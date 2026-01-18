@@ -4,11 +4,11 @@
 \usepackage{tabularx}
 \usepackage{booktabs}
 
-\title{Problem Statement and Goals\\Integrating NCRF Into Pipeline}
+\title{Problem Statement and Goals\\Integrating NCRFs Into Pipeline}
 
 \author{\authorname}
 
-\date{January 15th 2026}
+\date{January 18th 2026}
 
 
 \begin{document}
@@ -21,35 +21,55 @@
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-January 16 2026 & Yanyu Wu & Initial Draft\\
+January 15 2026 & Yanyu Wu & Initial Draft\\
+January 18 2026 & Yanyu Wu & 1.0 \\
 \bottomrule
 \end{tabularx}
 \end{table}
-
 \section{Problem Statement}
 
-This project focuses on integrating Nonlinear Convolutional Response Functions(NCRFs) into the existing TRF pipeline to extend its capability for modeling nonlinear brain responses.
+EEG (Electroencephalography) data is an important type of data in neuroscience research for studying brain activity over time. Temporal Response Functions (TRFs) are linear models that describe how the brain responds to continuous stimuli, such as speech, at different time lags. TRFs are widely used in EEG and MEG (Magnetoencephalography) studies of speech and auditory processing.
+
+An existing analysis pipeline allows users to process EEG data and obtain modeling results using TRF-based methods. In this pipeline, TRFs are used to model the relationship between speech features and brain activity. However, TRFs assume a linear relationship, which limits their ability to represent nonlinear brain responses.
+
+To overcome this limitation, this project aims to integrate Nonlinear Convolutional Response Functions (NCRFs) into the existing TRF pipeline. By adding NCRFs, the pipeline will be able to support nonlinear encoding models and provide a more flexible way to analyze the relationship between speech signals and brain activity.
 
 \subsection{Problem}
-The project aims to integrate NCRFs into the pipeline, enabling more accurate analysis of EEG data.
 
+The goal of this project is to extend an existing EEG analysis pipeline by integrating Nonlinear Convolutional Response Functions (NCRFs). 
+
+Compared to traditional linear TRF models, NCRFs can model nonlinear relationships between stimuli and brain responses, which may provide a more expressive representation of EEG encoding.
 
 \subsection{Inputs and Outputs}
-The input for the pipeline includes the original EEG data and speech features. \\The output data including the pre-processed data, statistical results and visualization results.
-
+\textbf{Inputs}
+\begin{itemize}
+    \item Preprocessed EEG data aligned with stimulus presentation.
+    \item Time-aligned predictors,such as gammatone features, word-level predictors.
+    \item Configuration parameters, such as file paths, stimulus duration, model settings.
+\end{itemize}
+\textbf{Outputs}
+\begin{itemize}
+    \item Fitted TRF and NCRF model parameters.
+    \item Model comparison results based on evaluation metrics.
+    \item Visualization results, including time-lag response plots and model comparison plots.
+\end{itemize}
 
 \subsection{Stakeholders}
-Stakeholders involve the lab members, researcher and students who will use the pipeline for their EEG analyses.
-\subsection{Environment}
+Stakeholders include lab members, researchers, and students who use the pipeline to conduct EEG data analysis and model evaluation.
 
-The project will be developed based on Python, Conda, Eelbrain on MacOS/Windows/Linux.
+\subsection{Environment}
+\begin{itemize}
+\item The product can be executed on modern operating systems, including macOS, Windows, and Linux. 
+\item The project will be developed based on Python programming language.
+\item The environment includes the Eelbrain library, which supports EEG data analysis and result visualization.
+\end{itemize}
 
 \section{Goals}
-\begin{enumerate}
-    \item Enable the analysis of nonlinear EEG responses by integrating NCRF modeling into the existing TRF pipeline.
-    \item Provide more complete neural response models by combining linear and nonlinear analyses.
-\end{enumerate}
+\begin{itemize}
+    \item Provide more complete neural response models that combine linear and nonlinear analyses.
 
+    \item Integrate NCRF modeling into the existing TRF pipeline to analyze nonlinear EEG responses.
+\end{itemize}
 
 \section{Stretch Goals}
 Provide an interactive GUI for the usage of this pipeline and enable more flexible analysis methods.
@@ -58,9 +78,10 @@ Provide an interactive GUI for the usage of this pipeline and enable more flexib
 
 Although this project is not a research project, it still requires a certain level of knowledge in neuroscience and related data processing methods; otherwise, users might be confused about the pipeline's functionality.
 
-\begin{enumerate}
+\begin{itemize}
+
 \item User documentation: Provide detailed instructions, including installation, preprocessing steps, NCRF analysis, and visualization.
-\item Pipeline demonstration: Include a working example with sample EEG and speech data to illustrate the pipeline's functions.
-\end{enumerate}
+\item Code Walkthrough: Provide a structured walkthrough of the pipeline implementation, explaining the overall architecture, key modules, data flow, and how NCRF components are integrated into the existing TRF-based pipeline.
+\end{itemize}
 
 \end{document}
