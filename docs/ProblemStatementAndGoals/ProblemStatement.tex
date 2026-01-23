@@ -8,7 +8,7 @@
 
 \author{\authorname}
 
-\date{January 18th 2026}
+\date{January 22 2026}
 
 
 \begin{document}
@@ -23,56 +23,60 @@
 \midrule
 January 15 2026 & Yanyu Wu & Initial Draft\\
 January 18 2026 & Yanyu Wu & 1.0 \\
+January 22 2026 & Yanyu Wu & 2.0 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 \section{Problem Statement}
 
-EEG (Electroencephalography) data is an important type of data in neuroscience research for studying brain activity over time. Temporal Response Functions (TRFs) are linear models that describe how the brain responds to continuous stimuli, such as speech, at different time lags. TRFs are widely used in EEG and MEG (Magnetoencephalography) studies of speech and auditory processing.
+EEG (Electroencephalography) and MEG(Magnetoencephalography) data are widely used in neuroscience area, to study the brain activity with high temporal resolution. In experiments involving continuous stimulimsuch as natural speech or music, researchers are interested in understanding both when neural responses occur and where in the brain these responses are generated. 
 
-An existing analysis pipeline allows users to process EEG data and obtain modeling results using TRF-based methods. In this pipeline, TRFs are used to model the relationship between speech features and brain activity. However, TRFs assume a linear relationship, which limits their ability to represent nonlinear brain responses.
+Temporal Response Functions (TRFs) are encoding model, describing how the continous stimuli will be mapped to neural signal by brain. Current TRF-based analysis pipelines follow a two-stage approach: (1) estimating neural source activity from sensor of EEG or MEG. (2)estimating TRFs on these fixed source estimates. A key limitation for this method is that uncertainty and errors in spatial estimation can directly affect the estimated TRFs.
 
-To overcome this limitation, this project aims to integrate Nonlinear Convolutional Response Functions (NCRFs) into the existing TRF pipeline. By adding NCRFs, the pipeline will be able to support nonlinear encoding models and provide a more flexible way to analyze the relationship between speech signals and brain activity.
+Neuro-Current Response Functions (NCRFs) are proposed to address this limitation by providing a unified approach that jointly estimates spatial and temporal aspects of neural responses. Instead of separating source localization and temporal modeling, NCRFs treat each cortical source as a linear filter that maps continuous stimuli directly to neural current activity.
 
 \subsection{Problem}
 
-The goal of this project is to extend an existing EEG analysis pipeline by integrating Nonlinear Convolutional Response Functions (NCRFs). 
+The main problem addressed in this project is that existing TRF method based pipeline separate spatial and temporal modeling, which may cause error propagation.
 
-Compared to traditional linear TRF models, NCRFs can model nonlinear relationships between stimuli and brain responses, which may provide a more expressive representation of EEG encoding.
+This project aims to integrating NCRFs into existing purely TRF-based pipeline, allowing spatial and temporal response properties to be estimated jointly rather than sequentially. 
 
 \subsection{Inputs and Outputs}
 \textbf{Inputs}
 \begin{itemize}
-    \item Preprocessed EEG data aligned with stimulus presentation.
-    \item Time-aligned predictors,such as gammatone features, word-level predictors.
+    \item Combination of different time series stimuli, such as acoustic envelope, word frequency etc.
+    \item EEG or MEG recordings collected during continuous-stimulus experiments.
     \item Configuration parameters, such as file paths, stimulus duration, model settings.
 \end{itemize}
 \textbf{Outputs}
 \begin{itemize}
-    \item Fitted TRF and NCRF model parameters.
-    \item Model comparison results based on evaluation metrics.
-    \item Visualization results, including time-lag response plots and model comparison plots.
+    \item Spitial information, indicating where in the brain stimulus-related activity occurs.
+    \item Temporal information, describing how neural responses evolves over time.
+    \item Result visualization to indicate temporal and spatial response.
 \end{itemize}
 
 \subsection{Stakeholders}
-Stakeholders include lab members, researchers, and students who use the pipeline to conduct EEG data analysis and model evaluation.
+Stakeholders include lab members, researchers, and students who use the pipeline to conduct EEG/MEG data analysis and model evaluation.
 
 \subsection{Environment}
 \begin{itemize}
-\item The product can be executed on modern operating systems, including macOS, Windows, and Linux. 
+\item The pipeline can be executed on modern operating systems, including macOS, Windows, and Linux. 
 \item The project will be developed based on Python programming language.
-\item The environment includes the Eelbrain library, which supports EEG data analysis and result visualization.
+\item The environment includes the Eelbrain library, which supports EEG/MEG data analysis, modeling and result visualization.
 \end{itemize}
 
 \section{Goals}
 \begin{itemize}
-    \item Provide more complete neural response models that combine linear and nonlinear analyses.
-
-    \item Integrate NCRF modeling into the existing TRF pipeline to analyze nonlinear EEG responses.
+    \item From sensor or channel TRF to cortical TRF, getting the response map of whole cortex response. 
+    \item Reduce the inaccuracy from two-step methods.
+    \item Improve the explainability in neuro-science.
 \end{itemize}
 
 \section{Stretch Goals}
-Provide an interactive GUI for the usage of this pipeline and enable more flexible analysis methods.
+\begin{itemize}
+    \item Provide an interactive user interface GUI for this pipeline.
+    \item Enable direct comparison between traditional TRF outputs and NCRF-based outputs within the same pipeline.
+\end{itemize}
 
 \section{Extras}
 
@@ -80,8 +84,8 @@ Although this project is not a research project, it still requires a certain lev
 
 \begin{itemize}
 
-\item User documentation: Provide detailed instructions, including installation, preprocessing steps, NCRF analysis, and visualization.
-\item Code Walkthrough: Provide a structured walkthrough of the pipeline implementation, explaining the overall architecture, key modules, data flow, and how NCRF components are integrated into the existing TRF-based pipeline.
+\item \textbf{User documentation}: Provide detailed instructions, including installation, NCRF analysis, execution methods.
+\item \textbf{Code Walkthrough}: Provide a structured walkthrough of the pipeline implementation, explaining the overall architecture, key modules, data flow, and how NCRF components are integrated into the existing TRF-based pipeline.
 \end{itemize}
 
 \end{document}
