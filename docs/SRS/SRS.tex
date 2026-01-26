@@ -78,6 +78,9 @@
 \newcommand{\lthelcnum}{LC\thelcnum}
 \newcommand{\lcref}[1]{LC\ref{#1}}
 
+\renewcommand{\progname}{Integrating NCRF into existing pipeline}
+
+
 \usepackage{fullpage}
 
 \newcommand{\deftheory}[9][Not Applicable]
@@ -128,8 +131,8 @@
 
 \begin{document}
 
-\title{Software Requirements Specification for \progname: subtitle describing software} 
-\author{\authname}
+\title{Software Requirements Specification for \progname} 
+\author{Yanyu Wu}
 \date{\today}
 	
 \maketitle
@@ -147,17 +150,12 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+Jan 26,2026 & 1.0 & Initial Draft\\
 \bottomrule
 \end{tabularx}
 
 ~\\
-\plt{This template is intended for use by CAS 741.  For CAS 741 the template
-should be used exactly as given, except the Reflection Appendix can be deleted.
-For the capstone course it is a source of ideas, but shouldn't be followed
-exactly.  The exception is the reflection appendix.  All capstone SRS documents
-should have a reflection appendix.}
+
 
 ~\newpage
 
@@ -179,34 +177,32 @@ description of the unit and the SI name.
     \toprule		
     \textbf{symbol} & \textbf{unit} & \textbf{SI}\\
     \midrule 
-    \si{\metre} & length & metre\\
-    \si{\kilogram} & mass	& kilogram\\
+    \si db & sound & decibel\\
     \si{\second} & time & second\\
-    \si{\celsius} & temperature & centigrade\\
-    \si{\joule} & energy & joule\\
-    \si{\watt} & power & watt (W = \si{\joule\per\second})\\
+    \si ms & time & millisecond\\
+    \si Hz & frequency & hertz \\
     \bottomrule
   \end{tabular}
   %	\caption{Provide a caption}
 %\end{table}
 
-\plt{Only include the units that your SRS actually uses.}
+% \plt{Only include the units that your SRS actually uses.}
 
-\plt{Derived units, like newtons, pascal, etc, should show their derivation
-    (the units they are derived from) if their constituent units are in the
-    table of units (that is, if the units they are derived from are used in the
-    document).  For instance, the derivation of pascals as
-    $\si{\pascal}=\si{\newton\per\square\meter}$ is shown if newtons and m are
-    both in the table.  The derivations of newtons would not be shown if kg and
-    s are not both in the table.}
+% \plt{Derived units, like newtons, pascal, etc, should show their derivation
+%     (the units they are derived from) if their constituent units are in the
+%     table of units (that is, if the units they are derived from are used in the
+%     document).  For instance, the derivation of pascals as
+%     $\si{\pascal}=\si{\newton\per\square\meter}$ is shown if newtons and m are
+%     both in the table.  The derivations of newtons would not be shown if kg and
+%     s are not both in the table.}
 
-\plt{The symbol for units named after people use capital letters, but the name
-  of the unit itself uses lower case.  For instance, pascals use the symbol Pa,
-  watts use the symbol W, teslas use the symbol T, newtons use the symbol N,
-  etc.  The one exception to this is degree Celsius.  Details on writing metric
-  units can be found on the 
-  \href{https://www.nist.gov/pml/weights-and-measures/writing-metric-units}
-  {NIST} web-page.}
+% \plt{The symbol for units named after people use capital letters, but the name
+%   of the unit itself uses lower case.  For instance, pascals use the symbol Pa,
+%   watts use the symbol W, teslas use the symbol T, newtons use the symbol N,
+%   etc.  The one exception to this is degree Celsius.  Details on writing metric
+%   units can be found on the 
+%   \href{https://www.nist.gov/pml/weights-and-measures/writing-metric-units}
+%   {NIST} web-page.}
 
 \subsection{Table of Symbols}
 
@@ -220,15 +216,19 @@ systems.  The symbols are listed in alphabetical order.
 \noindent \begin{longtable*}{l l p{12cm}} \toprule
 \textbf{symbol} & \textbf{unit} & \textbf{description}\\
 \midrule 
-$A_C$ & \si[per-mode=symbol] {\square\metre} & coil surface area
-\\
-$A_\text{in}$ & \si[per-mode=symbol] {\square\metre} & surface area over which
-heat is transferred in
-\\ 
+ t & s/ms & basic time unit \\
+ s & - & cortical source index \\
+ $e_t$ & db & speech envelope \\ 
+ $f_s$ & Hz & sampling frequency\\
+ M & - & total number of dipole sources\\
+ $r_m$ & m &  the right-anterior-superior (RAS) coordinates of the $m^{th}$ dipole \\
+ $j_{m,t}$ & A·m & Dipole current vector at source m and time t\\
+ $v_{m,t}$ & A·m & stimulus-independent background activity \\
+ $\tau_{m,i,l}$ & - & 3D vector-valued TRF at source m,defined as NCRF.\\
 \bottomrule
 \end{longtable*}
-\plt{Use your problems actual symbols.  The si package is a good idea to use for
-  units.}
+% \plt{Use your problems actual symbols.  The si package is a good idea to use for
+%   units.}
 
 \subsection{Abbreviations and Acronyms}
 
@@ -246,195 +246,215 @@ heat is transferred in
   PS & Physical System Description\\
   R & Requirement\\
   SRS & Software Requirements Specification\\
-  \progname{} & \plt{put an expanded version of your program name here (as appropriate)}\\
+  \progname{} & analyzing pipeline for eeg data via NCRF method\\
   TM & Theoretical Model\\
   \bottomrule
 \end{tabular}\\
 
-\plt{Add any other abbreviations or acronyms that you add}
+% \plt{Add any other abbreviations or acronyms that you add}
 
-\subsection{Mathematical Notation}
+% \subsection{Mathematical Notation}
 
-\plt{This section is optional, but should be included for projects that make use
-  of notation to convey mathematical information.  For instance, if typographic
-  conventions (like bold face font) are used to distinguish matrices, this
-  should be stated here.  If symbols are used to show mathematical operations,
-  these should be summarized here.  In some cases the easiest way to summarize
-  the notation is to point to a text or other source that explains the
-  notation.}
+% \plt{This section is optional, but should be included for projects that make use
+%   of notation to convey mathematical information.  For instance, if typographic
+%   conventions (like bold face font) are used to distinguish matrices, this
+%   should be stated here.  If symbols are used to show mathematical operations,
+%   these should be summarized here.  In some cases the easiest way to summarize
+%   the notation is to point to a text or other source that explains the
+%   notation.}
 
-\plt{This section was added to the template because some students use very
-  domain specific notation.  This notation will not be readily understandable to
-  people outside of your domain.  It should be explained.}
+% \plt{This section was added to the template because some students use very
+%   domain specific notation.  This notation will not be readily understandable to
+%   people outside of your domain.  It should be explained.}
 
 \newpage
 
-\pagenumbering{arabic}
+% \pagenumbering{arabic}
 
-\plt{This SRS template is based on \citet{SmithAndLai2005, SmithEtAl2007,
-  SmithAndKoothoor2016}.  It will get you started.  You should not modify the
-  section headings, without first discussing the change with the course
-  instructor.  Modification means you are not following the template, which
-  loses some of the advantage of a template, especially standardization.
-  Although the bits shown below do not include type information, you may need to
-  add this information for your problem.  If you are unsure, please can ask the
-  instructor.}
+% \plt{This SRS template is based on \citet{SmithAndLai2005, SmithEtAl2007,
+%   SmithAndKoothoor2016}.  It will get you started.  You should not modify the
+%   section headings, without first discussing the change with the course
+%   instructor.  Modification means you are not following the template, which
+%   loses some of the advantage of a template, especially standardization.
+%   Although the bits shown below do not include type information, you may need to
+%   add this information for your problem.  If you are unsure, please can ask the
+%   instructor.}
 
-\plt{Feel free to change the appearance of the report by modifying the LaTeX
-  commands.}
+% \plt{Feel free to change the appearance of the report by modifying the LaTeX
+%   commands.}
 
-\plt{This template document assumes that a single program is being documented.
-  If you are documenting a family of models, you should start with a commonality
-  analysis.  A separate template is provided for this.  For program
-  families you should look at \cite{Smith2006, SmithMcCutchanAndCarette2017}.
-  Single family member programs are often programs based on a single physical
-  model.  General purpose tools are usually documented as a family.  Families of
-  physical models also come up.}
+% \plt{This template document assumes that a single program is being documented.
+%   If you are documenting a family of models, you should start with a commonality
+%   analysis.  A separate template is provided for this.  For program
+%   families you should look at \cite{Smith2006, SmithMcCutchanAndCarette2017}.
+%   Single family member programs are often programs based on a single physical
+%   model.  General purpose tools are usually documented as a family.  Families of
+%   physical models also come up.}
 
-\plt{The SRS is not generally written, or read, sequentially.  The SRS is a
-  reference document.  It is generally read in an ad hoc order, as the need
-  arises.  For writing an SRS, and for reading one for the first time, the
-  suggested order of sections is:
-\begin{itemize}
-\item Goal Statement
-\item Instance Models
-\item Requirements
-\item Introduction
-\item Specific System Description
-\end{itemize}
-}
+% \plt{The SRS is not generally written, or read, sequentially.  The SRS is a
+%   reference document.  It is generally read in an ad hoc order, as the need
+%   arises.  For writing an SRS, and for reading one for the first time, the
+%   suggested order of sections is:
+% \begin{itemize}
+% \item Goal Statement
+% \item Instance Models
+% \item Requirements
+% \item Introduction
+% \item Specific System Description
+% \end{itemize}
+% }
 
-\plt{Guiding principles for the SRS document:
-\begin{itemize}
-\item Do not repeat the same information at the same abstraction level.  If
-  information is repeated, the repetition should be at a different abstraction
-  level.  For instance, there will be overlap between the scope section and the
-  assumptions, but the scope section will not go into as much detail as the
-  assumptions section.
-\end{itemize}
-}
+% \plt{Guiding principles for the SRS document:
+% \begin{itemize}
+% \item Do not repeat the same information at the same abstraction level.  If
+%   information is repeated, the repetition should be at a different abstraction
+%   level.  For instance, there will be overlap between the scope section and the
+%   assumptions, but the scope section will not go into as much detail as the
+%   assumptions section.
+% \end{itemize}
+% }
 
-\plt{The template description comments should be disabled before submitting this
-  document for grading.}
+% \plt{The template description comments should be disabled before submitting this
+%   document for grading.}
 
-\plt{You can borrow any wording from the text given in the template.  It is part
-  of the template, and not considered an instance of academic integrity.  Of
-  course, you need to cite the source of the template.}
+% \plt{You can borrow any wording from the text given in the template.  It is part
+%   of the template, and not considered an instance of academic integrity.  Of
+%   course, you need to cite the source of the template.}
 
-\plt{When the documentation is done, it should be possible to trace back to the
-  source of every piece of information.  Some information will come from
-  external sources, like terminology.  Other information will be derived, like
-  General Definitions.}
+% \plt{When the documentation is done, it should be possible to trace back to the
+%   source of every piece of information.  Some information will come from
+%   external sources, like terminology.  Other information will be derived, like
+%   General Definitions.}
 
-\plt{An SRS document should have the following qualities: unambiguous,
-  consistent, complete, validatable, abstract and traceable.}
+% \plt{An SRS document should have the following qualities: unambiguous,
+%   consistent, complete, validatable, abstract and traceable.}
 
-\plt{The overall goal of the SRS is that someone that meets the Characteristics
-  of the Intended Reader (Section~\ref{sec_IntendedReader}) can learn,
-  understand and verify the captured domain knowledge.  They should not have to
-  trust the authors of the SRS on any statements.  They should be able to
-  independently verify/derive every statement made.}
+% \plt{The overall goal of the SRS is that someone that meets the Characteristics
+%   of the Intended Reader (Section~\ref{sec_IntendedReader}) can learn,
+%   understand and verify the captured domain knowledge.  They should not have to
+%   trust the authors of the SRS on any statements.  They should be able to
+%   independently verify/derive every statement made.}
 
 \section{Introduction}
 
-\plt{The introduction section is written to introduce the problem.  It starts
-  general and focuses on the problem domain. The general advice is to start with
-a paragraph or two that describes the problem, followed by a ``roadmap''
-paragraph.  A roadmap orients the reader by telling them what sub-sections to
-expect in the Introduction section.}
+The ability to understand how the human brain processes continuous auditory stimuli, such as speech, is a central problem in cognitive neuroscience. Non-invasive measurements, such as magnetoencephalography (MEG) and electroencephalogram (EEG), provide high temporal resolution recordings of neural activities. 
+Typically, modeling how the brain's cortical sources respond to time-varying stimuli from these meaturement statisics was a tough issue.
+However, the Neuro-Current Response Function (NCRF) directly models the 3D cortical dipole currents as linear filters of stimulus features, avoiding the need for separate source reconstruction or fixed dipole orientations. By combining vector-valued impulse responses with the forward model and regularized estimation, NCRF enables accurate prediction of neural responses while flexibly adapting to each source’s spatial characteristics.
 
 \subsection{Purpose of Document}
+This section will provide an overview of the Software Requirements Specification (SRS) for the NCRF pipeline. This section explains the purpose of this document, the scope of requirements, the characteristics for intended readers and the organization of Document.
 
-\plt{This section summarizes the purpose of the SRS document.  It does not focus
-  on the problem itself.  The problem is described in the ``Problem
-  Description'' section (Section~\ref{Sec_pd}).  The purpose is for the document
-  in the context of the project itself, not in the context of this course.
-  Although the ``purpose'' of the document is to get a grade, you should not
-  mention this.  Instead, ``fake it'' as if this is a real project.  The purpose
-  section will be similar between projects.  The purpose of the document is the
-  purpose of the SRS, including communication, planning for the design stage,
-  etc.}
+% \plt{This section summarizes the purpose of the SRS document.  It does not focus
+%   on the problem itself.  The problem is described in the ``Problem
+%   Description'' section (Section~\ref{Sec_pd}).  The purpose is for the document
+%   in the context of the project itself, not in the context of this course.
+%   Although the ``purpose'' of the document is to get a grade, you should not
+%   mention this.  Instead, ``fake it'' as if this is a real project.  The purpose
+%   section will be similar between projects.  The purpose of the document is the
+%   purpose of the SRS, including communication, planning for the design stage,
+%   etc.}
 
 \subsection{Scope of Requirements} 
+This project focuses on integrating the Neuro-Current Response Function (NCRF) framework into an existing Temporal Response Function (TRF) experimental pipeline. 
+The following items are included in the scope:
+\begin{itemize}
+  \item Integration of NCRF concepts into the TRF pipeline to enable source-level response estimation.
+  \item Adaptation of input and intermediate data formats to ensure compatibility with the NCRF-based modeling approach.
+\end{itemize}
+The following aspects are explicitly out of scope:
+\begin{itemize}
+  \item Collection, acquisition, or preprocessing of MEG or EEG data.
+  \item Redesign or retraining of the existing TRF pipeline core implementation.
+\end{itemize}
 
-\plt{Modelling the real world requires simplification.  The full complexity of
-  the actual physics, chemistry, biology is too much for existing models, and
-  for existing computational solution techniques.  Rather than say what is in
-  the scope, it is usually easier to say what is not.  You can think of it as
-  the scope is initially everything, and then it is constrained to create the
-  actual scope.  For instance, the problem can be restricted to 2 dimensions, or
-  it can ignore the effect of temperature (or pressure) on the material
-  properties, etc.}  
+% \plt{Modelling the real world requires simplification.  The full complexity of
+%   the actual physics, chemistry, biology is too much for existing models, and
+%   for existing computational solution techniques.  Rather than say what is in
+%   the scope, it is usually easier to say what is not.  You can think of it as
+%   the scope is initially everything, and then it is constrained to create the
+%   actual scope.  For instance, the problem can be restricted to 2 dimensions, or
+%   it can ignore the effect of temperature (or pressure) on the material
+%   properties, etc.}  
 
-\plt{The scope section is related to the assumptions section
-  (Section~\ref{sec_assumpt}).  However, the scope and the assumptions are not
-  at the same level of abstraction.  The scope is at a high level.  The focus is
-  on the ``big picture'' assumptions.  The assumptions section lists, and
-  describes, all of the assumptions.}
+% \plt{The scope section is related to the assumptions section
+%   (Section~\ref{sec_assumpt}).  However, the scope and the assumptions are not
+%   at the same level of abstraction.  The scope is at a high level.  The focus is
+%   on the ``big picture'' assumptions.  The assumptions section lists, and
+%   describes, all of the assumptions.}
 
-\plt{The scope section is relevant for later determining typical values of inputs. The scope should make it clear what inputs are reasonable to expect. This is a distinction between scope and context (context is a later section).  Scope affects the inputs while context affects how the software will be used.}
+% \plt{The scope section is relevant for later determining typical values of inputs. The scope should make it clear what inputs are reasonable to expect. This is a distinction between scope and context (context is a later section).  Scope affects the inputs while context affects how the software will be used.}
 
 \subsection{Characteristics of Intended Reader} \label{sec_IntendedReader}
 
-\plt{This section summarizes the skills and knowledge of the readers of the
-  SRS.  It does NOT have the same purpose as the ``User Characteristics''
-  section (Section~\ref{SecUserCharacteristics}).  The intended readers are the
-  people that will read, review and maintain the SRS.  They are the people that
-  will conceivably design the software that is intended to meet the
-  requirements.  The user, on the other hand, is the person that uses the
-  software that is built.  They may never read this SRS document.  Of course,
-  the same person could be a ``user'' and an ``intended reader.''}
+  The intended readers of this Software Requirements Specification are graduate-level students, researchers, or developers involved in computational neuroscience, neural signal processing, or related software development. These readers are expected to use this document to understand, review, and maintain the requirements of the NCRF pipeline.
 
-\plt{The intended reader characteristics should be written as unambiguously and
-  as specifically as possible.  Rather than say, the user should have an
-  understanding of physics, say what kind of physics and at what level.  For
-  instance, is high school physics adequate, or should the reader have had a
-  graduate course on advanced quantum mechanics?}
+% \plt{This section summarizes the skills and knowledge of the readers of the
+%   SRS.  It does NOT have the same purpose as the ``User Characteristics''
+%   section (Section~\ref{SecUserCharacteristics}).  The intended readers are the
+%   people that will read, review and maintain the SRS.  They are the people that
+%   will conceivably design the software that is intended to meet the
+%   requirements.  The user, on the other hand, is the person that uses the
+%   software that is built.  They may never read this SRS document.  Of course,
+%   the same person could be a ``user'' and an ``intended reader.''}
+
+% \plt{The intended reader characteristics should be written as unambiguously and
+%   as specifically as possible.  Rather than say, the user should have an
+%   understanding of physics, say what kind of physics and at what level.  For
+%   instance, is high school physics adequate, or should the reader have had a
+%   graduate course on advanced quantum mechanics?}
 
 \subsection{Organization of Document}
 
-\plt{This section provides a roadmap of the SRS document.  It will help the
-  reader orient themselves.  It will provide direction that will help them
-  select which sections they want to read, and in what order.  This section will
-  be similar between project.}
+The organization of the whole SRS document follows the template for scientific computing software proposed by {\cite{SmithAndLai2005, SmithEtAl2007, SmithAndKoothoor2016}}.
 
-\plt{Include a reference to the template (\citet{SmithAndLai2005, SmithEtAl2007,
-  SmithAndKoothoor2016}) you are using in the documentation in the Organization of
-  the Document section.}
+For the readers, this document provides a bottom-up reading approach, firstly knowing the basic concepts, then is the introduction, finally is the goal and implementing principle for the project.
+
+\newpage
+% \plt{This section provides a roadmap of the SRS document.  It will help the
+%   reader orient themselves.  It will provide direction that will help them
+%   select which sections they want to read, and in what order.  This section will
+%   be similar between project.}
+
+% \plt{Include a reference to the template (\citet{SmithAndLai2005, SmithEtAl2007,
+%   SmithAndKoothoor2016}) you are using in the documentation in the Organization of
+%   the Document section.}
   
 
 \section{General System Description}
 
 This section provides general information about the system.  It identifies the
 interfaces between the system and its environment, describes the user
-characteristics and lists the system constraints.  \plt{This text can likely be
-  borrowed verbatim.}
+characteristics and lists the system constraints.  
+% \plt{This text can likely be borrowed verbatim.}
 
-\plt{The purpose of this section is to provide general information about the
-  system so the specific requirements in the next section will be easier to
-  understand. The general system description section is designed to be
-  changeable independent of changes to the functional requirements documented in
-  the specific system description. The general system description provides a
-  context for a family of related models.  The general description can stay the
-  same, while specific details are changed between family members.}
+% \plt{The purpose of this section is to provide general information about the
+%   system so the specific requirements in the next section will be easier to
+%   understand. The general system description section is designed to be
+%   changeable independent of changes to the functional requirements documented in
+%   the specific system description. The general system description provides a
+%   context for a family of related models.  The general description can stay the
+%   same, while specific details are changed between family members.}
 
 \subsection{System Context}
 
-\plt{Your system context will include a figure that shows the abstract view of
-  the software.  Often in a scientific context, the program can be viewed
-  abstractly following the design pattern of Inputs $\rightarrow$ Calculations
-  $\rightarrow$ Outputs.  The system context will therefore often follow this
-  pattern.  The user provides inputs, the system does the calculations, and then
-  provides the outputs to the user.  The figure should not show all of the
-  inputs, just an abstract view of the main categories of inputs (like material
-  properties, geometry, etc.).  Likewise, the outputs should be presented from
-  an abstract point of view.  In some cases the diagram will show other external
-  entities, besides the user.  For instance, when the software product is a
-  library, the user will be another software program, not an actual end user.
-  If there are system constraints that the software must work with external
-  libraries, these libraries can also be shown on the System Context diagram.
-  They should only be named with a specific library name if this is required by
-  the system constraint.}
+The Figure1 below indicates the system context about this project. 
+The user could be a researcher or graduate student works on neuro-science, who will provide time-series stimuli and related neuro data and it has been represented by the circle in Fig 1. The rectangle represents the software system (NCRF pipeline) and the the arrow indicates the workflow of data.
+
+% \plt{Your system context will include a figure that shows the abstract view of
+%   the software.  Often in a scientific context, the program can be viewed
+%   abstractly following the design pattern of Inputs $\rightarrow$ Calculations
+%   $\rightarrow$ Outputs.  The system context will therefore often follow this
+%   pattern.  The user provides inputs, the system does the calculations, and then
+%   provides the outputs to the user.  The figure should not show all of the
+%   inputs, just an abstract view of the main categories of inputs (like material
+%   properties, geometry, etc.).  Likewise, the outputs should be presented from
+%   an abstract point of view.  In some cases the diagram will show other external
+%   entities, besides the user.  For instance, when the software product is a
+%   library, the user will be another software program, not an actual end user.
+%   If there are system constraints that the software must work with external
+%   libraries, these libraries can also be shown on the System Context diagram.
+%   They should only be named with a specific library name if this is required by
+%   the system constraint.}
 
 \begin{figure}[h!]
 \begin{center}
