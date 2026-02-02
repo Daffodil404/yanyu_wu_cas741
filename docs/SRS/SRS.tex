@@ -337,11 +337,11 @@ systems.  The symbols are listed in alphabetical order.
 \section{Introduction}
 
 The ability to understand how the human brain processes continuous auditory stimuli, such as speech, is a central problem in cognitive neuroscience. Non-invasive measurements, such as magnetoencephalography (MEG) and electroencephalogram (EEG), provide high temporal resolution recordings of neural activities.
-Typically, modeling how the brain's cortical sources respond to time-varying stimuli from these meaturement statisics was a tough issue.
+Typically, modeling how the brain's cortical sources respond to time-varying stimuli from these measurement statistics is challenging.
 However, the Neuro-Current Response Function (NCRF) directly models the 3D cortical dipole currents as linear filters of stimulus features, avoiding the need for separate source reconstruction or fixed dipole orientations. By combining vector-valued impulse responses with the forward model and regularized estimation, NCRF enables accurate prediction of neural responses while flexibly adapting to each source’s spatial characteristics.
 
 \subsection{Purpose of Document}
-This section will provide an overview of the Software Requirements Specification (SRS) for the NCRF pipeline. This section explains the purpose of this document, the scope of requirements, the characteristics for intended readers and the organization of Document.
+This section provides an overview of the Software Requirements Specification (SRS) for the NCRF pipeline. It explains the purpose of this document, the scope of requirements, the intended reader characteristics, and the organization of the document.
 
 % \plt{This section summarizes the purpose of the SRS document.  It does not focus
 %   on the problem itself.  The problem is described in the ``Problem
@@ -386,7 +386,7 @@ The following aspects are explicitly out of scope:
 \subsection{Characteristics of Intended Reader} \label{sec_IntendedReader}
 
 The intended readers of this Software Requirements Specification should have an undergraduate-level understanding of programming and math.
-The users of NCRF pipeline can have a lower level of expertise, as explained in (Section~\ref{SecUserCharacteristics} )
+The users of the NCRF pipeline may have a lower level of expertise, as explained in Section~\ref{SecUserCharacteristics}.
 
 % \plt{This section summarizes the skills and knowledge of the readers of the
 %   SRS.  It does NOT have the same purpose as the ``User Characteristics''
@@ -407,7 +407,7 @@ The users of NCRF pipeline can have a lower level of expertise, as explained in 
 
 The organization of the whole SRS document follows the template for scientific computing software proposed by {\cite{SmithAndLai2005, SmithEtAl2007, SmithAndKoothoor2016}}.
 
-For the readers, this document provides a bottom-up reading approach, firstly knowing the basic concepts, then is the introduction, finally is the goal and implementing principle for the project.
+For readers, this document follows a bottom-up approach: it first introduces the basic concepts, then provides the system introduction, and finally presents the goals and implementation principles for the project.
 
 \newpage
 % \plt{This section provides a roadmap of the SRS document.  It will help the
@@ -728,10 +728,18 @@ change [LC], in which the respective assumption is used.
     %     appropriate traceability to TM, GD, DD etc., using commands like dref, ddref
     %     etc.  Each assumption should be atomic - that is, there should not be an
     %     explicit (or implicit) ``and'' in the text of an assumption.}
-  \item[A1:] Preprocessed, time-aligned stimulus features and EEG/MEG recordings are available as inputs.
-  \item[A2:] The stimulus feature representation is fixed and provided externally; feature extraction is outside the system scope.
-  \item[A3:] Cortical source responses are modeled using linear temporal filters; nonlinear dynamics are not considered.
-  \item[A4:] The cortical source space and the corresponding forward model are assumed to be fixed and known.
+
+  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A1}:]
+  Preprocessed, time-aligned stimulus features and EEG/MEG recordings are available as inputs.
+
+  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A2}:]
+  Cortical source responses are modeled using linear temporal filters; nonlinear dynamics are not considered.
+
+  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A3}:]
+  The cortical source space and the corresponding forward model are assumed to be fixed and known.
+
+  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A4}:]
+  The brain response to a stimulus is not instantaneous; it occurs with a non-zero time lag.
 \end{itemize}
 
 \subsubsection{Theoretical Models}\label{sec_theoretical}
@@ -748,7 +756,7 @@ change [LC], in which the respective assumption is used.
 % rationale theories.}
 
 This section focuses on the general equations and laws that NCRF pipeline is based
-on.
+on. Under the linear temporal response assumption (A3), the stimulus-driven neural response is modeled as a temporal convolution.
 % \plt{Modify the examples below for your problem, and add additional models as appropriate.}
 
 ~\newline
@@ -1010,7 +1018,8 @@ identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
     Output&$j_{m,t,i}$\\
     \hline
     Description&
-    This instance model specifies the neural stimulation–response relationship at the level of individual cortical dipole sources. \\
+    Given preprocessed and time-aligned stimulus features and EEG/MEG recordings (A1), the NCRF pipeline accepts these continuous signals as inputs. \\
+    &This instance model specifies the neural stimulation–response relationship at the level of individual cortical dipole sources. \\
     & $j_{m,t,i}$ is the neuro source current at position m and time t. \\
     & $e(t)$ is the stimulus input feature signal. \\
     & $v_{m,t,i}$ is the background source activity.\\
@@ -1208,13 +1217,10 @@ qualities that the software is expected to exhibit.
 \item[NFR1:] \textbf{Accuracy}  
 The system shall produce numerically stable and reproducible results that can be verified against established TRF/NCRF benchmarks or reference implementations.
 
-\item[NFR2:] \textbf{Usability}  
-The system shall be usable by users with a background in neuroscience and Python programming, without requiring changes to the existing pipeline workflow.
-
-\item[NFR3:] \textbf{Maintainability}  
+\item[NFR2:] \textbf{Maintainability}  
 The system shall be modularly designed such that future extensions and defect fixes require substantially less effort than the initial development.
 
-\item[NFR4:] \textbf{Portability}  
+\item[NFR3:] \textbf{Portability}  
 The system shall be implemented as a Python package and be executable on macOS, Windows, and Linux platforms.
 
 \end{itemize}
@@ -1279,18 +1285,18 @@ the assumptions.
   \begin{landscape}
     \begin{table}[h!]
       \centering
-      \begin{tabular}{|c|c|c|c|}
+      \begin{tabular}{|c|c|c|c|c|}
         \hline
-        & \aref{A1} & \aref{A2} & \aref{A3} \\
+        & \aref{A1} & \aref{A2} & \aref{A3} & \aref{A4} \\
         \hline
-        \tref{TM_NCRF_Model} & & X & X \\ \hline
-        \dref{GD_StimulusDriven} & & X & X \\ \hline
-        \dref{GD_BackgroundActivity} & & X & \\ \hline
-        \ddref{DD_NCRF_Coefficients} & & & X \\ \hline
-        \iref{IM_NeuralStimResponse} & & X & X \\ \hline
-        \lcref{LC_OutputFormat} & & & \\ \hline
-        \lcref{LC_ModelParameters} & & & X \\ \hline
-        \lcref{LC_CoreMethods} & & & \\ \hline
+        \tref{TM_NCRF_Model} & & X & X & X \\ \hline
+        \dref{GD_StimulusDriven} & & X & X & X \\ \hline
+        \dref{GD_BackgroundActivity} & & X & & \\ \hline
+        \ddref{DD_NCRF_Coefficients} & & & X & X \\ \hline
+        \iref{IM_NeuralStimResponse} & & X & X & X \\ \hline
+        \lcref{LC_OutputFormat} & & & & \\ \hline
+        \lcref{LC_ModelParameters} & & & X & X \\ \hline
+        \lcref{LC_CoreMethods} & & & & \\ \hline
       \end{tabular}
       \caption{Traceability Matrix Showing the Connections Between Assumptions and Other Items}
       \label{Table:A_trace}
@@ -1333,11 +1339,7 @@ The purpose of the traceability graphs is also to provide easy references on
 what has to be additionally modified if a certain component is changed.  The
 arrows in the graphs represent dependencies. The component at the tail of an
 arrow is depended on by the component at the head of that arrow. Therefore, if a
-component is changed, the components that it points to should also be
-changed. Figure~\ref{Fig_ATrace} shows the dependencies of theoretical models,
-general definitions, data definitions, instance models, likely changes, and
-assumptions on each other. Figure~\ref{Fig_RTrace} shows the dependencies of
-instance models, requirements, and data constraints on each other.
+component is changed, the components that it points to should also be changed.
 
 % \begin{figure}[h!]
 %   \begin{center}
@@ -1389,58 +1391,58 @@ instance models, requirements, and data constraints on each other.
 \bibliographystyle {plainnat}
 \bibliography {../../refs/References}
 
-\newpage
+% \newpage
 
-\noindent \plt{The following is not part of the template, just some things to consider
-when filing in the template.}
+% \noindent \plt{The following is not part of the template, just some things to consider
+% when filing in the template.}
 
-\noindent \plt{Grammar, flow and \LaTeX advice:
-  \begin{itemize}
-    \item For Mac users \texttt{*.DS\_Store} should be in \texttt{.gitignore}
-    \item \LaTeX{} and formatting rules
-      \begin{itemize}
-        \item Variables are italic, everything else not, includes subscripts (link to
-          document)
-          \begin{itemize}
-            \item \href{https://physics.nist.gov/cuu/pdf/typefaces.pdf}{Conventions}
-            \item Watch out for implied multiplication
-          \end{itemize}
-        \item Use BibTeX
-        \item Use cross-referencing
-      \end{itemize}
-    \item Grammar and writing rules
-      \begin{itemize}
-        \item Acronyms expanded on first usage (not just in table of acronyms)
-        \item ``In order to'' should be ``to''
-      \end{itemize}
-  \end{itemize}}
+% \noindent \plt{Grammar, flow and \LaTeX advice:
+%   \begin{itemize}
+%     \item For Mac users \texttt{*.DS\_Store} should be in \texttt{.gitignore}
+%     \item \LaTeX{} and formatting rules
+%       \begin{itemize}
+%         \item Variables are italic, everything else not, includes subscripts (link to
+%           document)
+%           \begin{itemize}
+%             \item \href{https://physics.nist.gov/cuu/pdf/typefaces.pdf}{Conventions}
+%             \item Watch out for implied multiplication
+%           \end{itemize}
+%         \item Use BibTeX
+%         \item Use cross-referencing
+%       \end{itemize}
+%     \item Grammar and writing rules
+%       \begin{itemize}
+%         \item Acronyms expanded on first usage (not just in table of acronyms)
+%         \item ``In order to'' should be ``to''
+%       \end{itemize}
+%   \end{itemize}}
 
-\noindent \plt{Advice on using the template:
-  \begin{itemize}
-    \item Difference between physical and software constraints
-    \item Properties of a correct solution means \emph{additional} properties, not
-      a restating of the requirements (may be ``not applicable'' for your problem).
-      If you have a table of output constraints, then these are properties of a
-      correct solution.
-    \item Assumptions have to be invoked somewhere
-    \item ``Referenced by'' implies that there is an explicit reference
-    \item Think of traceability matrix, list of assumption invocations and list of
-      reference by fields as automatically generatable
-    \item If you say the format of the output (plot, table etc), then your
-      requirement could be more abstract
-  \end{itemize}
-}
+% \noindent \plt{Advice on using the template:
+%   \begin{itemize}
+%     \item Difference between physical and software constraints
+%     \item Properties of a correct solution means \emph{additional} properties, not
+%       a restating of the requirements (may be ``not applicable'' for your problem).
+%       If you have a table of output constraints, then these are properties of a
+%       correct solution.
+%     \item Assumptions have to be invoked somewhere
+%     \item ``Referenced by'' implies that there is an explicit reference
+%     \item Think of traceability matrix, list of assumption invocations and list of
+%       reference by fields as automatically generatable
+%     \item If you say the format of the output (plot, table etc), then your
+%       requirement could be more abstract
+%   \end{itemize}
+% }
 
-\newpage{}
-\section*{Appendix --- Reflection}
+% \newpage{}
+% \section*{Appendix --- Reflection}
 
-\wss{Not required for CAS 741}
+% \wss{Not required for CAS 741}
 
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Lifelong Learning.
+% The information in this section will be used to evaluate the team members on the
+% graduate attribute of Lifelong Learning.
 
-\input{../Reflection.text}
+% \input{../Reflection.text}
 
-\input{../SRS_Reflection.text}
+% \input{../SRS_Reflection.text}
 
 \end{document}
