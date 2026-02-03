@@ -213,7 +213,7 @@ systems.  The symbols are listed in alphabetical order.
 \renewcommand{\arraystretch}{1.2}
 %\noindent \begin{tabularx}{1.0\textwidth}{l l X}
 \noindent
-\begin{longtable*}{l l p{12cm}} \toprule
+\begin{longtable}{l l p{12cm}} \toprule
   \textbf{symbol} & \textbf{unit} & \textbf{description}\\
   \midrule
   t & s/ms & basic time unit \\
@@ -221,11 +221,11 @@ systems.  The symbols are listed in alphabetical order.
   m & - & cortical source index \\
   $e_t$ & db & audio stimulus at time t \\
   $r_m$ & m &  the right-anterior-superior (RAS) coordinates of the $m^{th}$ dipole \\
-  $j_{m,t}$ & A·m & Dipole current vector at source m and time t\\
-  $v_{m,t}$ & A·m & stimulus-independent background activity \\
+  $j_{m,t}$ & A$\cdot$m & Dipole current vector at source m and time t\\
+  $v_{m,t}$ & A$\cdot$m & stimulus-independent background activity \\
   $\tau_{m,i,l}$ & - & 3D vector-valued TRF at source m,defined as NCRF.\\
   \bottomrule
-\end{longtable*}
+\end{longtable}
 % \plt{Use your problems actual symbols.  The si package is a good idea to use for
 %   units.}
 
@@ -338,7 +338,7 @@ systems.  The symbols are listed in alphabetical order.
 
 The ability to understand how the human brain processes continuous auditory stimuli, such as speech, is a central problem in cognitive neuroscience. Non-invasive measurements, such as magnetoencephalography (MEG) and electroencephalogram (EEG), provide high temporal resolution recordings of neural activities.
 Typically, modeling how the brain's cortical sources respond to time-varying stimuli from these measurement statistics is challenging.
-However, the Neuro-Current Response Function (NCRF) directly models the 3D cortical dipole currents as linear filters of stimulus features, avoiding the need for separate source reconstruction or fixed dipole orientations. By combining vector-valued impulse responses with the forward model and regularized estimation, NCRF enables accurate prediction of neural responses while flexibly adapting to each source’s spatial characteristics.
+However, the Neuro-Current Response Function (NCRF) directly models the 3D cortical dipole currents as linear filters of stimulus features, avoiding the need for separate source reconstruction or fixed dipole orientations. By combining vector-valued impulse responses with the forward model and regularized estimation, NCRF enables accurate prediction of neural responses while flexibly adapting to each source's spatial characteristics.
 
 \subsection{Purpose of Document}
 This section provides an overview of the Software Requirements Specification (SRS) for the NCRF pipeline. It explains the purpose of this document, the scope of requirements, the intended reader characteristics, and the organization of the document.
@@ -643,7 +643,7 @@ includes the following elements:
 %   (Section~\ref{Sec_pd}).  A goal is a functional objective the system under
 %   consideration should achieve. Goals provide criteria for sufficient
 %   completeness of a requirements specification and for requirements
-%   pertinence. Goals will be refined in Section “Instanced Models”
+%   pertinence. Goals will be refined in Section ``Instanced Models''
 %   (Section~\ref{sec_instance}). Large and complex goals should be decomposed
 %   into smaller sub-goals.  The goals are written abstractly, with a minimal
 %   amount of technical language.  They should be understandable by non-domain
@@ -1031,7 +1031,7 @@ identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
     \rowcolor[gray]{0.9}
     Number& IM\refstepcounter{instnum}\theinstnum \label{ewat}\label{IM_NeuralStimResponse}\\
     \hline
-    Label& \bf Neural Stimulation–Response Instance Model \\
+    Label& \bf Neural Stimulation--Response Instance Model \\
     \hline
     Input& $e(t)$, $\tau_{m,i}$, $v_{m,t}$, \\
     \hline
@@ -1039,7 +1039,7 @@ identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
     \hline
     Description&
     Given preprocessed and time-aligned stimulus features and EEG/MEG recordings (A1), the NCRF pipeline accepts these continuous signals as inputs. \\
-    &This instance model specifies the neural stimulation–response relationship at the level of individual cortical dipole sources. \\
+    &This instance model specifies the neural stimulation--response relationship at the level of individual cortical dipole sources. \\
     & $j_{m,t,i}$ is the neuro source current at position m and time t. \\
     & $e(t)$ is the stimulus input feature signal. \\
     & $v_{m,t,i}$ is the background source activity.\\
@@ -1093,7 +1093,7 @@ Table~\ref{TblSpecParams}.
   \caption{Input Variables} \label{TblInputVar}
   \renewcommand{\arraystretch}{1.3}
   \noindent
-  \begin{longtable*}{
+  \begin{tabular}{
       p{0.8cm}
       p{4.5cm}
       p{4.5cm}
@@ -1133,7 +1133,7 @@ Table~\ref{TblSpecParams}.
     & High \\
 
     \bottomrule
-  \end{longtable*}
+  \end{tabular}
 \end{table}
 
 % \noindent
@@ -1395,7 +1395,7 @@ component is changed, the components that it points to should also be changed.
 
 \begin{itemize}
   \item \textbf{Sampling rate}: EEG/MEG and stimulus signals are assumed to be sampled at a fixed rate (e.g., 1000 Hz).
-  \item \textbf{Lag window}: The temporal response functions are defined over a fixed lag window (e.g., 0–500 ms).
+  \item \textbf{Lag window}: The temporal response functions are defined over a fixed lag window (e.g., 0--500 ms).
   \item \textbf{Lag resolution}: Lags are discretized according to the sampling interval.
 \end{itemize}
 

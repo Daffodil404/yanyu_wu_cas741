@@ -1,7 +1,7 @@
 # Makefile for compiling .tex files
 
 # Define the pdflatex command
-PDFLATEX_CMD = pdflatex -interaction=nonstopmode
+PDFLATEX_CMD = pdflatex -interaction=nonstopmode -halt-on-error -file-line-error
 
 # Define the compile step for pdflatex
 define COMPILE_TEX
