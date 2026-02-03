@@ -404,11 +404,37 @@ The users of the NCRF pipeline may have a lower level of expertise, as explained
 %   graduate course on advanced quantum mechanics?}
 
 \subsection{Organization of Document}
-
 The organization of the whole SRS document follows the template for scientific computing software proposed by 
-{\cite{SmithAndLai2005, SmithEtAl2007,SmithAndKoothoor2016}}.
+{\cite{SmithAndLai2005, SmithEtAl2007,SmithAndKoothoor2016}}.\\
 
-For readers, this document follows a bottom-up approach: it first introduces the basic concepts, then provides the system introduction, and finally presents the goals and implementation principles for the project.
+The document is intended to be read selectively rather than sequentially. \\
+
+For readers who wish to obtain a high-level understanding of the problem and the
+intended capabilities of the system, the recommended reading order is as follows:
+
+\begin{itemize}
+
+  \item \textbf{\hyperref[Sec_pd]{Problem Description}} , which presents the scientific
+  problem addressed by the system and the context of NCRF-based analysis.
+  \item \textbf{\hyperref[sec_goalstatements]{Goal Statements}}, which summarize the objectives
+  the system is required to achieve.
+  \item \textbf{\hyperref[sec_scope]{Scope of Requirements}} and
+  \textbf{\hyperref[sec_IntendedReader]{Characteristics of Intended Reader}} which clarify the
+  applicability and assumed background knowledge.
+  \item \textbf{\hyperref[sec_gensysdesc]{General System Description}}, which outlines the system
+  boundaries, user interactions, and external dependencies.
+  \item \textbf{\hyperref[sec_assumpt]{Assumptions}}, which describe the simplifying
+  conditions under which the scientific models are valid.
+\end{itemize}
+
+Readers interested in the mathematical formulation and verification of the system
+should then consult the \textbf{\hyperref[sub_sec_scs]{Solution Characteristics Specification}}
+, with particular attention to the \textbf{\hyperref[sec_theoretical]{Theoretical Models}}
+and \textbf{\hyperref[sec_instance]{Instance Models}}. \\
+
+The remaining sections, including requirements, traceability matrices, and auxiliary
+constants, are primarily referential and are intended to support validation,
+maintenance, and future modification of the system.
 
 \newpage
 % \plt{This section provides a roadmap of the SRS document.  It will help the
@@ -769,9 +795,7 @@ on. Under the linear temporal response assumption (A3), the stimulus-driven neur
 % #3 label
 {Stimulus-to-Source Model (NCRF Model)}
 % #4 equation
-{%
-  \ensuremath{\mathbf{j}_m(t)=\sum_{\ell=0}^{L-1}\boldsymbol{\tau}_m(\ell)\, e(t-\ell)+\mathbf{v}_m(t)}
-}
+{\ensuremath{\mathbf{j}_m(t)=\sum_{\ell=0}^{L-1}\boldsymbol{\tau}_m(\ell)\, e(t-\ell)+\mathbf{v}_m(t)}}
 % #5 description
 {%
   The NCRF model defines how the stimulus feature drives the neural source current at cortical source location $m$.
@@ -779,17 +803,14 @@ on. Under the linear temporal response assumption (A3), the stimulus-driven neur
   The term $e(t-\ell)$ is the stimulus feature at lag $\ell$ (feature-dependent unit; commonly dimensionless or arbitrary units).
   The vector-valued kernel $\boldsymbol{\tau}_m(\ell)$ is the neuro-current response function (NCRF) at source $m$ and lag $\ell$
   (unit: \si{\ampere\metre} per stimulus unit), and $L$ is the number of discrete lags.
-  $\mathbf{v}_m(t)$ represents stimulus-independent background source activity (same unit as $\mathbf{j}_m(t)$).%
+  $\mathbf{v}_m(t)$ represents stimulus-independent background source activity (same unit as $\mathbf{j}_m(t)$).
 }
 % #6 Notes
 {%
   None.
 }
 % #7 Source
-{%
-  \cite{DasBrodbeckSimonBabadi2020}  
-%
-}
+{\citep{DasBrodbeckSimonBabadi2020}}
 % #8 Referenced by
 {%
   None.
@@ -798,8 +819,6 @@ on. Under the linear temporal response assumption (A3), the stimulus-driven neur
 {%
   None.
 }
-% #1 derivation - not applicable by default
-{}
 
 ~\newline
 
