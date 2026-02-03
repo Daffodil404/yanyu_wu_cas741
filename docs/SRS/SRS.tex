@@ -115,12 +115,12 @@
   #8
 
   \paragraph{Preconditions for \hyperref[#2]{#2}:}
-  \label{#2_precond}
+  \label{#2-precond}
 
   #9
 
   \paragraph{Derivation for \hyperref[#2]{#2}:}
-  \label{#2_deriv}
+  \label{#2-deriv}
 
   #1
 
@@ -329,7 +329,7 @@ systems.  The symbols are listed in alphabetical order.
 %   consistent, complete, validatable, abstract and traceable.}
 
 % \plt{The overall goal of the SRS is that someone that meets the Characteristics
-%   of the Intended Reader (Section~\ref{sec_IntendedReader}) can learn,
+%   of the Intended Reader (Section~\ref{sec-IntendedReader}) can learn,
 %   understand and verify the captured domain knowledge.  They should not have to
 %   trust the authors of the SRS on any statements.  They should be able to
 %   independently verify/derive every statement made.}
@@ -345,7 +345,7 @@ This section provides an overview of the Software Requirements Specification (SR
 
 % \plt{This section summarizes the purpose of the SRS document.  It does not focus
 %   on the problem itself.  The problem is described in the ``Problem
-%   Description'' section (Section~\ref{Sec_pd}).  The purpose is for the document
+%   Description'' section (Section~\ref{Sec-pd}).  The purpose is for the document
 %   in the context of the project itself, not in the context of this course.
 %   Although the ``purpose'' of the document is to get a grade, you should not
 %   mention this.  Instead, ``fake it'' as if this is a real project.  The purpose
@@ -376,14 +376,14 @@ The following aspects are explicitly out of scope:
 %   properties, etc.}
 
 % \plt{The scope section is related to the assumptions section
-%   (Section~\ref{sec_assumpt}).  However, the scope and the assumptions are not
+%   (Section~\ref{sec-assumpt}).  However, the scope and the assumptions are not
 %   at the same level of abstraction.  The scope is at a high level.  The focus is
 %   on the ``big picture'' assumptions.  The assumptions section lists, and
 %   describes, all of the assumptions.}
 
 % \plt{The scope section is relevant for later determining typical values of inputs. The scope should make it clear what inputs are reasonable to expect. This is a distinction between scope and context (context is a later section).  Scope affects the inputs while context affects how the software will be used.}
 
-\subsection{Characteristics of Intended Reader} \label{sec_IntendedReader}
+\subsection{Characteristics of Intended Reader} \label{sec-IntendedReader}
 
 The intended readers of this Software Requirements Specification should have an undergraduate-level understanding of programming and math.
 The users of the NCRF pipeline may have a lower level of expertise, as explained in Section~\ref{SecUserCharacteristics}.
@@ -414,23 +414,23 @@ intended capabilities of the system, the recommended reading order is as follows
 
 \begin{itemize}
 
-  \item \textbf{\hyperref[Sec_pd]{Problem Description}} , which presents the scientific
+  \item \textbf{\hyperref[Sec-pd]{Problem Description}} , which presents the scientific
   problem addressed by the system and the context of NCRF-based analysis.
-  \item \textbf{\hyperref[sec_goalstatements]{Goal Statements}}, which summarize the objectives
+  \item \textbf{\hyperref[sec-goalstatements]{Goal Statements}}, which summarize the objectives
   the system is required to achieve.
-  \item \textbf{\hyperref[sec_scope]{Scope of Requirements}} and
-  \textbf{\hyperref[sec_IntendedReader]{Characteristics of Intended Reader}} which clarify the
+  \item \textbf{\hyperref[sec-scope]{Scope of Requirements}} and
+  \textbf{\hyperref[sec-IntendedReader]{Characteristics of Intended Reader}} which clarify the
   applicability and assumed background knowledge.
-  \item \textbf{\hyperref[sec_gensysdesc]{General System Description}}, which outlines the system
+  \item \textbf{\hyperref[sec-gensysdesc]{General System Description}}, which outlines the system
   boundaries, user interactions, and external dependencies.
-  \item \textbf{\hyperref[sec_assumpt]{Assumptions}}, which describe the simplifying
+  \item \textbf{\hyperref[sec-assumpt]{Assumptions}}, which describe the simplifying
   conditions under which the scientific models are valid.
 \end{itemize}
 
 Readers interested in the mathematical formulation and verification of the system
-should then consult the \textbf{\hyperref[sub_sec_scs]{Solution Characteristics Specification}}
-, with particular attention to the \textbf{\hyperref[sec_theoretical]{Theoretical Models}}
-and \textbf{\hyperref[sec_instance]{Instance Models}}. \\
+should then consult the \textbf{\hyperref[sub-sec-scs]{Solution Characteristics Specification}}
+, with particular attention to the \textbf{\hyperref[sec-theoretical]{Theoretical Models}}
+and \textbf{\hyperref[sec-instance]{Instance Models}}. \\
 
 The remaining sections, including requirements, traceability matrices, and auxiliary
 constants, are primarily referential and are intended to support validation,
@@ -487,7 +487,7 @@ The user could be a researcher or graduate student works on neuro-science, who w
   \begin{center}
     \includegraphics[width=0.6\textwidth]{SystemContextFigure}
     \caption{System Context}
-    \label{Fig_SystemContext}
+    \label{Fig-SystemContext}
   \end{center}
 \end{figure}
 
@@ -536,7 +536,7 @@ The users of NCRF pipeline should have a basic understanding of Neuro Science, s
 %   Measuring usability, which is often a required non-function requirement,
 %   requires knowledge of a typical user.  As mentioned above, the user is a
 %   different role from the ``intended reader,'' as given in
-%   Section~\ref{sec_IntendedReader}.  As in Section~\ref{sec_IntendedReader}, the
+%   Section~\ref{sec-IntendedReader}.  As in Section~\ref{sec-IntendedReader}, the
 %   user characteristics should be specific an unambiguous.  For instance, ``The
 %   end user of \progname{} should have an understanding of undergraduate Level 1
 %   Calculus and Physics.''}
@@ -561,7 +561,7 @@ the instance models.
 % \plt{Add any project specific details that are relevant
 %   for the section overview.}
 
-\subsection{Problem Description} \label{Sec_pd}
+\subsection{Problem Description} \label{Sec-pd}
 
 \progname{} is intended to solve the error propagation issue of traditional TRF-based pipeline. Using NCRF could allow spatial and temporal response properties to be estimated jointly, instead of sequentially.
 
@@ -587,7 +587,7 @@ This subsection provides a list of terms that are used in the subsequent section
 
 \end{itemize}
 
-\subsubsection{Physical System Description} \label{sec_phySystDescrip}
+\subsubsection{Physical System Description} \label{sec-phySystDescrip}
 
 % \plt{The purpose of this section is to clearly and unambiguously state the physical system that is to be modelled. Effective problem solving requires a
 %   logical and organized approach. The statements on the physical system to be studied should cover enough information to solve the problem. The physical description involves element identification, where elements are defined as independent and separable items of the physical system. Some example elements include acceleration due to gravity, the mass of an object, and the size and
@@ -609,7 +609,7 @@ includes the following elements:
       \begin{center}
         \includegraphics[width=0.6\textwidth]{Stimulus2Signal}
         \caption{Physical system of continuous stimulus processing measured by EEG/MEG}
-        \label{Fig_PS1}
+        \label{Fig-PS1}
       \end{center}
     \end{figure}
 
@@ -619,7 +619,7 @@ includes the following elements:
       \begin{center}
         \includegraphics[width=0.6\textwidth]{NCRF}
         \caption{Conceptual model of stimulus-to-cortex mapping using NCRF}
-        \label{Fig_PS2}
+        \label{Fig-PS2}
       \end{center}
     \end{figure}
 
@@ -640,11 +640,11 @@ includes the following elements:
 \subsubsection{Goal Statements}
 
 % \plt{The goal statements refine the ``Problem Description''
-%   (Section~\ref{Sec_pd}).  A goal is a functional objective the system under
+%   (Section~\ref{Sec-pd}).  A goal is a functional objective the system under
 %   consideration should achieve. Goals provide criteria for sufficient
 %   completeness of a requirements specification and for requirements
 %   pertinence. Goals will be refined in Section ``Instanced Models''
-%   (Section~\ref{sec_instance}). Large and complex goals should be decomposed
+%   (Section~\ref{sec-instance}). Large and complex goals should be decomposed
 %   into smaller sub-goals.  The goals are written abstractly, with a minimal
 %   amount of technical language.  They should be understandable by non-domain
 %   experts.}
@@ -653,7 +653,7 @@ includes the following elements:
 
 \begin{itemize}
 
-    % \item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] \plt{One
+    % \item[GS\refstepcounter{goalnum}\thegoalnum \label{G-meaningfulLabel}:] \plt{One
     %     sentence description of the goal.  There may be more than one.  Each Goal
     %     should have a meaningful label.}
 
@@ -712,7 +712,7 @@ includes the following elements:
 % \end{figure}
 
 % The instance models that govern \progname{} are presented in
-% Subsection~\ref{sec_instance}.  The information to understand the meaning of the
+% Subsection~\ref{sec-instance}.  The information to understand the meaning of the
 % instance models and their derivation is also presented, so that the instance models can be verified.
 
 % \subsubsection{Types}
@@ -727,7 +727,7 @@ includes the following elements:
 
 % \plt{This section is optional.}
 
-\subsubsection{Assumptions} \label{sec_assumpt}
+\subsubsection{Assumptions} \label{sec-assumpt}
 
 % \plt{The assumptions are a refinement of the scope.  The scope is general, where
 %   the assumptions are specific.  All assumptions should be listed, even those
@@ -749,7 +749,7 @@ change [LC], in which the respective assumption is used.
 
 \begin{itemize}
 
-    % \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_meaningfulLabel}:]
+    % \item[A\refstepcounter{assumpnum}\theassumpnum \label{A-meaningfulLabel}:]
     %   \plt{Short description of each assumption.  Each assumption
     %     should have a meaningful label.  Use cross-references to identify the
     %     appropriate traceability to TM, GD, DD etc., using commands like dref, ddref
@@ -769,11 +769,11 @@ change [LC], in which the respective assumption is used.
   The brain response to a stimulus is not instantaneous; it occurs with a non-zero time lag.
 \end{itemize}
 
-\subsubsection{Theoretical Models}\label{sec_theoretical}
+\subsubsection{Theoretical Models}\label{sec-theoretical}
 
 % \plt{Theoretical models are sets of abstract mathematical equations or axioms
 %   for solving the problem described in Section ``Physical System Description''
-%   (Section~\ref{sec_phySystDescrip}). Examples of theoretical models are
+%   (Section~\ref{sec-phySystDescrip}). Examples of theoretical models are
 %   physical laws, constitutive equations, relevant conversion factors, etc.}
 
 % \plt{Optionally the theory section could be divided into subsections to provide
@@ -791,7 +791,7 @@ on. Under the linear temporal response assumption (A3), the stimulus-driven neur
 \noindent
 \deftheory
 % #2 refname of theory
-{TM_NCRF_Model}
+{TM1: NCRF Model}
 % #3 label
 {Stimulus-to-Source Model (NCRF Model)}
 % #4 equation
@@ -822,7 +822,7 @@ on. Under the linear temporal response assumption (A3), the stimulus-driven neur
 
 ~\newline
 
-\subsubsection{General Definitions}\label{sec_gendef}
+\subsubsection{General Definitions}\label{sec-gendef}
 
 % \plt{General Definitions (GDs) are a refinement of one or more TMs, and/or of
 %   other GDs.  The GDs are less abstract than the TMs.  Generally the reduction
@@ -846,7 +846,7 @@ instance models.
   \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
     \hline
     \rowcolor[gray]{0.9}
-    Number& GD\refstepcounter{defnum}\thedefnum \label{GD_StimulusDriven}\\
+    Number& GD\refstepcounter{defnum}\thedefnum \label{GD-StimulusDriven}\\
     \hline
     Label &\bf Stimulus-Driven Dipole Response \\
     \hline
@@ -881,7 +881,7 @@ instance models.
   \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
     \hline
     \rowcolor[gray]{0.9}
-    Number& GD\refstepcounter{defnum}\thedefnum \label{GD_BackgroundActivity}\\
+    Number& GD\refstepcounter{defnum}\thedefnum \label{GD-BackgroundActivity}\\
     \hline
     Label &\bf Background Dipole Activity \\
     \hline
@@ -911,7 +911,7 @@ instance models.
 % \plt{Derivations are important for justifying a given GD.  You want it to be
 %   clear where the equation came from.}
 
-\subsubsection{Data Definitions}\label{sec_datadef}
+\subsubsection{Data Definitions}\label{sec-datadef}
 
 % \plt{The Data Definitions are definitions of symbols and equations that are
 %   given for the problem.  They are not derived; they are simply used by other
@@ -935,7 +935,7 @@ models. The dimension of each quantity is also given.
   \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
     \hline
     \rowcolor[gray]{0.9}
-    Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{FluxCoil}\label{DD_NCRF_Coefficients}\\
+    Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{FluxCoil}\label{DD-NCRF-Coefficients}\\
     \hline
     Label& \bf Neuro-Current Response Function (NCRF) Coefficients \\
     \hline
@@ -962,7 +962,7 @@ models. The dimension of each quantity is also given.
   \end{tabular}
 \end{minipage}\\
 
-% \subsubsection{Data Types}\label{sec_datatypes}
+% \subsubsection{Data Types}\label{sec-datatypes}
 
 % \plt{This section is optional.  In many scientific computing programs it isn't
 %   necessary, since the inputs and outpus are straightforward types, like reals,
@@ -1001,18 +1001,18 @@ models. The dimension of each quantity is also given.
 % \end{tabular}
 % \end{minipage}\\
 
-\subsubsection{Instance Models} \label{sec_instance}
+\subsubsection{Instance Models} \label{sec-instance}
 
 % \plt{The motivation for this section is to reduce the problem defined in
-%   ``Physical System Description'' (Section~\ref{sec_phySystDescrip}) to one
+%   ``Physical System Description'' (Section~\ref{sec-phySystDescrip}) to one
 %   expressed in mathematical terms. The IMs are built by refining the TMs and/or
 %   GDs.  This section should remain abstract.  The SRS should specify the
 %   requirements without considering the implementation.}
 
-This section transforms the problem defined in Section~\ref{Sec_pd} into
+This section transforms the problem defined in Section~\ref{Sec-pd} into
 one which is expressed in mathematical terms. It uses concrete symbols defined
-in Section~\ref{sec_datadef} to replace the abstract symbols in the models
-identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
+in Section~\ref{sec-datadef} to replace the abstract symbols in the models
+identified in Sections~\ref{sec-theoretical} and~\ref{sec-gendef}.
 
 % The goals \plt{reference your goals} are solved by \plt{reference your instance
 %   models}.  \plt{other details, with cross-references where appropriate.}
@@ -1029,7 +1029,7 @@ identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
   \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
     \hline
     \rowcolor[gray]{0.9}
-    Number& IM\refstepcounter{instnum}\theinstnum \label{ewat}\label{IM_NeuralStimResponse}\\
+    Number& IM\refstepcounter{instnum}\theinstnum \label{ewat}\label{IM-NeuralStimResponse}\\
     \hline
     Label& \bf Neural Stimulation--Response Instance Model \\
     \hline
@@ -1059,7 +1059,7 @@ identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
 %   where the derivation cannot be described under the Description field, it will
 %   be necessary to include this subsection.}
 
-\subsubsection{Input Data Constraints} \label{sec_DataConstraints}
+\subsubsection{Input Data Constraints} \label{sec-DataConstraints}
 
 Table~\ref{TblInputVar} shows the data constraints on the input output
 variables.  The column for physical constraints gives the physical limitations
@@ -1153,7 +1153,7 @@ Table~\ref{TblSpecParams}.
 % \end{longtable*}
 % \end{table}
 
-% \subsubsection{Properties of a Correct Solution} \label{sec_CorrectSolution}
+% \subsubsection{Properties of a Correct Solution} \label{sec-CorrectSolution}
 
 % \noindent
 % A correct solution must exhibit \plt{fill in the details}.  \plt{These
@@ -1170,7 +1170,7 @@ Table~\ref{TblSpecParams}.
 %   \toprule
 %   \textbf{Var} & \textbf{Physical Constraints} \\
 %   \midrule
-%   $T_W$ & $T_\text{init} \leq T_W \leq T_C$ (by~\aref{A_charge})
+%   $T_W$ & $T_\text{init} \leq T_W \leq T_C$ (by~\aref{A-charge})
 %   \\
 %   \bottomrule
 % \end{longtable*}
@@ -1195,16 +1195,16 @@ qualities that the software is expected to exhibit.
 \noindent
 \begin{itemize}
 
-  \item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:]
+  \item[R\refstepcounter{reqnum}\thereqnum \label{R-Inputs}:]
     The system shall accept a continuous stimulus feature signal $e(t)$ as input to the NCRF pipeline.
 
-  \item[R\refstepcounter{reqnum}\thereqnum \label{R_Calculate}:]
+  \item[R\refstepcounter{reqnum}\thereqnum \label{R-Calculate}:]
     The system shall compute source-level neural current estimates using the NCRF model (e.g., by applying the learned/estimated response functions to $e(t)$).
 
-  % \item[R\refstepcounter{reqnum}\thereqnum \label{R_VerifyOutput}:]
+  % \item[R\refstepcounter{reqnum}\thereqnum \label{R-VerifyOutput}:]
   %   The system shall provide a mechanism to verify that the computed outputs are consistent with the corresponding inputs and the specified instance models (e.g., by checking dimensions, sampling rates, and expected value ranges).
 
-  \item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:]
+  \item[R\refstepcounter{reqnum}\thereqnum \label{R-Output}:]
     The system shall output (i) the estimated source currents $j_{m,t}$ and (ii) the NCRF coefficients $\tau_{m,i,\ell}$ in a format suitable for downstream analysis in the existing pipeline.
 
 \end{itemize}
@@ -1257,11 +1257,11 @@ The system shall be implemented as a Python package and be executable on macOS, 
 \noindent
 \begin{itemize}
 
-  \item[LC\refstepcounter{lcnum}\thelcnum\label{LC_OutputFormat}:]
+  \item[LC\refstepcounter{lcnum}\thelcnum\label{LC-OutputFormat}:]
     The output data format may evolve (e.g., adding visualization and summary plots)
     so users can more easily interpret the combined temporal--spatial response data.
 
-  \item[LC\refstepcounter{lcnum}\thelcnum\label{LC_ModelParameters}:]
+  \item[LC\refstepcounter{lcnum}\thelcnum\label{LC-ModelParameters}:]
     Additional model parameters (e.g., new regularization settings or lag-window
     choices) may be introduced as the pipeline is extended.
 
@@ -1272,7 +1272,7 @@ The system shall be implemented as a Python package and be executable on macOS, 
 \noindent
 \begin{itemize}
 
-  \item[LC\refstepcounter{lcnum}\thelcnum\label{LC_CoreMethods}:]
+  \item[LC\refstepcounter{lcnum}\thelcnum\label{LC-CoreMethods}:]
     The core analysis approach is unlikely to change; the pipeline will continue to
     support the existing TRF analysis and the integrated NCRF-based response
     functions.
@@ -1286,9 +1286,9 @@ has to be additionally modified if a certain component is changed.  Every time a
 component is changed, the items in the column of that component that are marked
 with an ``X'' may have to be modified as well.  Table~\ref{Table:trace} shows the
 dependencies of theoretical models, general definitions, data definitions, and
-instance models with each other. Table~\ref{Table:R_trace} shows the
+instance models with each other. Table~\ref{Table:R-trace} shows the
 dependencies of instance models, requirements, and data constraints on each
-other. Table~\ref{Table:A_trace} shows the dependencies of theoretical models,
+other. Table~\ref{Table:A-trace} shows the dependencies of theoretical models,
 general definitions, data definitions, instance models, and likely changes on
 the assumptions.
 
@@ -1309,17 +1309,17 @@ the assumptions.
         \hline
         & \aref{A1} & \aref{A2} & \aref{A3} & \aref{A4} \\
         \hline
-        \tref{TM_NCRF_Model} & & X & X & X \\ \hline
-        \dref{GD_StimulusDriven} & & X & X & X \\ \hline
-        \dref{GD_BackgroundActivity} & & X & & \\ \hline
-        \ddref{DD_NCRF_Coefficients} & & & X & X \\ \hline
-        \iref{IM_NeuralStimResponse} & & X & X & X \\ \hline
-        \lcref{LC_OutputFormat} & & & & \\ \hline
-        \lcref{LC_ModelParameters} & & & X & X \\ \hline
-        \lcref{LC_CoreMethods} & & & & \\ \hline
+        \tref{TM-NCRF-Model} & & X & X & X \\ \hline
+        \dref{GD-StimulusDriven} & & X & X & X \\ \hline
+        \dref{GD-BackgroundActivity} & & X & & \\ \hline
+        \ddref{DD-NCRF-Coefficients} & & & X & X \\ \hline
+        \iref{IM-NeuralStimResponse} & & X & X & X \\ \hline
+        \lcref{LC-OutputFormat} & & & & \\ \hline
+        \lcref{LC-ModelParameters} & & & X & X \\ \hline
+        \lcref{LC-CoreMethods} & & & & \\ \hline
       \end{tabular}
       \caption{Traceability Matrix Showing the Connections Between Assumptions and Other Items}
-      \label{Table:A_trace}
+      \label{Table:A-trace}
     \end{table}
   \end{landscape}
 }
@@ -1328,13 +1328,13 @@ the assumptions.
   \centering
   \begin{tabular}{|c|c|c|c|c|}
     \hline
-    & \tref{TM_NCRF_Model} & \dref{GD_StimulusDriven} & \dref{GD_BackgroundActivity} & \ddref{DD_NCRF_Coefficients} \\
+    & \tref{TM-NCRF-Model} & \dref{GD-StimulusDriven} & \dref{GD-BackgroundActivity} & \ddref{DD-NCRF-Coefficients} \\
     \hline
-    \tref{TM_NCRF_Model} & & & & \\ \hline
-    \dref{GD_StimulusDriven} & X & & & \\ \hline
-    \dref{GD_BackgroundActivity} & X & & & \\ \hline
-    \ddref{DD_NCRF_Coefficients} & X & & & \\ \hline
-    \iref{IM_NeuralStimResponse} & X & X & X & X \\ \hline
+    \tref{TM-NCRF-Model} & & & & \\ \hline
+    \dref{GD-StimulusDriven} & X & & & \\ \hline
+    \dref{GD-BackgroundActivity} & X & & & \\ \hline
+    \ddref{DD-NCRF-Coefficients} & X & & & \\ \hline
+    \iref{IM-NeuralStimResponse} & X & X & X & X \\ \hline
   \end{tabular}
   \caption{Traceability Matrix Showing the Connections Between Items of Different Sections}
   \label{Table:trace}
@@ -1344,15 +1344,15 @@ the assumptions.
   \centering
   \begin{tabular}{|c|c|c|c|c|}
     \hline
-    & \rref{R_Inputs} & \rref{R_Calculate} & \rref{R_Output} & \iref{IM_NeuralStimResponse} \\
+    & \rref{R-Inputs} & \rref{R-Calculate} & \rref{R-Output} & \iref{IM-NeuralStimResponse} \\
     \hline
-    \rref{R_Inputs} & & & & X \\ \hline
-    \rref{R_Calculate} & & & & X \\ \hline
-    \rref{R_Output} & & & & X \\ \hline
-    \iref{IM_NeuralStimResponse} & X & X & X & \\ \hline
+    \rref{R-Inputs} & & & & X \\ \hline
+    \rref{R-Calculate} & & & & X \\ \hline
+    \rref{R-Output} & & & & X \\ \hline
+    \iref{IM-NeuralStimResponse} & X & X & X & \\ \hline
   \end{tabular}
   \caption{Traceability Matrix Showing the Connections Between Requirements and Instance Models}
-  \label{Table:R_trace}
+  \label{Table:R-trace}
 \end{table}
 
 The purpose of the traceability graphs is also to provide easy references on
@@ -1367,7 +1367,7 @@ component is changed, the components that it points to should also be changed.
 %     {
 %       \includegraphics[width=\textwidth]{ATrace.png}
 %     }
-%     \caption{\label{Fig_ATrace} Traceability Matrix Showing the Connections Between Items of Different Sections}
+%     \caption{\label{Fig-ATrace} Traceability Matrix Showing the Connections Between Items of Different Sections}
 %   \end{center}
 % \end{figure}
 
@@ -1377,7 +1377,7 @@ component is changed, the components that it points to should also be changed.
 %     {
 %       \includegraphics[width=0.7\textwidth]{RTrace.png}
 %     }
-%     \caption{\label{Fig_RTrace} Traceability Matrix Showing the Connections Between Requirements, Instance Models, and Data Constraints}
+%     \caption{\label{Fig-RTrace} Traceability Matrix Showing the Connections Between Requirements, Instance Models, and Data Constraints}
 %   \end{center}
 % \end{figure}
 
