@@ -15,10 +15,12 @@
 \input{../Comments.text}
 \input{../Common.text}
 
+\renewcommand{\progname}{Integrating NCRF into existing pipeline}
+
 \begin{document}
 
 \title{System Verification and Validation Plan for \progname{}} 
-\author{\authname}
+\author{Yanyu Wu}
 \date{\today}
 	
 \maketitle
@@ -30,25 +32,24 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+Feb 4 & 1.0 & Initial draft\\
 \bottomrule
 \end{tabularx}
 
-~\\
-\wss{The intention of the VnV plan is to increase confidence in the software.
-However, this does not mean listing every verification and validation technique
-that has ever been devised.  The VnV plan should also be a \textbf{feasible}
-plan. Execution of the plan should be possible with the time and team available.
-If the full plan cannot be completed during the time available, it can either be
-modified to ``fake it'', or a better solution is to add a section describing
-what work has been completed and what work is still planned for the future.}
+% ~\\
+% \wss{The intention of the VnV plan is to increase confidence in the software.
+% However, this does not mean listing every verification and validation technique
+% that has ever been devised.  The VnV plan should also be a \textbf{feasible}
+% plan. Execution of the plan should be possible with the time and team available.
+% If the full plan cannot be completed during the time available, it can either be
+% modified to ``fake it'', or a better solution is to add a section describing
+% what work has been completed and what work is still planned for the future.}
 
-\wss{The VnV plan is typically started after the requirements stage, but before
-the design stage.  This means that the sections related to unit testing cannot
-initially be completed.  The sections will be filled in after the design stage
-is complete.  the final version of the VnV plan should have all sections filled
-in.}
+% \wss{The VnV plan is typically started after the requirements stage, but before
+% the design stage.  This means that the sections related to unit testing cannot
+% initially be completed.  The sections will be filled in after the design stage
+% is complete.  the final version of the VnV plan should have all sections filled
+% in.}
 
 \newpage
 
@@ -64,74 +65,110 @@ in.}
 
 \section{Symbols, Abbreviations, and Acronyms}
 
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l l} 
-  \toprule		
-  \textbf{symbol} & \textbf{description}\\
-  \midrule 
-  T & Test\\
-  \bottomrule
-\end{tabular}\\
+% \renewcommand{\arraystretch}{1.2}
+% \begin{tabular}{l l} 
+%   \toprule		
+%   \textbf{symbol} & \textbf{description}\\
+%   \midrule 
+%   T & Test\\
+%   \bottomrule
+% \end{tabular}\\
 
-\wss{symbols, abbreviations, or acronyms --- you can simply reference the SRS
-  \citep{SRS} tables, if appropriate}
+% \wss{symbols, abbreviations, or acronyms --- you can simply reference the SRS
+%   \citep{SRS} tables, if appropriate}
 
-\wss{Remove this section if it isn't needed}
+% \wss{Remove this section if it isn't needed}
+
+The definition of symbols, abbreviations and acronyms is as same as those in my SRS documents.
 
 \newpage
 
 \pagenumbering{arabic}
 
-This document ... \wss{provide an introductory blurb and roadmap of the
-  Verification and Validation plan}
+This document provides an introductory blurb and roadmap of the NCRF pipeline Verification and Validation plan.
 
 \section{General Information}
 
 \subsection{Summary}
 
-\wss{Say what software is being tested.  Give its name and a brief overview of
-  its general functions.}
-
+% \wss{Say what software is being tested.  Give its name and a brief overview of
+%   its general functions.}
+Integrating NCRF into existing pipeline is intended to solve the error propagation issue of
+traditional TRF-based pipeline. Using NCRF could allow spatial and temporal response
+properties to be estimated jointly, instead of sequentially.
 \subsection{Objectives}
+\textbf{Primary Objectives}
+\begin{itemize}
+  \item Build confidence that the NCRF integration satisfies the SRS functional requirements.
+  \item Verify numerical correctness on small, controlled datasets by matching expected outputs within defined tolerances.
+  \item Demonstrate reproducibility of results across repeated runs with fixed seeds and documented configurations.
+  \item Guarantee key non-functional requirements (e.g., reliability, traceability).
+\end{itemize}
+\textbf{Out of Scope}
+\begin{itemize}
+  \item Internal correctness or performance of third-party libraries (e.g., Eelbrain, MNE); assume they are already verified by their maintainers.
+  \item Large-scale performance and scalability benchmarking on very large datasets.
+\end{itemize}
+% \wss{State what is intended to be accomplished.  The objective will be around
+%   the qualities that are most important for your project.  You might have
+%   something like: ``build confidence in the software correctness,''
+%   ``demonstrate adequate usability.'' etc.  You won't list all of the qualities,
+%   just those that are most important.}
 
-\wss{State what is intended to be accomplished.  The objective will be around
-  the qualities that are most important for your project.  You might have
-  something like: ``build confidence in the software correctness,''
-  ``demonstrate adequate usability.'' etc.  You won't list all of the qualities,
-  just those that are most important.}
+% \wss{You should also list the objectives that are out of scope.  You don't have 
+% the resources to do everything, so what will you be leaving out.  For instance, 
+% if you are not going to verify the quality of usability, state this.  It is also 
+% worthwhile to justify why the objectives are left out.}
 
-\wss{You should also list the objectives that are out of scope.  You don't have 
-the resources to do everything, so what will you be leaving out.  For instance, 
-if you are not going to verify the quality of usability, state this.  It is also 
-worthwhile to justify why the objectives are left out.}
-
-\wss{The objectives are important because they highlight that you are aware of 
-limitations in your resources for verification and validation.  You can't do everything, 
-so what are you going to prioritize?  As an example, if your system depends on an 
-external library, you can explicitly state that you will assume that external library 
-has already been verified by its implementation team.}
+% \wss{The objectives are important because they highlight that you are aware of 
+% limitations in your resources for verification and validation.  You can't do everything, 
+% so what are you going to prioritize?  As an example, if your system depends on an 
+% external library, you can explicitly state that you will assume that external library 
+% has already been verified by its implementation team.}
 
 \subsection{Extras}
 
-\wss{Summarize the extras (if any) that were tackled by this project.  Extras
-can include usability testing, code walkthroughs, user documentation, formal
-proof, GenderMag personas, Design Thinking, etc.  Extras should have already
-been approved by the course instructor as included in your problem statement.
-You can use a pull request to update your extras (in TeamComposition.csv or
-Repos.csv) if your plan changes as a result of the VnV planning exercise.}
+% \wss{Summarize the extras (if any) that were tackled by this project.  Extras
+% can include usability testing, code walkthroughs, user documentation, formal
+% proof, GenderMag personas, Design Thinking, etc.  Extras should have already
+% been approved by the course instructor as included in your problem statement.
+% You can use a pull request to update your extras (in TeamComposition.csv or
+% Repos.csv) if your plan changes as a result of the VnV planning exercise.}
+Two project extras are planned and were declared at the start of the course:
+\textbf{User Manual} and \textbf{Code Walkthrough}. 
+
+The User Manual will provide task-oriented guidance (installation, input preparation, running the pipeline,
+and interpreting outputs) and will be validated through checklist-based review
+for clarity, completeness, and consistency with the SRS and system behavior. The
+
+Code Walkthrough will be a structured inspection session using a checklist to
+verify coding standards, traceability from requirements to implementation, and
+consistency with the architecture and detailed design documents. Findings from
+both activities will be recorded as actionable issues and tracked to resolution.
 
 \subsection{Relevant Documentation}
 
-\wss{Reference relevant documentation.  This will definitely include your SRS
-  and your other project documents (design documents, like MG, MIS, etc).  You
-  can include these even before they are written, since by the time the project
-  is done, they will be written.  You can create BibTeX entries for your
-  documents and within those entries include a hyperlink to the documents.}
+% \wss{Reference relevant documentation.  This will definitely include your SRS
+%   and your other project documents (design documents, like MG, MIS, etc).  You
+%   can include these even before they are written, since by the time the project
+%   is done, they will be written.  You can create BibTeX entries for your
+%   documents and within those entries include a hyperlink to the documents.}
 
-\citet{SRS}
+The Software Requirements Specification (SRS) is the primary source for
+verification targets; all test cases and traceability links originate from it
+(\href{../SRS/SRS.tex}{SRS}).
 
-\wss{Don't just list the other documents.  You should explain why they are relevant and 
-how they relate to your VnV efforts.}
+The Module Guide (MG) defines the system
+decomposition and responsibilities used to plan design-level reviews and
+coverage (\href{../Design/SoftArchitecture/MG.tex}{MG}).
+
+The Module Interface Specification (MIS) provides detailed module interfaces and expected behaviors
+to support unit-level verification (\href{../Design/SoftDetailedDes/MIS.tex}{MIS}).
+
+% \citet{SRS}
+
+% \wss{Don't just list the other documents.  You should explain why they are relevant and 
+% how they relate to your VnV efforts.}
 
 \section{Plan}
 
@@ -140,90 +177,144 @@ how they relate to your VnV efforts.}
 
 \subsection{Verification and Validation Team}
 
-\wss{Your teammates.  Maybe your supervisor.
-  You should do more than list names.  You should say what each person's role is
-  for the project's verification.  A table is a good way to summarize this information.}
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{p{0.18\textwidth} p{0.22\textwidth} X}
+\toprule
+\textbf{Member} & \textbf{Role} & \textbf{Responsibilities} \\
+\midrule
+Yanyu Wu & Developer / V\&V Lead & Owns the V\&V plan, executes verification activities, and documents results and issues. \\
+Dr.Brodbeck & Reviewer & Provides high-level guidance on direction and priorities. \\
+Dr.Smith & Course Instructor & Provides feedback on the V\&V plan and documentation. \\
+Zhangwenchi Li & Domain Expert & Conducts code review and provides domain feedback on code and documentation. \\
+\bottomrule
+\end{tabularx}
+\caption{Verification and Validation Team}
+\label{tab:vv_team}
+\end{table}
+
+% \wss{Your teammates.  Maybe your supervisor.
+%   You should do more than list names.  You should say what each person's role is
+%   for the project's verification.  A table is a good way to summarize this information.}
 
 \subsection{SRS Verification}
 
-\wss{List any approaches you intend to use for SRS verification.  This may
-  include ad hoc feedback from reviewers, like your classmates (like your
-  primary reviewer), or you may plan for something more rigorous/systematic.}
-
-\wss{If you have a supervisor for the project, you shouldn't just say they will
-read over the SRS.  You should explain your structured approach to the review.
-Will you have a meeting?  What will you present?  What questions will you ask?
-Will you give them instructions for a task-based inspection?  Will you use your
-issue tracker?}
-
-\wss{Maybe create an SRS checklist?}
+% \wss{List any approaches you intend to use for SRS verification.  This may
+%   include ad hoc feedback from reviewers, like your classmates (like your
+%   primary reviewer), or you may plan for something more rigorous/systematic.}
+%
+% \wss{If you have a supervisor for the project, you shouldn't just say they will
+% read over the SRS.  You should explain your structured approach to the review.
+% Will you have a meeting?  What will you present?  What questions will you ask?
+% Will you give them instructions for a task-based inspection?  Will you use your
+% issue tracker?}
+%
+% \wss{Maybe create an SRS checklist?}
+SRS verification will be done through a structured review and a requirements
+checklist:
+\begin{itemize}
+  \item Domain expert review for scientific validity and consistency with NCRF pipeline goals.
+  \item Supervisor review for clarity, completeness, and alignment with project scope.
+  \item Developer self-check to ensure functional and non-functional requirements are specific, testable, and traceable.
+\end{itemize}
 
 \subsection{Design Verification}
 
-\wss{Plans for design verification}
+% \wss{Plans for design verification}
 
-\wss{The review will include reviews by your classmates}
-
-\wss{Create a checklists?}
+% \wss{The review will include reviews by your classmates}
+%
+% \wss{Create a checklists?}
+Design verification will combine structured peer review and checklist-based inspection:
+\begin{itemize}
+  \item Classmate / peer design review: scheduled walkthrough sessions where classmates provide feedback on the design documents (MG and MIS).
+  \item Design checklists: ensure each SRS requirement is addressed at the design level, with checks for modularity, clarity, and traceability to requirements.
+\end{itemize}
 
 \subsection{Verification and Validation Plan Verification}
 
-\wss{The verification and validation plan is an artifact that should also be
-verified.  Techniques for this include review and mutation testing.}
-
-\wss{The review will include reviews by your classmates}
-
-\wss{Create a checklists?}
+% \wss{The verification and validation plan is an artifact that should also be
+% verified.  Techniques for this include review and mutation testing.}
+%
+% \wss{The review will include reviews by your classmates}
+%
+% \wss{Create a checklists?}
+The V\&V plan will be verified to ensure it is complete, feasible, and aligned
+with the SRS:
+\begin{itemize}
+  \item Peer review to check clarity, coverage, and feasibility of the planned activities.
+  \item V\&V checklist inspection to ensure required sections and details are present.
+  \item Traceability spot-check to confirm each SRS requirement has at least one planned verification method.
+\end{itemize}
 
 \subsection{Implementation Verification}
 
-\wss{You should at least point to the tests listed in this document and the unit
-  testing plan.}
-
-\wss{In this section you would also give any details of any plans for static
-  verification of the implementation.  Potential techniques include code
-  walkthroughs, code inspection, static analyzers, etc.}
-
-\wss{The final class presentation in CAS 741 could be used as a code
-walkthrough.  There is also a possibility of using the final presentation (in
-CAS741) for a partial usability survey.}
+% \wss{You should at least point to the tests listed in this document and the unit
+%   testing plan.}
+%
+% \wss{In this section you would also give any details of any plans for static
+%   verification of the implementation.  Potential techniques include code
+%   walkthroughs, code inspection, static analyzers, etc.}
+%
+% \wss{The final class presentation in CAS 741 could be used as a code
+% walkthrough.  There is also a possibility of using the final presentation (in
+% CAS741) for a partial usability survey.}
+Implementation verification will focus on test execution, requirements coverage,
+and inspection:
+\begin{itemize}
+  \item Execute planned test cases (unit and system-level) and record results against expected outputs.
+  \item Verify coverage by checking each SRS requirement is implemented and has at least one corresponding test.
+  \item Conduct code walkthroughs to inspect critical logic, edge cases, and consistency with the design (MG/MIS).
+\end{itemize}
 
 \subsection{Automated Testing and Verification Tools}
 
-\wss{What tools are you using for automated testing.  Likely a unit testing
-  framework and maybe a profiling tool, like ValGrind.  Other possible tools
-  include a static analyzer, make, continuous integration tools, test coverage
-  tools, etc.  Explain your plans for summarizing code coverage metrics.
-  Linters are another important class of tools.  For the programming language
-  you select, you should look at the available linters.  There may also be tools
-  that verify that coding standards have been respected, like flake9 for
-  Python.}
+% \wss{What tools are you using for automated testing.  Likely a unit testing
+%   framework and maybe a profiling tool, like ValGrind.  Other possible tools
+%   include a static analyzer, make, continuous integration tools, test coverage
+%   tools, etc.  Explain your plans for summarizing code coverage metrics.
+%   Linters are another important class of tools.  For the programming language
+%   you select, you should look at the available linters.  There may also be tools
+%   that verify that coding standards have been respected, like flake9 for
+%   Python.}
 
-\wss{If you have already done this in the development plan, you can point to
-that document.}
+% \wss{If you have already done this in the development plan, you can point to
+% that document.}
 
-\wss{The details of this section will likely evolve as you get closer to the
-  implementation.}
+% \wss{The details of this section will likely evolve as you get closer to the
+%   implementation.}
+Automated verification will use a small set of standard Python tools and CI:
+\begin{itemize}
+  \item Continuous Integration (CI) to run tests and checks on each update to the repository.
+  \item Unit testing with `pytest` for functional correctness of modules and utilities.
+  \item Coverage tracking with `Coverage.py` to summarize test coverage.
+\end{itemize}
 
 \subsection{Software Validation}
+Software validation will focus on confirming that the pipeline meets the intended scientific use and produces meaningful outputs:
+\begin{itemize}
+  \item Supervisor review of results and workflow to confirm the system addresses the project goals.
+  \item Domain expert feedback on the interpretability and scientific plausibility of NCRF outputs.
+  \item Validation on a small, real dataset to ensure outputs match expected patterns and are usable for downstream analysis.
+\end{itemize}
 
-\wss{If there is any external data that can be used for validation, you should
-  point to it here.  If there are no plans for validation, you should state that
-  here.}
+% \wss{If there is any external data that can be used for validation, you should
+%   point to it here.  If there are no plans for validation, you should state that
+%   here.}
 
-\wss{You might want to use review sessions with the stakeholder to check that
-the requirements document captures the right requirements.  Maybe task based
-inspection?}
+% \wss{You might want to use review sessions with the stakeholder to check that
+% the requirements document captures the right requirements.  Maybe task based
+% inspection?}
 
-\wss{For those capstone teams with an external supervisor, the Rev 0 demo should 
-be used as an opportunity to validate the requirements.  You should plan on 
-demonstrating your project to your supervisor shortly after the scheduled Rev 0 demo.  
-The feedback from your supervisor will be very useful for improving your project.}
+% \wss{For those capstone teams with an external supervisor, the Rev 0 demo should 
+% be used as an opportunity to validate the requirements.  You should plan on 
+% demonstrating your project to your supervisor shortly after the scheduled Rev 0 demo.  
+% The feedback from your supervisor will be very useful for improving your project.}
 
-\wss{For teams without an external supervisor, user testing can serve the same purpose 
-as a Rev 0 demo for the supervisor.}
+% \wss{For teams without an external supervisor, user testing can serve the same purpose 
+% as a Rev 0 demo for the supervisor.}
 
-\wss{This section might reference back to the SRS verification section.}
+% \wss{This section might reference back to the SRS verification section.}
 
 \section{System Tests}
 
