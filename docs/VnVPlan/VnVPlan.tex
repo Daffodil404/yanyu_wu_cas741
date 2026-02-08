@@ -473,26 +473,26 @@ How test will be performed: Execute downstream loading script and verify complet
 
 \subsection{Tests for Nonfunctional Requirements}
 
-\wss{The nonfunctional requirements for accuracy will likely just reference the
-  appropriate functional tests from above.  The test cases should mention
-  reporting the relative error for these tests.  Not all projects will
-  necessarily have nonfunctional requirements related to accuracy.}
+% \wss{The nonfunctional requirements for accuracy will likely just reference the
+%   appropriate functional tests from above.  The test cases should mention
+%   reporting the relative error for these tests.  Not all projects will
+%   necessarily have nonfunctional requirements related to accuracy.}
 
-\wss{For some nonfunctional tests, you won't be setting a target threshold for
-passing the test, but rather describing the experiment you will do to measure
-the quality for different inputs.  For instance, you could measure speed versus
-the problem size.  The output of the test isn't pass/fail, but rather a summary
-table or graph.}
+% \wss{For some nonfunctional tests, you won't be setting a target threshold for
+% passing the test, but rather describing the experiment you will do to measure
+% the quality for different inputs.  For instance, you could measure speed versus
+% the problem size.  The output of the test isn't pass/fail, but rather a summary
+% table or graph.}
 
-\wss{Tests related to usability could include conducting a usability test and
-  survey.  The survey will be in the Appendix.}
+% \wss{Tests related to usability could include conducting a usability test and
+%   survey.  The survey will be in the Appendix.}
 
-\wss{Static tests, review, inspections, and walkthroughs, will not follow the
-format for the tests given below.}
+% \wss{Static tests, review, inspections, and walkthroughs, will not follow the
+% format for the tests given below.}
 
-\wss{If you introduce static tests in your plan, you need to provide details.
-How will they be done?  In cases like code (or document) walkthroughs, who will
-be involved? Be specific.}
+% \wss{If you introduce static tests in your plan, you need to provide details.
+% How will they be done?  In cases like code (or document) walkthroughs, who will
+% be involved? Be specific.}
 
 \subsubsection{Accuracy and Reproducibility (NFR1)}
 		
@@ -568,8 +568,29 @@ How test will be performed: Execute automated tests in CI (or local runs) and re
 
 \subsection{Traceability Between Test Cases and Requirements}
 
-\wss{Provide a table that shows which test cases are supporting which
-  requirements.}
+% \wss{Provide a table that shows which test cases are supporting which
+%   requirements.}
+This table provides a mapping between the requirements in the SRS and the test cases defined in this VnV plan.
+Table~\ref{tab:traceability} summarizes traceability between requirements in the
+SRS and the test cases defined in this VnV plan.
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{p{0.28\textwidth} X}
+\toprule
+\textbf{Requirement} & \textbf{Test Cases} \\
+\midrule
+R\ref{R-Inputs}  & FR-INPUT-01, FR-API-02, FR-API-03 \\
+R\ref{R-Calculate} & FR-CALC-01, FR-CALC-02 \\
+R\ref{R-Output} & FR-OUT-01, FR-OUT-02 \\
+NFR1 (Accuracy) & NFR-ACC-01, NFR-ACC-02 \\
+NFR2 (Maintainability) & NFR-MAINT-01 \\
+NFR3 (Portability) & NFR-PORT-01 \\
+\bottomrule
+\end{tabularx}
+\caption{Traceability Between Requirements and Test Cases}
+\label{tab:traceability}
+\end{table}
 
 \section{Unit Test Description}
 
@@ -650,12 +671,12 @@ How test will be performed:
 
 \subsection{Tests for Nonfunctional Requirements}
 
-\wss{If there is a module that needs to be independently assessed for
-  performance, those test cases can go here.  In some projects, planning for
-  nonfunctional tests of units will not be that relevant.}
+% \wss{If there is a module that needs to be independently assessed for
+%   performance, those test cases can go here.  In some projects, planning for
+%   nonfunctional tests of units will not be that relevant.}
 
-\wss{These tests may involve collecting performance data from previously
-  mentioned functional tests.}
+% \wss{These tests may involve collecting performance data from previously
+%   mentioned functional tests.}
 
 \subsubsection{Module ?}
 		
