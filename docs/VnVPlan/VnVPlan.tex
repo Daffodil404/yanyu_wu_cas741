@@ -171,9 +171,9 @@ to support unit-level verification (\href{../Design/SoftDetailedDes/MIS.tex}{MIS
 % how they relate to your VnV efforts.}
 
 \section{Plan}
-
-\wss{Introduce this section.  You can provide a roadmap of the sections to
-  come.}
+This section provides a roadmap of the verification and validation activities planned for the project.
+% \wss{Introduce this section.  You can provide a roadmap of the sections to
+%   come.}
 
 \subsection{Verification and Validation Team}
 
@@ -317,63 +317,157 @@ Software validation will focus on confirming that the pipeline meets the intende
 % \wss{This section might reference back to the SRS verification section.}
 
 \section{System Tests}
-
-\wss{There should be text between all headings, even if it is just a roadmap of
-the contents of the subsections.}
+This section describes the system tests planned for the project.
+% \wss{There should be text between all headings, even if it is just a roadmap of
+% the contents of the subsections.}
 
 \subsection{Tests for Functional Requirements}
+This sections defines the test cases for key funtional areas of Integrating NCRF into existing pipeline. The goal for the test cases are checking the project correctly calculated the result using NCRF and the functions are be integrated into the existing pipeline correctly.
 
-\wss{Subsets of the tests may be in related, so this section is divided into
-  different areas.  If there are no identifiable subsets for the tests, this
-  level of document structure can be removed.}
+The test cases are derived from the functional requirements in the Software Requirements Specification (SRS).
 
-\wss{Include a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.}
+% \wss{Subsets of the tests may be in related, so this section is divided into
+%   different areas.  If there are no identifiable subsets for the tests, this
+%   level of document structure can be removed.}
 
-\subsubsection{Area of Testing1}
+% \wss{Include a blurb here to explain why the subsections below
+%   cover the requirements.  References to the SRS would be good here.}
+The subsections below map directly to the SRS functional requirements:
+input handling (R\ref{R-Inputs}), NCRF computation (R\ref{R-Calculate}), and
+output generation for downstream analysis (R\ref{R-Output}). Each test area
+is designed to verify that the implemented pipeline satisfies these specific
+requirements.
 
-\wss{It would be nice to have a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.  If a section
-  covers tests for input constraints, you should reference the data constraints
-  table in the SRS.}
+% \wss{It would be nice to have a blurb here to explain why the subsections below
+%   cover the requirements.  References to the SRS would be good here.  If a section
+%   covers tests for input constraints, you should reference the data constraints
+%   table in the SRS.}
+
+\subsubsection{Input Handling and API Selection (R\ref{R-Inputs})}
+This area verifies that the pipeline accepts required inputs and exposes an
+API that selects NCRF estimation as described in issue \#50.
 		
-\paragraph{Title for Test}
+\paragraph{Input and Estimator Selection}
 
 \begin{enumerate}
 
-\item{test-id1\\}
+\item{FR-INPUT-01\\}
 
-Control: Manual versus Automatic
+Control: Automatic
 					
-Initial State: 
+Initial State: BIDS dataset and stimulus features are available; configuration is valid.
 					
-Input: 
+Input: Valid stimulus feature signal $e(t)$ and EEG/MEG data; call \texttt{load\_trf(estimator="ncrf")}.
 					
-Output: \wss{The expected result for the given inputs.  Output is not how you
-are going to return the results of the test.  The output is the expected
-result.}
+Output: The NCRF pipeline is invoked without input/parameter errors; data and parameters are accepted.
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+Test Case Derivation: R\ref{R-Inputs} requires the system to accept $e(t)$ as input.
 					
-How test will be performed: 
+How test will be performed: Run the pipeline with a small BIDS dataset and log successful NCRF initialization.
 					
-\item{test-id2\\}
+\item{FR-API-02\\}
 
-Control: Manual versus Automatic
+Control: Automatic
 					
-Initial State: 
+Initial State: Same as FR-INPUT-01.
 					
-Input: 
+Input: Call \texttt{load\_trf(estimator="unknown")}.
 					
-Output: \wss{The expected result for the given inputs}
+Output: A clear error is raised indicating invalid estimator and listing supported options.
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+Test Case Derivation: The API must validate estimator selection to prevent invalid execution paths.
 
-How test will be performed: 
+How test will be performed: Invoke the call and verify the error message and exit behavior.
+
+\item{FR-API-03\\}
+
+Control: Automatic
+					
+Initial State: Existing TRF workflow configuration.
+					
+Input: Call \texttt{load\_trf()} without specifying estimator.
+					
+Output: Default (boosting) behavior is preserved; no regression in baseline workflow.
+
+Test Case Derivation: Issue \#50 emphasizes API unification without breaking existing TRF usage.
+
+How test will be performed: Run a known TRF configuration and compare outputs to baseline.
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
+\subsubsection{NCRF Computation (R\ref{R-Calculate})}
+This area verifies that NCRF estimation executes and produces valid outputs.
+
+\paragraph{NCRF Execution Sanity}
+
+\begin{enumerate}
+
+\item{FR-CALC-01\\}
+
+Control: Automatic
+
+Initial State: Small, controlled dataset with fixed configuration.
+
+Input: Valid $e(t)$ and data; NCRF estimator selected.
+
+Output: Estimated $j_{m,t}$ and $\tau_{m,i,\ell}$ are produced with expected dimensions.
+
+Test Case Derivation: R\ref{R-Calculate} requires computation of source-level neural current estimates.
+
+How test will be performed: Run NCRF on a small dataset and verify output shapes against model settings.
+
+\item{FR-CALC-02\\}
+
+Control: Automatic
+
+Initial State: Same as FR-CALC-01 with fixed random seed.
+
+Input: Repeat the same NCRF run twice.
+
+Output: Results are numerically consistent across runs (within tolerance).
+
+Test Case Derivation: Supports reproducibility expectations aligned with NFR1 while validating computation.
+
+How test will be performed: Compare outputs from repeated runs using relative error or norm.
+
+\end{enumerate}
+
+\subsubsection{Output Generation and Downstream Use (R\ref{R-Output})}
+This area verifies output content and compatibility with downstream analysis.
+
+\paragraph{Output Format and Integration}
+
+\begin{enumerate}
+
+\item{FR-OUT-01\\}
+
+Control: Automatic
+
+Initial State: Successful NCRF computation completed.
+
+Input: NCRF output objects/files.
+
+Output: Outputs include $j_{m,t}$ and $\tau_{m,i,\ell}$ in the expected structure and format.
+
+Test Case Derivation: R\ref{R-Output} requires both outputs in a format suitable for downstream analysis.
+
+How test will be performed: Inspect output fields and validate metadata/shape consistency.
+
+\item{FR-OUT-02\\}
+
+Control: Automatic
+
+Initial State: Outputs from FR-OUT-01 available.
+
+Input: Load NCRF outputs into the existing downstream pipeline step.
+
+Output: Downstream analysis successfully loads and processes the outputs without format errors.
+
+Test Case Derivation: R\ref{R-Output} requires interoperability with the existing pipeline.
+
+How test will be performed: Execute downstream loading script and verify completion.
+
+\end{enumerate}
 
 ...
 
@@ -400,41 +494,77 @@ format for the tests given below.}
 How will they be done?  In cases like code (or document) walkthroughs, who will
 be involved? Be specific.}
 
-\subsubsection{Area of Testing1}
+\subsubsection{Accuracy and Reproducibility (NFR1)}
 		
-\paragraph{Title for Test}
+\paragraph{Numerical Accuracy Against Reference}
 
 \begin{enumerate}
 
-\item{test-id1\\}
+\item{NFR-ACC-01\\}
 
-Type: Functional, Dynamic, Manual, Static etc.
+Type: Dynamic, Automatic
 					
-Initial State: 
+Initial State: Reference TRF/NCRF benchmark or baseline outputs are available.
 					
-Input/Condition: 
+Input/Condition: Run NCRF on the reference dataset with documented parameters.
 					
-Output/Result: 
+Output/Result: Output matches the reference within an agreed tolerance (relative error or norm).
 					
-How test will be performed: 
+How test will be performed: Compare $j_{m,t}$ and $\tau_{m,i,\ell}$ to reference results and report error metrics.
 					
-\item{test-id2\\}
+\item{NFR-ACC-02\\}
 
-Type: Functional, Dynamic, Manual, Static etc.
+Type: Dynamic, Automatic
 					
-Initial State: 
+Initial State: Fixed random seed and configuration.
 					
-Input: 
+Input/Condition: Repeat NCRF estimation twice.
 					
-Output: 
+Output/Result: Outputs are numerically consistent across runs within tolerance.
 					
-How test will be performed: 
+How test will be performed: Compute relative error or norm between repeated runs and report results.
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
+\subsubsection{Maintainability (NFR2)}
+		
+\paragraph{Modularity and Code Structure Review}
 
-...
+\begin{enumerate}
+
+\item{NFR-MAINT-01\\}
+
+Type: Static, Manual
+					
+Initial State: MG/MIS and codebase are available for review.
+					
+Input/Condition: Inspect module structure and interfaces for separation of concerns.
+					
+Output/Result: NCRF integration is localized to well-defined modules, with minimal changes to unrelated code.
+					
+How test will be performed: Checklist-based review of module boundaries and interface usage (MG/MIS checklist).
+
+\end{enumerate}
+
+\subsubsection{Portability (NFR3)}
+		
+\paragraph{Cross-Platform Execution}
+
+\begin{enumerate}
+
+\item{NFR-PORT-01\\}
+
+Type: Dynamic, Automatic
+					
+Initial State: Supported environments available (macOS, Windows, Linux) or CI matrix configured.
+					
+Input/Condition: Run a minimal NCRF workflow on each platform.
+					
+Output/Result: The pipeline executes without platform-specific errors.
+					
+How test will be performed: Execute automated tests in CI (or local runs) and record pass/fail on each OS.
+
+\end{enumerate}
 
 \subsection{Traceability Between Test Cases and Requirements}
 
