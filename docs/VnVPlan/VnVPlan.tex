@@ -3,6 +3,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{hyperref}
+\usepackage{xr-hyper}
 \hypersetup{
     colorlinks,
     citecolor=blue,
@@ -14,6 +15,8 @@
 
 \input{../Comments.text}
 \input{../Common.text}
+
+\externaldocument{../SRS/SRS}
 
 \renewcommand{\progname}{Integrating NCRF into existing pipeline}
 
@@ -32,7 +35,7 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Feb 4 & 1.0 & Initial draft\\
+Feb 11 & 1.0 & Initial draft\\
 \bottomrule
 \end{tabularx}
 
@@ -56,10 +59,10 @@ Feb 4 & 1.0 & Initial draft\\
 \tableofcontents
 
 \listoftables
-\wss{Remove this section if it isn't needed}
+% \wss{Remove this section if it isn't needed}
 
-\listoffigures
-\wss{Remove this section if it isn't needed}
+% \listoffigures
+% \wss{Remove this section if it isn't needed}
 
 \newpage
 
@@ -335,8 +338,8 @@ The test cases are derived from the functional requirements in the Software Requ
 % \wss{Include a blurb here to explain why the subsections below
 %   cover the requirements.  References to the SRS would be good here.}
 The subsections below map directly to the SRS functional requirements:
-input handling (\rref{R-Inputs}), NCRF computation (\rref{R-Calculate}), and
-output generation for downstream analysis (\rref{R-Output}). Each test area
+input handling (\href{../SRS/SRS.tex}{R-Inputs}), NCRF computation (\href{../SRS/SRS.tex}{R-Calculate}), and
+output generation for downstream analysis (\href{../SRS/SRS.tex}{R-Output}). Each test area
 is designed to verify that the implemented pipeline satisfies these specific
 requirements.
 
@@ -345,7 +348,7 @@ requirements.
 %   covers tests for input constraints, you should reference the data constraints
 %   table in the SRS.}
 
-\subsubsection{Input Handling and API Selection (\rref{R-Inputs})}
+\subsubsection{Input Handling and API Selection (\href{../SRS/SRS.tex}{R-Inputs})}
 This area verifies that the pipeline accepts required inputs and exposes an API for using NCRF estimator.
 		
 \paragraph{Input and Estimator Selection}
@@ -362,7 +365,7 @@ This area verifies that the pipeline accepts required inputs and exposes an API 
 					
 \textbf{Output:} The NCRF pipeline is invoked without input/parameter errors; data and parameters are accepted.
 
-\textbf{Test Case Derivation:} R\ref{R-Inputs} requires the system to accept $e(t)$ as input.
+\textbf{Test Case Derivation:} \href{../SRS/SRS.tex}{R-Inputs} requires the system to accept $e(t)$ as input.
 					
 \textbf{How Test Will Be Performed:} Run the pipeline with a small BIDS dataset and log successful NCRF initialization.
 					
@@ -396,7 +399,7 @@ This area verifies that the pipeline accepts required inputs and exposes an API 
 
 \end{enumerate}
 
-\subsubsection{NCRF Computation (R\ref{R-Calculate})}
+\subsubsection{NCRF Computation (\href{../SRS/SRS.tex}{R-Calculate})}
 This area verifies that NCRF estimation executes and produces valid outputs.
 
 \paragraph{NCRF Execution Sanity}
@@ -413,7 +416,7 @@ This area verifies that NCRF estimation executes and produces valid outputs.
 
 \textbf{Output:} Estimated $j_{m,t}$ and $\tau_{m,i,\ell}$ are produced with expected dimensions.
 
-\textbf{Test Case Derivation:} R\ref{R-Calculate} requires computation of source-level neural current estimates.
+\textbf{Test Case Derivation:} \href{../SRS/SRS.tex}{R-Calculate} requires computation of source-level neural current estimates.
 
 \textbf{How Test Will Be Performed:} Run NCRF on a small dataset and verify output shapes against model settings.
 
@@ -433,7 +436,7 @@ This area verifies that NCRF estimation executes and produces valid outputs.
 
 \end{enumerate}
 
-\subsubsection{Output Generation and Downstream Use (R\ref{R-Output})}
+\subsubsection{Output Generation and Downstream Use (\href{../SRS/SRS.tex}{R-Output})}
 This area verifies output content and compatibility with downstream analysis.
 
 \paragraph{Output Format and Integration}
@@ -450,7 +453,7 @@ This area verifies output content and compatibility with downstream analysis.
 
 \textbf{Output:} Outputs include $j_{m,t}$ and $\tau_{m,i,\ell}$ in the expected structure and format.
 
-\textbf{Test Case Derivation:} \rref{R-Output} requires both outputs in a format suitable for downstream analysis.
+\textbf{Test Case Derivation:} \href{../SRS/SRS.tex}{R-Output} requires both outputs in a format suitable for downstream analysis.
 
 \textbf{How Test Will Be Performed:} Inspect output fields and validate metadata/shape consistency.
 
@@ -464,7 +467,7 @@ This area verifies output content and compatibility with downstream analysis.
 
 \textbf{Output:} Downstream analysis successfully loads and processes the outputs without format errors.
 
-\textbf{Test Case Derivation:} R\ref{R-Output} requires interoperability with the existing pipeline.
+\textbf{Test Case Derivation:} \href{../SRS/SRS.tex}{R-Output} requires interoperability with the existing pipeline.
 
 \textbf{How Test Will Be Performed:} Execute downstream loading script and verify completion.
 
@@ -581,9 +584,9 @@ SRS and the test cases defined in this VnV plan.
 \toprule
 \textbf{Requirement} & \textbf{Test Cases} \\
 \midrule
-R\ref{R-Inputs}  & FR-INPUT-01, FR-API-02, FR-API-03 \\
-R\ref{R-Calculate} & FR-CALC-01, FR-CALC-02 \\
-R\ref{R-Output} & FR-OUT-01, FR-OUT-02 \\
+\href{../SRS/SRS.tex}{R-Inputs}  & FR-INPUT-01, FR-API-02, FR-API-03 \\
+\href{../SRS/SRS.tex}{R-Calculate} & FR-CALC-01, FR-CALC-02 \\
+\href{../SRS/SRS.tex}{R-Output} & FR-OUT-01, FR-OUT-02 \\
 NFR1 (Accuracy) & NFR-ACC-01, NFR-ACC-02 \\
 NFR2 (Maintainability) & NFR-MAINT-01 \\
 NFR3 (Portability) & NFR-PORT-01 \\
