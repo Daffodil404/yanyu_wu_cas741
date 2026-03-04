@@ -19,6 +19,7 @@
 \input{../../Comments.text}
 \input{../../Common.text}
 
+
 \newcounter{acnum}
 \newcommand{\actheacnum}{AC\theacnum}
 \newcommand{\acref}[1]{AC\ref{#1}}
@@ -46,8 +47,7 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+March 5, 2026 & 1.0 & Initial Draft\\
 \bottomrule
 \end{tabularx}
 
@@ -60,21 +60,21 @@ This section records information for easy reference.
 \subsection{Abbreviations and Acronyms}
 
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l l} 
-  \toprule		
+\begin{tabular}{l l}
+  \toprule
   \textbf{symbol} & \textbf{description}\\
-  \midrule 
-  AC & Anticipated Change\\
-  DAG & Directed Acyclic Graph \\
-  M & Module \\
-  MG & Module Guide \\
-  OS & Operating System \\
+  \midrule
+  A & Assumption\\
+  DD & Data Definition\\
+  GD & General Definition\\
+  GS & Goal Statement\\
+  IM & Instance Model\\
+  LC & Likely Change\\
+  PS & Physical System Description\\
   R & Requirement\\
-  SC & Scientific Computing \\
   SRS & Software Requirements Specification\\
-  \progname & Explanation of program name\\
-  UC & Unlikely Change \\
-  \wss{etc.} & \wss{...}\\
+  \progname{} & analyzing pipeline for eeg data via NCRF method\\
+  TM & Theoretical Model\\
   \bottomrule
 \end{tabular}\\
 
@@ -157,16 +157,15 @@ adapted here is called design for
 change.
 
 \begin{description}
-\item[\refstepcounter{acnum} \actheacnum \label{acHardware}:] The specific
-  hardware on which the software is running.
+\item[\refstepcounter{acnum} \actheacnum \label{acHardware}:] Hardware platform (e.g., OS compatibility)
 \item[\refstepcounter{acnum} \actheacnum \label{acInput}:] The format of the
-  initial input data.
-\item ...
+  initial input data. (e.g., MEG/EEG Data)
+\item[\refstepcounter{acnum} \actheacnum \label{acLaunch}:] Launching method (e.g., terminal command)
 \end{description}
 
-\wss{Anticipated changes relate to changes that would be made in requirements,
-design or implementation choices.  They are not related to changes that are made
-at run-time, like the values of parameters.}
+% \wss{Anticipated changes relate to changes that would be made in requirements,
+% design or implementation choices.  They are not related to changes that are made
+% at run-time, like the values of parameters.}
 
 \subsection{Unlikely Changes} \label{SecUchange}
 
@@ -179,8 +178,9 @@ decisions will be changed.
 
 \begin{description}
 \item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Input/Output devices
-  (Input: File and/or Keyboard, Output: File, Memory, and/or Screen).
-\item ...
+  (Input: MEG/EEG data and predictors, Output: ).
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Core TRF-based stimulus-response model.
+
 \end{description}
 
 \section{Module Hierarchy} \label{SecMH}
@@ -192,7 +192,9 @@ actually be implemented.
 
 \begin{description}
 \item [\refstepcounter{mnum} \mthemnum \label{mHH}:] Hardware-Hiding Module
-\item ...
+\item  [\refstepcounter{mnum} \mthemnum \label{mInput}:]  Input Format Module
+\item [\refstepcounter{mnum} \mthemnum \label{mEstimator}:] Estimator Resolve Module
+\item [\refstepcounter{mnum} \mthemnum \label{mTRF}:] TRF Calculation Module
 \end{description}
 
 
@@ -203,22 +205,14 @@ actually be implemented.
 \textbf{Level 1} & \textbf{Level 2}\\
 \midrule
 
-{Hardware-Hiding Module} & ~ \\
+{Hardware-Hiding Module} & Hardware \\
 \midrule
 
-\multirow{7}{0.3\textwidth}{Behaviour-Hiding Module} & ?\\
-& ?\\
-& ?\\
-& ?\\
-& ?\\
-& ?\\
-& ?\\ 
-& ?\\
+\multirow{2}{0.3\textwidth}{Behaviour-Hiding Module} & Input Format Module\\
+& Estimator Resolve Module\\
 \midrule
 
-\multirow{3}{0.3\textwidth}{Software Decision Module} & {?}\\
-& ?\\
-& ?\\
+\multirow{1}{0.3\textwidth}{Software Decision Module}  & TRF Calculation Module\\
 \bottomrule
 
 \end{tabular}
@@ -230,14 +224,32 @@ actually be implemented.
 
 The design of the system is intended to satisfy the requirements developed in
 the SRS. In this stage, the system is decomposed into modules. The connection
-between requirements and modules is listed in Table~\ref{TblRT}.
+between requirements and modules is listed in Table~\ref{TblConnection}.
 
-\wss{The intention of this section is to document decisions that are made
-  ``between'' the requirements and the design.  To satisfy some requirements,
-  design decisions need to be made.  Rather than make these decisions implicit,
-  they are explicitly recorded here.  For instance, if a program has security
-  requirements, a specific design decision may be made to satisfy those
-  requirements with a password.}
+\begin{table}[H]
+\centering
+\begin{tabular}{p{0.45\textwidth} p{0.45\textwidth}}
+\toprule
+\textbf{Requirements (SRS)} & \textbf{Module ID}\\
+\midrule
+R1 (\textit{R-Inputs}) & \mref{mInput}, \mref{mHH}\\
+R2 (\textit{R-Calculate}) & \mref{mEstimator}, \mref{mTRF}\\
+R3 (\textit{R-Output}) & \mref{mTRF}\\
+NFR1 (\textit{Accuracy}) & \mref{mTRF}\\
+NFR2 (\textit{Maintainability}) & \mref{mInput}, \mref{mEstimator}, \mref{mTRF}\\
+NFR3 (\textit{Portability}) & \mref{mHH}\\
+\bottomrule
+\end{tabular}
+\caption{Connection Between Requirements and Module IDs}
+\label{TblConnection}
+\end{table}
+
+% \wss{The intention of this section is to document decisions that are made
+%   ``between'' the requirements and the design.  To satisfy some requirements,
+%   design decisions need to be made.  Rather than make these decisions implicit,
+%   they are explicitly recorded here.  For instance, if a program has security
+%   requirements, a specific design decision may be made to satisfy those
+%   requirements with a password.}
 
 \section{Module Decomposition} \label{SecMD}
 
@@ -258,54 +270,55 @@ to be implemented.
 \subsection{Hardware Hiding Modules (\mref{mHH})}
 
 \begin{description}
-\item[Secrets:]The data structure and algorithm used to implement the virtual
-  hardware.
-\item[Services:]Serves as a virtual hardware used by the rest of the
-  system. This module provides the interface between the hardware and the
-  software. So, the system can use it to display outputs or to accept inputs.
-\item[Implemented By:] OS
+\item[Secrets:]The detailed environment implemention for the hardware.
+\item[Services:] Interfaces with system hardware for data input and dispalay.
+\item[Implemented By:] OS libraries
 \end{description}
 
 \subsection{Behaviour-Hiding Module}
 
 \begin{description}
-\item[Secrets:]The contents of the required behaviours.
-\item[Services:]Includes programs that provide externally visible behaviour of
-  the system as specified in the software requirements specification (SRS)
-  documents. This module serves as a communication layer between the
-  hardware-hiding module and the software decision module. The programs in this
-  module will need to change if there are changes in the SRS.
+\item[Secrets:]The workflow-level behaviours that realize the functional
+  requirements (input ingestion, estimator invocation, and result preparation)
+  using the experiment configuration in the TRF pipeline.
+\item[Services:]Coordinates execution of the NCRF/TRF workflow through
+  experiment-level operations (for example, subject selection, predictor
+  availability, and estimator choice) and invokes model computation through
+  \texttt{load\_trf(...)}. This layer isolates requirement-driven behaviour from core
+  numerical implementation details.
 \item[Implemented By:] --
 \end{description}
 
 \subsubsection{Input Format Module (\mref{mInput})}
 
 \begin{description}
-\item[Secrets:]The format and structure of the input data.
-\item[Services:]Converts the input data into the data structure used by the
-  input parameters module.
-\item[Implemented By:] [Your Program Name Here]
-\item[Type of Module:] [Record, Library, Abstract Object, or Abstract Data Type]
-  [Information to include for leaf modules in the decomposition by secrets tree.]
+\item[Secrets:]The accepted schema and storage conventions for predictors and
+ trial metadata.
+\item[Services:]Loads and preprocess MEG/EEG signals, validates metadata. 
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Library
 \end{description}
 
-\subsubsection{Etc.}
-
-
-\subsection{Software Decision Module}
+\subsubsection{Estimator Resolve Module (\mref{mEstimator})}
 
 \begin{description}
-\item[Secrets:] The design decision based on mathematical theorems, physical
-  facts, or programming considerations. The secrets of this module are
-  \emph{not} described in the SRS.
-\item[Services:] Includes data structure and algorithms used in the system that
-  do not provide direct interaction with the user. 
-  % Changes in these modules are more likely to be motivated by a desire to
-  % improve performance than by externally imposed changes.
-\item[Implemented By:] --
+\item[Secrets:] The strategies for how to resolving parameters in estimators and applying to experiment.
+\item[Services:] Accept 'boosting' and 'ncrf' two types of estimator and make it effective.
+\item[Implemented By:] \progname{}
+\item[Type of Module:] Library
 \end{description}
 
-\subsubsection{Etc.}
+
+\subsection{Software Decision Module (\mref{mTRF})}
+
+\begin{description}
+\item[Secrets:] The impletion of calcualtion for TRF with different estimation parameters.
+\item[Services:] Compute the related TRF
+  % Changes in these modules are more likely to be motivated by a desire to
+  % improve performance than by externally imposed changes.
+\item[Implemented By:] Elbrain (Python backend)
+\end{description}
+
 
 \section{Traceability Matrix} \label{SecTM}
 
@@ -320,17 +333,12 @@ requirements and between the modules and the anticipated changes.
 \toprule
 \textbf{Req.} & \textbf{Modules}\\
 \midrule
-R1 & \mref{mHH}, \mref{mInput}, \mref{mParams}, \mref{mControl}\\
-R2 & \mref{mInput}, \mref{mParams}\\
-R3 & \mref{mVerify}\\
-R4 & \mref{mOutput}, \mref{mControl}\\
-R5 & \mref{mOutput}, \mref{mODEs}, \mref{mControl}, \mref{mSeqDS}, \mref{mSolver}, \mref{mPlot}\\
-R6 & \mref{mOutput}, \mref{mODEs}, \mref{mControl}, \mref{mSeqDS}, \mref{mSolver}, \mref{mPlot}\\
-R7 & \mref{mOutput}, \mref{mEnergy}, \mref{mControl}, \mref{mSeqDS}, \mref{mPlot}\\
-R8 & \mref{mOutput}, \mref{mEnergy}, \mref{mControl}, \mref{mSeqDS}, \mref{mPlot}\\
-R9 & \mref{mVerifyOut}\\
-R10 & \mref{mOutput}, \mref{mODEs}, \mref{mControl}\\
-R11 & \mref{mOutput}, \mref{mODEs}, \mref{mEnergy}, \mref{mControl}\\
+R1 (\textit{R-Inputs}) & \mref{mInput}, \mref{mHH}\\
+R2 (\textit{R-Calculate}) & \mref{mEstimator}, \mref{mTRF}\\
+R3 (\textit{R-Output}) & \mref{mTRF}, \mref{mEstimator}\\
+NFR1 (\textit{Accuracy}) & \mref{mEstimator}, \mref{mTRF}\\
+NFR2 (\textit{Maintainability}) & \mref{mInput}, \mref{mEstimator}, \mref{mTRF}\\
+NFR3 (\textit{Portability}) & \mref{mHH}\\
 \bottomrule
 \end{tabular}
 \caption{Trace Between Requirements and Modules}
@@ -345,16 +353,7 @@ R11 & \mref{mOutput}, \mref{mODEs}, \mref{mEnergy}, \mref{mControl}\\
 \midrule
 \acref{acHardware} & \mref{mHH}\\
 \acref{acInput} & \mref{mInput}\\
-\acref{acParams} & \mref{mParams}\\
-\acref{acVerify} & \mref{mVerify}\\
-\acref{acOutput} & \mref{mOutput}\\
-\acref{acVerifyOut} & \mref{mVerifyOut}\\
-\acref{acODEs} & \mref{mODEs}\\
-\acref{acEnergy} & \mref{mEnergy}\\
-\acref{acControl} & \mref{mControl}\\
-\acref{acSeqDS} & \mref{mSeqDS}\\
-\acref{acSolver} & \mref{mSolver}\\
-\acref{acPlot} & \mref{mPlot}\\
+\acref{acLaunch} & \mref{mEstimator}\\
 \bottomrule
 \end{tabular}
 \caption{Trace Between Anticipated Changes and Modules}
@@ -398,16 +397,16 @@ arrows in the diagram typically correspond to the presence of import statement.}
 needed. Drawings, Sketches, Figma}
 
 \section{Design of Communication Protocols}
-
-\wss{If there is communication between hardware and software, it may be necessary 
-to explain the design of the communication protocol.  This section should be filled 
-in with NA if it is not appropriate for a given project.}
+NA
+% \wss{If there is communication between hardware and software, it may be necessary 
+% to explain the design of the communication protocol.  This section should be filled 
+% in with NA if it is not appropriate for a given project.}
 
 \section{Database Design}
-
-\wss{If a database is a significant component of the project, the database
-design should be summarized here.  This section should be filled in with NA if
-it is not appropriate for a given project.}
+NA
+% \wss{If a database is a significant component of the project, the database
+% design should be summarized here.  This section should be filled in with NA if
+% it is not appropriate for a given project.}
 
 \section{Timeline}
 
