@@ -53,8 +53,7 @@ urlcolor=cyan          % color of external links
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+March 5, 2026 & 1.0 & Initial version\\
 \bottomrule
 \end{tabularx}
 
@@ -62,9 +61,10 @@ Date 2 & 1.1 & Notes\\
 
 \section{Symbols, Abbreviations and Acronyms}
 
-See SRS Documentation at \wss{give url}
+See SRS documentation at
+\href{https://github.com/Daffodil404/yanyu_wu_cas741/blob/main/docs/SRS/SRS.tex}{SRS.tex}.
 
-\wss{Also add any additional symbols, abbreviations or acronyms}
+% \wss{Also add any additional symbols, abbreviations or acronyms}
 
 \newpage
 
@@ -76,24 +76,29 @@ See SRS Documentation at \wss{give url}
 
 \section{Introduction}
 
-The following document details the Module Interface Specifications for
-\wss{Fill in your project name and description}
+The following document details the Module Interface Specifications for Integrating NCRF into existing TRF pipeline. This pipeline accepts MEG/EEG data for analysing and now we are going to add estimators to distinguish different estimation method, like ncrf, boosting etc.
+% \wss{Fill in your project name and description}
 
 Complementary documents include the System Requirement Specifications
 and Module Guide.  The full documentation and implementation can be
-found at \url{...}.  \wss{provide the url for your repo}
+found at \url{https://github.com/Daffodil404/yanyu_wu_cas741}. The key
+companion documents are
+\href{https://github.com/Daffodil404/yanyu_wu_cas741/blob/main/docs/SRS/SRS.tex}{SRS}
+and
+\href{https://github.com/Daffodil404/yanyu_wu_cas741/blob/main/docs/Design/SoftArchitecture/MG.tex}{MG}.
 
 \section{Notation}
 
-\wss{You should describe your notation.  You can use what is below as
-  a starting point.}
+% \wss{You should describe your notation.  You can use what is below as
+%   a starting point.}
 
 The structure of the MIS for modules comes from \citet{HoffmanAndStrooper1995},
 with the addition that template modules have been adapted from
 \cite{GhezziEtAl2003}.  The mathematical notation comes from Chapter 3 of
-\citet{HoffmanAndStrooper1995}.  For instance, the symbol := is used for a
-multiple assignment statement and conditional rules follow the form $(c_1
-\Rightarrow r_1 | c_2 \Rightarrow r_2 | ... | c_n \Rightarrow r_n )$.
+\citet{HoffmanAndStrooper1995}. 
+%  For instance, the symbol := is used for a
+% multiple assignment statement and conditional rules follow the form $(c_1
+% \Rightarrow r_1 | c_2 \Rightarrow r_2 | ... | c_n \Rightarrow r_n )$.
 
 The following table summarizes the primitive data types used by \progname. 
 
@@ -104,21 +109,36 @@ The following table summarizes the primitive data types used by \progname.
 \toprule 
 \textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\ 
 \midrule
-character & char & a single symbol or digit\\
-integer & $\mathbb{Z}$ & a number without a fractional component in (-$\infty$, $\infty$) \\
-natural number & $\mathbb{N}$ & a number without a fractional component in [1, $\infty$) \\
-real & $\mathbb{R}$ & any number in (-$\infty$, $\infty$)\\
+boolean & $\mathbb{B}$ & logical value: \texttt{true} or \texttt{false}\\
+integer & $\mathbb{Z}$ & a whole number in $(-\infty, \infty)$\\
+natural number & $\mathbb{N}$ & a counting number in $[1, \infty)$\\
+real scalar & $\mathbb{R}$ & a real-valued scalar quantity\\
+real vector & $\mathbb{R}^{n}$ & a one-dimensional real-valued time series\\
+real matrix & $\mathbb{R}^{m \times n}$ & a two-dimensional real-valued array\\
+real tensor & $\mathbb{R}^{m \times i \times \ell}$ & a three-dimensional real-valued array\\
+EEG/MEG signal & $\mathbb{R}^{c \times t}$ & multichannel real-valued time series, where $c$ is channel/sensor count and $t$ is time index\\
+string & str & text identifier such as subject, task, or estimator name\\
+path & Path & filesystem location for input/output artifacts\\
 \bottomrule
 \end{tabular} 
 \end{center}
 
 \noindent
-The specification of \progname \ uses some derived data types: sequences, strings, and
-tuples. Sequences are lists filled with elements of the same data type. Strings
-are sequences of characters. Tuples contain a list of values, potentially of
-different types. In addition, \progname \ uses functions, which
-are defined by the data types of their inputs and outputs. Local functions are
-described by giving their type signature followed by their specification.
+The MIS specification of \progname{} uses the primitive data types listed in
+the table above: $\mathbb{B}$ (boolean), $\mathbb{Z}$ (integer),
+$\mathbb{N}$ (natural number), $\mathbb{R}$ (real scalar),
+$\mathbb{R}^{n}$ (real vector), $\mathbb{R}^{m \times n}$ (real matrix), and
+$\mathbb{R}^{m \times i \times \ell}$ (real tensor), plus \texttt{str} and
+\texttt{Path}. In this project, stimulus features are modeled as
+$\mathbb{R}^{n}$ time series, EEG/MEG observations are modeled as
+$\mathbb{R}^{c \times t}$, source estimates are modeled as
+$\mathbb{R}^{m \times n}$, and NCRF coefficients are modeled as
+$\mathbb{R}^{m \times i \times \ell}$. Strings are used for identifiers such
+as subject, task, stimulus, and estimator name (for example,
+\texttt{boosting} and \texttt{ncrf}), while paths denote filesystem locations
+for predictors, intermediate artifacts, and outputs. Functions are specified by
+explicit input/output type signatures, followed by behavioral requirements and
+exception conditions where applicable.
 
 \section{Module Decomposition}
 
@@ -131,21 +151,14 @@ The following table is taken directly from the Module Guide document for this pr
 \textbf{Level 1} & \textbf{Level 2}\\
 \midrule
 
-{Hardware-Hiding} & ~ \\
+{Hardware-Hiding Module} & Hardware \\
 \midrule
 
-\multirow{7}{0.3\textwidth}{Behaviour-Hiding} & Input Parameters\\
-& Output Format\\
-& Output Verification\\
-& Temperature ODEs\\
-& Energy Equations\\ 
-& Control Module\\
-& Specification Parameters Module\\
+\multirow{2}{0.3\textwidth}{Behaviour-Hiding Module} & Input Format Module\\
+& Estimator Resolve Module\\
 \midrule
 
-\multirow{3}{0.3\textwidth}{Software Decision} & {Sequence Data Structure}\\
-& ODE Solver\\
-& Plotting\\
+\multirow{1}{0.3\textwidth}{Software Decision Module} & TRF Calculation Module\\
 \bottomrule
 
 \end{tabular}
