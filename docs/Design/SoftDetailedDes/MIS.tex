@@ -167,20 +167,101 @@ The following table is taken directly from the Module Guide document for this pr
 \end{table}
 
 \newpage
-~\newpage
 
-\section{MIS of \wss{Module Name}} \label{Module} \wss{Use labels for
-  cross-referencing}
+\section{MIS of Hardware-Hiding Module} \label{Module} 
+% \wss{Use labels for cross-referencing}
 
-\wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
+% \wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
 
-\wss{It is also possible to use \LaTeX for hypperlinks to external documents.}
+% \wss{It is also possible to use \LaTeX for hypperlinks to external documents.}
 
 \subsection{Module}
 
-\wss{Short name for the module}
+M1: OS Absraction Layer
 
 \subsection{Uses}
+OS filesystem APIs, Eelbrain data-loading interfaces.
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+NA
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3cm} p{4cm} p{4cm} p{3cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+\texttt{RawSource.\_load} & \texttt{subject}, \texttt{recording}, \texttt{preload} & MNE \texttt{Raw} object loaded from EEG/MEG file & \texttt{FileNotFoundError}, \texttt{OSError} (reader I/O errors) \\
+\texttt{save.pickle} & Python object (\texttt{res}) + destination path (\texttt{dst}) & Pickle file written to disk (TRF cache/result file) & \texttt{OSError}, pickle serialization errors \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None.
+
+\subsubsection{Environment Variables}
+
+Filesystem interface (\texttt{fs}) for reading raw EEG/MEG recordings and writing
+serialized outputs.
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item The operating system provides standard file I/O semantics
+(\texttt{Linux}/\texttt{Windows}/\texttt{macOS}).
+\item Input recording paths and output destinations are valid and accessible
+under current process permissions.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \texttt{RawSource.\_load(subject, recording, preload)}:
+\begin{itemize}
+\item transition: None.
+\item output: Returns an MNE \texttt{Raw} object loaded from the resolved
+recording path.
+\item exception: Raises \texttt{FileNotFoundError} when the recording cannot be
+located, or \texttt{OSError} when low-level reader I/O fails.
+\end{itemize}
+
+\noindent \texttt{save.pickle(res, dst)}:
+\begin{itemize}
+\item transition: Writes serialized object \texttt{res} to destination path
+\texttt{dst}.
+\item output: Produces a persisted pickle artifact for cache/results reuse.
+\item exception: Raises \texttt{OSError} for filesystem write failures and
+serialization exceptions for unsupported object graphs.
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+None.
+
+\newpage
+
+\bibliographystyle {plainnat}
+\bibliography {../../../refs/References}
+
+\newpage
+\section{MIS of Input Format Module} \label{Module} 
+% \wss{Use labels for cross-referencing}
+
+% \wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
+
+% \wss{It is also possible to use \LaTeX for hypperlinks to external documents.}
+
+\subsection{Module}
+MEG/EEG Data Formatter and Experiment Configuration.
+% \wss{Short name for the module}
+
+\subsection{Uses}
+Uses M1 for reading raw MEG/EEG data.
 
 
 \subsection{Syntax}
@@ -190,11 +271,19 @@ The following table is taken directly from the Module Guide document for this pr
 \subsubsection{Exported Access Programs}
 
 \begin{center}
-\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+\begin{tabular}{p{3cm} p{4cm} p{4cm} p{3cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-\wss{accessProg} & - & - & - \\
+\texttt{load\_epochs} &
+\texttt{samplingrate, data, interpolate\_bads} &
+Dataset &
+\texttt{ValueError} \\
+
+\texttt{add\_predictor} &
+dataset, predictor, optional \texttt{filter\_x}, optional target \texttt{y} &
+\texttt{ds} extended with predictor column \texttt{code.key} &
+\texttt{ValueError}, \texttt{NotImplementedError}, undefined predictor errors \\
 \hline
 \end{tabular}
 \end{center}
@@ -203,42 +292,75 @@ The following table is taken directly from the Module Guide document for this pr
 
 \subsubsection{State Variables}
 
-\wss{Not all modules will have state variables.  State variables give the module
-  a memory.}
+\begin{itemize}
+\item \texttt{predictors}: map from predictor name (\texttt{str}) to predictor
+generator/loader objects.
+\end{itemize}
 
 \subsubsection{Environment Variables}
 
-\wss{This section is not necessary for all modules.  Its purpose is to capture
-  when the module has external interaction with the environment, such as for a
-  device driver, screen interface, keyboard, file, etc.}
+\begin{itemize}
+\item Filesystem location \texttt{predictor-dir} containing serialized predictor
+files in naming form \texttt{\{stimulus\}\textasciitilde\{predictor\}.pickle}.
+\item Optional predictor cache directory for generated predictors.
+\item Experiment state keys (for example \texttt{subject}, \texttt{recording},
+\texttt{epoch}) used to resolve predictor identity and reproducible randomization.
+\end{itemize}
 
 \subsubsection{Assumptions}
 
-\wss{Try to minimize assumptions and anticipate programmer errors via
-  exceptions, but for practical purposes assumptions are sometimes appropriate.}
+\begin{itemize}
+\item Input dataset contains event metadata required to identify stimulus
+instances (for example task/stimulus label).
+\item Predictor definitions are registered in \texttt{predictors} before loading.
+\item Time axis requested by TRF routines is valid and compatible with predictor
+sampling constraints.
+\end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \wss{accessProg}():
+\noindent \texttt{add\_predictor(ds, code, filter\_x, y)}:
 \begin{itemize}
-\item transition: \wss{if appropriate} 
-\item output: \wss{if appropriate} 
-\item exception: \wss{if appropriate} 
+\item transition: Extends dataset \texttt{ds} by assigning predictor signal(s) to
+column \texttt{code.key}. Predictor values are aligned to the response time axis
+for each epoch/trial.
+\item output: None (in-place update of \texttt{ds}).
+\item exception:
+\begin{itemize}
+\item Undefined predictor code (not registered in \texttt{predictors}).
+\item \texttt{ValueError} when \texttt{filter\_x} is requested for unsupported
+predictor types.
+\item \texttt{NotImplementedError} for unsupported combinations (for example
+event predictor with variable-time epochs, or session predictor with fixed-time
+epochs).
+\end{itemize}
 \end{itemize}
 
-\wss{A module without environment variables or state variables is unlikely to
-  have a state transition.  In this case a state transition can only occur if
-  the module is changing the state of another module.}
-
-\wss{Modules rarely have both a transition and an output.  In most cases you
-  will have one or the other.}
+\noindent \texttt{load\_epochs(samplingrate, data, interpolate\_bads)}:
+\begin{itemize}
+\item transition: No module state transition. Reads epoch definitions and raw
+recordings to construct an analysis dataset for the current subject/recording.
+\item output: Returns epoch dataset \texttt{ds} containing response variable
+(for example MEG/EEG channels), event metadata, and a time axis consistent with
+\texttt{samplingrate}.
+\item exception:
+\begin{itemize}
+\item \texttt{FileNotFoundError}/\texttt{OSError} when raw/event files are
+missing or unreadable.
+\item \texttt{ValueError} for invalid data-mode or inconsistent epoch
+configuration.
+\item Propagates preprocessing/runtime errors from lower-level epoch-loading
+utilities.
+\end{itemize}
+\end{itemize}
 
 \subsubsection{Local Functions}
 
-\wss{As appropriate} \wss{These functions are for the purpose of specification.
-  They are not necessarily something that is going to be implemented
-  explicitly.  Even if they are implemented, they are not exported; they only
-  have local scope.}
+\begin{itemize}
+\item \texttt{load\_predictor(code)}: parse predictor expression and normalize
+stimulus/shuffle qualifiers.
+
+\end{itemize}
 
 \newpage
 
@@ -246,6 +368,257 @@ The following table is taken directly from the Module Guide document for this pr
 \bibliography {../../../refs/References}
 
 \newpage
+
+
+
+\section{MIS of Estimator Resolve Module} \label{Module}
+
+\subsection{Module}
+
+Estimator Selection and Parameter Resolution.
+\subsection{Uses}
+Uses M2 for experiment state/configuration and M4 for TRF fitting execution.
+
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3cm} p{4cm} p{4cm} p{3cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+\texttt{load\_trf} & 
+\texttt{x}, \texttt{tstart}, \texttt{tstop}, optional \texttt{estimator} (\texttt{str} or \texttt{Estimator}) & 
+TRF result object or cache path (\texttt{path\_only=True}) & 
+\texttt{ValueError} (invalid estimator key or invalid estimator map), \texttt{IOError} (cache miss with \texttt{make=False}) \\
+\texttt{\_trf\_job} & 
+effective TRF options (including resolved estimator parameters), data/predictor inputs & 
+callable that fits TRF (\texttt{boosting} or \texttt{fit\_ncrf}) or \texttt{None} when linked cached NCRF exists & 
+\texttt{ValueError} (invalid backward multi-predictor case), runtime fitting exceptions from backend libraries \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None. This module is stateless and computes effective options per request.
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+\item \texttt{estimators}: optional dictionary mapping estimator names
+(\texttt{str}) to estimator objects (\texttt{Estimator} subclasses such as
+\texttt{BoostingEstimator} or \texttt{NCRFEstimator}).
+\item Filesystem cache for TRF artifacts (read/write via path resolution).
+\item Backend fitting functions from Eelbrain and NCRF libraries.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item If \texttt{estimator} is provided as a string, the experiment defines a
+dictionary \texttt{estimators} and contains the requested key.
+\item Estimator objects implement \texttt{parameters\_for\_partial()} and return
+keyword arguments compatible with the selected backend fitter.
+\item Predictor and response data are already prepared by upstream modules.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \texttt{load\_trf(x, tstart, tstop, ..., estimator, make, path\_only)}:
+\begin{itemize}
+\item transition: No internal state transition. May create/update TRF cache file
+when \texttt{make=True}.
+\item output: Returns resolved cached TRF, newly fitted TRF, or TRF path.
+Resolution rule:
+\[
+\texttt{estimator is str} \Rightarrow \texttt{estimator := estimators[estimator]}
+\]
+Then estimator parameters override explicit options (for example
+\texttt{delta}, \texttt{basis}, \texttt{partitions}, \texttt{cv},
+\texttt{selective\_stopping}, \texttt{partition\_results}) before locating and
+computing the TRF.
+\item exception:
+\begin{itemize}
+\item \texttt{ValueError} if \texttt{estimator} is a string but
+\texttt{estimators} is missing/not a dictionary.
+\item \texttt{ValueError} if estimator key is not found in
+\texttt{estimators}.
+\item \texttt{IOError} if requested TRF is absent and \texttt{make=False}.
+\end{itemize}
+\end{itemize}
+
+\noindent \texttt{\_trf\_job(x, tstart, tstop, ..., estimator)}:
+\begin{itemize}
+\item transition: None in module state; returns deferred fitting action.
+\item output: Returns a callable for backend fitting:
+\begin{itemize}
+\item \texttt{partial(boosting, ...)} for boosting path.
+\item \texttt{partial(fit\_ncrf, ...)} for NCRF path, where
+\texttt{estimator.parameters\_for\_partial()} augments NCRF arguments.
+\item \texttt{None} when equivalent NCRF output already exists and cache link is
+created.
+\end{itemize}
+\item exception:
+\begin{itemize}
+\item \texttt{ValueError} for backward model with multiple predictors.
+\item Propagates fitting/library runtime errors from backend calls.
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+\begin{itemize}
+\item \texttt{resolve\_estimator(estimator, estimators)}:
+\[
+(\texttt{estimator} \in \texttt{str} \land \texttt{estimator} \in \texttt{keys(estimators)})
+\Rightarrow \texttt{estimators[estimator]}
+\]
+otherwise raise \texttt{ValueError}.
+\item \texttt{apply\_effective\_options(base\_opts, est\_opts)}: merges
+estimator option map over explicit call options to produce deterministic cache
+key and fitter configuration.
+\end{itemize}
+
+\newpage
+
+\bibliographystyle {plainnat}
+\bibliography {../../../refs/References}
+
+\newpage
+
+
+
+
+\section{MIS of TRF Calculation Module} \label{Module}
+
+\subsection{Module}
+
+Estimator Selection and Parameter Resolution.
+\subsection{Uses}
+Uses M2 for data processing and M3 for estimator configurations fitting.
+
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3cm} p{4cm} p{4cm} p{3cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+\texttt{load\_trf} & 
+\texttt{x}, \texttt{tstart}, \texttt{tstop}, optional \texttt{estimator} (\texttt{str} or \texttt{Estimator}) & 
+TRF result object or cache path (\texttt{path\_only=True}) & 
+\texttt{ValueError} (invalid estimator key or invalid estimator map), \texttt{IOError} (cache miss with \texttt{make=False}) \\
+\texttt{\_trf\_job} & 
+effective TRF options (including resolved estimator parameters), data/predictor inputs & 
+callable that fits TRF (\texttt{boosting} or \texttt{fit\_ncrf}) or \texttt{None} when linked cached NCRF exists & 
+\texttt{ValueError} (invalid backward multi-predictor case), runtime fitting exceptions from backend libraries \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None. This module is stateless and computes effective options per request.
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+\item \texttt{estimators}: optional dictionary mapping estimator names
+(\texttt{str}) to estimator objects (\texttt{Estimator} subclasses such as
+\texttt{BoostingEstimator} or \texttt{NCRFEstimator}).
+\item Filesystem cache for TRF artifacts (read/write via path resolution).
+\item Backend fitting functions from Eelbrain and NCRF libraries.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+\item If \texttt{estimator} is provided as a string, the experiment defines a
+dictionary \texttt{estimators} and contains the requested key.
+\item Estimator objects implement \texttt{parameters\_for\_partial()} and return
+keyword arguments compatible with the selected backend fitter.
+\item Predictor and response data are already prepared by upstream modules.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \texttt{load\_trf(x, tstart, tstop, ..., estimator, make, path\_only)}:
+\begin{itemize}
+\item transition: No internal state transition. May create/update TRF cache file
+when \texttt{make=True}.
+\item output: Returns resolved cached TRF, newly fitted TRF, or TRF path.
+Resolution rule:
+\[
+\texttt{estimator is str} \Rightarrow \texttt{estimator := estimators[estimator]}
+\]
+Then estimator parameters override explicit options (for example
+\texttt{delta}, \texttt{basis}, \texttt{partitions}, \texttt{cv},
+\texttt{selective\_stopping}, \texttt{partition\_results}) before locating and
+computing the TRF.
+\item exception:
+\begin{itemize}
+\item \texttt{ValueError} if \texttt{estimator} is a string but
+\texttt{estimators} is missing/not a dictionary.
+\item \texttt{ValueError} if estimator key is not found in
+\texttt{estimators}.
+\item \texttt{IOError} if requested TRF is absent and \texttt{make=False}.
+\end{itemize}
+\end{itemize}
+
+\noindent \texttt{\_trf\_job(x, tstart, tstop, ..., estimator)}:
+\begin{itemize}
+\item transition: None in module state; returns deferred fitting action.
+\item output: Returns a callable for backend fitting:
+\begin{itemize}
+\item \texttt{partial(boosting, ...)} for boosting path.
+\item \texttt{partial(fit\_ncrf, ...)} for NCRF path, where
+\texttt{estimator.parameters\_for\_partial()} augments NCRF arguments.
+\item \texttt{None} when equivalent NCRF output already exists and cache link is
+created.
+\end{itemize}
+\item exception:
+\begin{itemize}
+\item \texttt{ValueError} for backward model with multiple predictors.
+\item Propagates fitting/library runtime errors from backend calls.
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+\begin{itemize}
+\item \texttt{resolve\_estimator(estimator, estimators)}:
+\[
+(\texttt{estimator} \in \texttt{str} \land \texttt{estimator} \in \texttt{keys(estimators)})
+\Rightarrow \texttt{estimators[estimator]}
+\]
+otherwise raise \texttt{ValueError}.
+\item \texttt{apply\_effective\_options(base\_opts, est\_opts)}: merges
+estimator option map over explicit call options to produce deterministic cache
+key and fitter configuration.
+\end{itemize}
+
+\newpage
+
+\bibliographystyle {plainnat}
+\bibliography {../../../refs/References}
+
+\newpage
+
+
 
 \section{Appendix} \label{Appendix}
 
