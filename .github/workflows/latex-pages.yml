@@ -37,6 +37,9 @@ jobs:
       - name: Compile LaTeX
         run: |
           PDF_CACHE_DIR="$GITHUB_WORKSPACE/build-pdf"
+
+          # Start from a clean cache directory so only core PDFs remain
+          rm -rf "$PDF_CACHE_DIR"
           mkdir -p "$PDF_CACHE_DIR"
 
           # Only build the core course documents we want on the site
