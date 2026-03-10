@@ -29,27 +29,6 @@ jobs:
           key: pdf-cache-${{ github.run_id }}
           restore-keys: |
             pdf-cache-
-      - name: Get changed LaTeX files
-        id: latex-files
-        run: |
-          BASE=${{ github.event.before }}
-          [ -z "$BASE" ] && BASE=HEAD^
-
-          CHANGED_FILES=$(git diff --name-only "$BASE" "${{ github.sha }}" -- ':(glob)docs/**/*.tex' | xargs)
-
-          echo "Changed files: $CHANGED_FILES"
-          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
-
-          CHANGED_FILENAMES=$(for file in $CHANGED_FILES; do basename "$file"; done | xargs)
-          echo "CHANGED_FILENAMES=$CHANGED_FILENAMES" >> $GITHUB_ENV
-
-          FILE_COUNT=$(echo "$CHANGED_FILENAMES" | wc -w)
-          if [ "$FILE_COUNT" -gt 1 ]; then
-            PLURAL_S='s'
-          else
-            PLURAL_S=''
-          fi
-          echo "PLURAL_S=$PLURAL_S" >> $GITHUB_ENV
       - name: Install TeX Live
         run: |
           sudo apt-get update
@@ -60,15 +39,12 @@ jobs:
           PDF_CACHE_DIR="$GITHUB_WORKSPACE/build-pdf"
           mkdir -p "$PDF_CACHE_DIR"
 
-          echo "CHANGED_FILES seen by compile step: $CHANGED_FILES"
+          # Always build all LaTeX documents so all PDFs exist on the site
+          ALL_TEX_FILES=$(find docs -name "*.tex")
+          echo "Building PDFs for:"
+          echo "$ALL_TEX_FILES"
 
-          # Bootstrap: full build if cache is empty
-          if [ -z "${CHANGED_FILES}" ] && [ -z "$(ls -A "$PDF_CACHE_DIR" 2>/dev/null)" ]; then
-            echo "No cached PDFs found; building all documents"
-            CHANGED_FILES=$(find docs -name "*.tex")
-          fi
-
-          for file in $CHANGED_FILES; do
+          for file in $ALL_TEX_FILES; do
             # Build using existing Makefile rules
             make -B "${file%.tex}.pdf"
               

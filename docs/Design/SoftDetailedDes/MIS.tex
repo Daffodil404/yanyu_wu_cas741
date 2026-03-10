@@ -375,7 +375,7 @@ stimulus/shuffle qualifiers.
 
 \subsection{Module}
 
-Estimator Selection and Parameter Resolution.
+Estimator resolution logic embedded in \texttt{load\_trf} (not a standalone API).
 \subsection{Uses}
 Uses M2 for experiment state/configuration and M4 for TRF fitting execution.
 
@@ -395,10 +395,6 @@ Uses M2 for experiment state/configuration and M4 for TRF fitting execution.
 \texttt{x}, \texttt{tstart}, \texttt{tstop}, optional \texttt{estimator} (\texttt{str} or \texttt{Estimator}) & 
 TRF result object or cache path (\texttt{path\_only=True}) & 
 \texttt{ValueError} (invalid estimator key or invalid estimator map), \texttt{IOError} (cache miss with \texttt{make=False}) \\
-\texttt{\_trf\_job} & 
-effective TRF options (including resolved estimator parameters), data/predictor inputs & 
-callable that fits TRF (\texttt{boosting} or \texttt{fit\_ncrf}) or \texttt{None} when linked cached NCRF exists & 
-\texttt{ValueError} (invalid backward multi-predictor case), runtime fitting exceptions from backend libraries \\
 \hline
 \end{tabular}
 \end{center}
@@ -407,7 +403,7 @@ callable that fits TRF (\texttt{boosting} or \texttt{fit\_ncrf}) or \texttt{None
 
 \subsubsection{State Variables}
 
-None. This module is stateless and computes effective options per request.
+None. M3 only specifies the in-function resolution behavior.
 
 \subsubsection{Environment Variables}
 
@@ -427,6 +423,8 @@ dictionary \texttt{estimators} and contains the requested key.
 \item Estimator objects implement \texttt{parameters\_for\_partial()} and return
 keyword arguments compatible with the selected backend fitter.
 \item Predictor and response data are already prepared by upstream modules.
+\item Estimator resolution is performed inline in \texttt{load\_trf} before the
+fitting job is created.
 \end{itemize}
 
 \subsubsection{Access Routine Semantics}
@@ -436,14 +434,15 @@ keyword arguments compatible with the selected backend fitter.
 \item transition: No internal state transition. May create/update TRF cache file
 when \texttt{make=True}.
 \item output: Returns resolved cached TRF, newly fitted TRF, or TRF path.
-Resolution rule:
+Estimator resolution (inline logic) rule:
 \[
 \texttt{estimator is str} \Rightarrow \texttt{estimator := estimators[estimator]}
 \]
-Then estimator parameters override explicit options (for example
+If resolved estimator is not \texttt{None}, its parameter map overrides explicit
+call options (for example
 \texttt{delta}, \texttt{basis}, \texttt{partitions}, \texttt{cv},
-\texttt{selective\_stopping}, \texttt{partition\_results}) before locating and
-computing the TRF.
+\texttt{selective\_stopping}, \texttt{partition\_results}) before passing
+effective options to TRF computation in M4.
 \item exception:
 \begin{itemize}
 \item \texttt{ValueError} if \texttt{estimator} is a string but
@@ -454,37 +453,11 @@ computing the TRF.
 \end{itemize}
 \end{itemize}
 
-\noindent \texttt{\_trf\_job(x, tstart, tstop, ..., estimator)}:
-\begin{itemize}
-\item transition: None in module state; returns deferred fitting action.
-\item output: Returns a callable for backend fitting:
-\begin{itemize}
-\item \texttt{partial(boosting, ...)} for boosting path.
-\item \texttt{partial(fit\_ncrf, ...)} for NCRF path, where
-\texttt{estimator.parameters\_for\_partial()} augments NCRF arguments.
-\item \texttt{None} when equivalent NCRF output already exists and cache link is
-created.
-\end{itemize}
-\item exception:
-\begin{itemize}
-\item \texttt{ValueError} for backward model with multiple predictors.
-\item Propagates fitting/library runtime errors from backend calls.
-\end{itemize}
-\end{itemize}
-
 \subsubsection{Local Functions}
 
-\begin{itemize}
-\item \texttt{resolve\_estimator(estimator, estimators)}:
-\[
-(\texttt{estimator} \in \texttt{str} \land \texttt{estimator} \in \texttt{keys(estimators)})
-\Rightarrow \texttt{estimators[estimator]}
-\]
-otherwise raise \texttt{ValueError}.
-\item \texttt{apply\_effective\_options(base\_opts, est\_opts)}: merges
-estimator option map over explicit call options to produce deterministic cache
-key and fitter configuration.
-\end{itemize}
+None. In current implementation, estimator resolution is not separated into
+named helper functions; it is implemented directly inside
+\texttt{load\_trf(...)}.
 
 \newpage
 
@@ -500,9 +473,10 @@ key and fitter configuration.
 
 \subsection{Module}
 
-Estimator Selection and Parameter Resolution.
+TRF computation and backend dispatch.
 \subsection{Uses}
-Uses M2 for data processing and M3 for estimator configurations fitting.
+Uses M2 for epoch/predictor-formatted data and M3 for resolved estimator
+options.
 
 
 \subsection{Syntax}
@@ -517,12 +491,12 @@ Uses M2 for data processing and M3 for estimator configurations fitting.
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
 \texttt{load\_trf} & 
-\texttt{x}, \texttt{tstart}, \texttt{tstop}, optional \texttt{estimator} (\texttt{str} or \texttt{Estimator}) & 
-TRF result object or cache path (\texttt{path\_only=True}) & 
-\texttt{ValueError} (invalid estimator key or invalid estimator map), \texttt{IOError} (cache miss with \texttt{make=False}) \\
+\texttt{x}, \texttt{tstart}, \texttt{tstop}, TRF options, optional \texttt{make}, optional \texttt{path\_only} &
+TRF result object, or cache path if \texttt{path\_only=True} &
+\texttt{IOError} (cache miss with \texttt{make=False}), propagated cache/load/runtime errors \\
 \texttt{\_trf\_job} & 
-effective TRF options (including resolved estimator parameters), data/predictor inputs & 
-callable that fits TRF (\texttt{boosting} or \texttt{fit\_ncrf}) or \texttt{None} when linked cached NCRF exists & 
+effective TRF options, prepared response \texttt{y} and predictor(s) \texttt{x} &
+deferred callable created with \texttt{partial(...)} for \texttt{boosting} or \texttt{fit\_ncrf} &
 \texttt{ValueError} (invalid backward multi-predictor case), runtime fitting exceptions from backend libraries \\
 \hline
 \end{tabular}
@@ -532,61 +506,63 @@ callable that fits TRF (\texttt{boosting} or \texttt{fit\_ncrf}) or \texttt{None
 
 \subsubsection{State Variables}
 
-None. This module is stateless and computes effective options per request.
+None. Computation is request-scoped.
 
 \subsubsection{Environment Variables}
 
 \begin{itemize}
-\item \texttt{estimators}: optional dictionary mapping estimator names
-(\texttt{str}) to estimator objects (\texttt{Estimator} subclasses such as
-\texttt{BoostingEstimator} or \texttt{NCRFEstimator}).
 \item Filesystem cache for TRF artifacts (read/write via path resolution).
-\item Backend fitting functions from Eelbrain and NCRF libraries.
+\item Backend fitting functions: Eelbrain \texttt{boosting(...)} and NCRF
+\texttt{fit\_ncrf(...)}.
+\item Forward model/covariance inputs for NCRF path when source-space inversion
+is requested.
 \end{itemize}
 
 \subsubsection{Assumptions}
 
 \begin{itemize}
-\item If \texttt{estimator} is provided as a string, the experiment defines a
-dictionary \texttt{estimators} and contains the requested key.
-\item Estimator objects implement \texttt{parameters\_for\_partial()} and return
-keyword arguments compatible with the selected backend fitter.
-\item Predictor and response data are already prepared by upstream modules.
+\item Response epochs and predictors requested by model \texttt{x} are available
+from upstream modules.
+\item Effective estimator options have already been resolved (M3) before
+dispatching the fit callable.
+\item Cache keys uniquely encode effective TRF options.
 \end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
 \noindent \texttt{load\_trf(x, tstart, tstop, ..., estimator, make, path\_only)}:
 \begin{itemize}
-\item transition: No internal state transition. May create/update TRF cache file
-when \texttt{make=True}.
-\item output: Returns resolved cached TRF, newly fitted TRF, or TRF path.
-Resolution rule:
-\[
-\texttt{estimator is str} \Rightarrow \texttt{estimator := estimators[estimator]}
-\]
-Then estimator parameters override explicit options (for example
-\texttt{delta}, \texttt{basis}, \texttt{partitions}, \texttt{cv},
-\texttt{selective\_stopping}, \texttt{partition\_results}) before locating and
-computing the TRF.
+\item transition: May create or update cache file at resolved \texttt{trf-file}
+path when \texttt{make=True}; otherwise reads existing cache only.
+\item output:
+\begin{itemize}
+\item returns cache path if \texttt{path\_only=True};
+\item returns cached TRF if valid cache exists;
+\item otherwise calls \texttt{\_trf\_job(...)} to obtain a deferred fit callable
+and executes it (\texttt{res = func()}), then serializes result to cache.
+\end{itemize}
 \item exception:
 \begin{itemize}
-\item \texttt{ValueError} if \texttt{estimator} is a string but
-\texttt{estimators} is missing/not a dictionary.
-\item \texttt{ValueError} if estimator key is not found in
-\texttt{estimators}.
 \item \texttt{IOError} if requested TRF is absent and \texttt{make=False}.
+\item Propagates unpickling and backend runtime errors.
 \end{itemize}
 \end{itemize}
 
 \noindent \texttt{\_trf\_job(x, tstart, tstop, ..., estimator)}:
 \begin{itemize}
-\item transition: None in module state; returns deferred fitting action.
-\item output: Returns a callable for backend fitting:
+\item transition: None in module state.
+\item output: Returns deferred computation using \texttt{partial(...)}:
 \begin{itemize}
-\item \texttt{partial(boosting, ...)} for boosting path.
-\item \texttt{partial(fit\_ncrf, ...)} for NCRF path, where
-\texttt{estimator.parameters\_for\_partial()} augments NCRF arguments.
+\item boosting path:
+\[
+\texttt{partial(boosting, y, xs, tstart, tstop, 'inplace', **boosting\_args)}
+\]
+\item NCRF path:
+\[
+\texttt{partial(fit\_ncrf, y, xs, fwd, cov, tstart, tstop, normalize=True, in\_place=True, **ncrf\_args)}
+\]
+Estimator-specific options are merged into fitter kwargs before creating the
+\texttt{partial} callable.
 \item \texttt{None} when equivalent NCRF output already exists and cache link is
 created.
 \end{itemize}
@@ -600,15 +576,10 @@ created.
 \subsubsection{Local Functions}
 
 \begin{itemize}
-\item \texttt{resolve\_estimator(estimator, estimators)}:
-\[
-(\texttt{estimator} \in \texttt{str} \land \texttt{estimator} \in \texttt{keys(estimators)})
-\Rightarrow \texttt{estimators[estimator]}
-\]
-otherwise raise \texttt{ValueError}.
-\item \texttt{apply\_effective\_options(base\_opts, est\_opts)}: merges
-estimator option map over explicit call options to produce deterministic cache
-key and fitter configuration.
+\item \texttt{build\_boosting\_partial(y, xs, tstart, tstop, boosting\_args)}:
+constructs deferred boosting computation.
+\item \texttt{build\_ncrf\_partial(y, xs, fwd, cov, tstart, tstop, ncrf\_args)}:
+constructs deferred NCRF computation.
 \end{itemize}
 
 \newpage
