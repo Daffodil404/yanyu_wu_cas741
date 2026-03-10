@@ -39,12 +39,25 @@ jobs:
           PDF_CACHE_DIR="$GITHUB_WORKSPACE/build-pdf"
           mkdir -p "$PDF_CACHE_DIR"
 
-          # Always build all LaTeX documents so all PDFs exist on the site
-          ALL_TEX_FILES=$(find docs -name "*.tex")
-          echo "Building PDFs for:"
-          echo "$ALL_TEX_FILES"
+          # Only build the core course documents we want on the site
+          CORE_TEX_FILES="
+          docs/ProblemStatementAndGoals/ProblemStatement.tex
+          docs/SRS/SRS.tex
+          docs/VnVPlan/VnVPlan.tex
+          docs/Design/SoftArchitecture/MG.tex
+          docs/Design/SoftDetailedDes/MIS.tex
+          "
 
-          for file in $ALL_TEX_FILES; do
+          echo "Building PDFs for core documents:"
+          echo "$CORE_TEX_FILES"
+
+          for file in $CORE_TEX_FILES; do
+            # Skip if the file does not exist (in case templates are removed)
+            if [ ! -f "$file" ]; then
+              echo "Skipping missing file: $file"
+              continue
+            fi
+
             # Build using existing Makefile rules
             make -B "${file%.tex}.pdf"
               
