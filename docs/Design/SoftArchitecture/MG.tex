@@ -73,7 +73,7 @@ This section records information for easy reference.
   PS & Physical System Description\\
   R & Requirement\\
   SRS & Software Requirements Specification\\
-  \progname{} & analyzing pipeline for eeg data via NCRF method\\
+  \progname{} & software system that loads MEG/EEG experimental data, configures NCRF/TRF estimators, and computes stimulus–response TRFs within a flexible analysis pipeline\\
   TM & Theoretical Model\\
   \bottomrule
 \end{tabular}\\
@@ -101,7 +101,7 @@ hides represent likely future changes.  Design for change is valuable in SC,
 where modifications are frequent, especially during initial development as the
 solution space is explored.  
 
-Our design follows the rules layed out by \citet{ParnasEtAl1984}, as follows:
+Our design follows the rules laid out by \citet{ParnasEtAl1984}, as follows:
 \begin{itemize}
 \item System details that are likely to change independently should be the
   secrets of separate modules.
@@ -172,7 +172,7 @@ change.
 The module design should be as general as possible. However, a general system is
 more complex. Sometimes this complexity is not necessary. Fixing some design
 decisions at the system architecture stage can simplify the software design. If
-these decision should later need to be changed, then many parts of the design
+these decisions later need to be changed, then many parts of the design
 will potentially need to be modified. Hence, it is not intended that these
 decisions will be changed.
 
@@ -270,8 +270,8 @@ to be implemented.
 \subsection{Hardware Hiding Modules (\mref{mHH})}
 
 \begin{description}
-\item[Secrets:]The detailed environment implemention for the hardware.
-\item[Services:] Interfaces with system hardware for data input and dispalay.
+\item[Secrets:]The detailed environment implementation for the hardware.
+\item[Services:] Interfaces with system hardware for data input and display.
 \item[Implemented By:] OS libraries
 \end{description}
 
@@ -294,7 +294,7 @@ to be implemented.
 \begin{description}
 \item[Secrets:]The accepted schema and storage conventions for predictors and
  trial metadata.
-\item[Services:]Loads and preprocess MEG/EEG signals, validates metadata. 
+\item[Services:]Loads and preprocesses MEG/EEG signals, validates metadata. 
 \item[Implemented By:] \progname{}
 \item[Type of Module:] Library
 \end{description}
@@ -302,7 +302,7 @@ to be implemented.
 \subsubsection{Estimator Resolve Module (\mref{mEstimator})}
 
 \begin{description}
-\item[Secrets:] The strategies for how to resolving parameters in estimators and applying to experiment.
+\item[Secrets:] The strategies for resolving parameters in estimators and applying them to experiments.
 \item[Services:] Accept 'boosting' and 'ncrf' two types of estimator which defined by the user and make it effective.
 \item[Implemented By:] \progname{}
 \item[Type of Module:] Library
@@ -312,7 +312,7 @@ to be implemented.
 \subsection{Software Decision Module (\mref{mTRF})}
 
 \begin{description}
-\item[Secrets:] The impletion of calcualtion for TRF with different estimation parameters.
+\item[Secrets:] The implementation of TRF calculation with different estimation parameters.
 \item[Services:] Compute TRF model outputs given preprocessed MEG/EEG data,
   predictor signals, and estimator parameters. Returns TRF weights and fit
   metrics needed for downstream reporting and output generation.
