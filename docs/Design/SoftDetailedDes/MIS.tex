@@ -76,7 +76,7 @@ See SRS documentation at
 
 \section{Introduction}
 
-The following document details the Module Interface Specifications for Integrating NCRF into existing TRF pipeline. This pipeline accepts MEG/EEG data for analysing and now we are going to add estimators to distinguish different estimation method, like ncrf, boosting etc.
+The following document details the Module Interface Specifications for integrating NCRF into the existing TRF pipeline. This pipeline accepts MEG/EEG data for analyzing, and we now add estimators to distinguish different estimation methods, such as \texttt{ncrf} and \texttt{boosting}.
 % \wss{Fill in your project name and description}
 
 Complementary documents include the System Requirement Specifications
@@ -168,16 +168,16 @@ The following table is taken directly from the Module Guide document for this pr
 
 \newpage
 
-\section{MIS of Hardware-Hiding Module} \label{Module} 
+\section{MIS of Hardware-Hiding Module} \label{MIS:HH} 
 % \wss{Use labels for cross-referencing}
 
 % \wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
 
-% \wss{It is also possible to use \LaTeX for hypperlinks to external documents.}
+% \wss{It is also possible to use \LaTeX for hyperlinks to external documents.}
 
 \subsection{Module}
 
-M1: OS Absraction Layer
+M1: OS Abstraction Layer
 
 \subsection{Uses}
 OS filesystem APIs, Eelbrain data-loading interfaces.
@@ -249,12 +249,12 @@ None.
 \bibliography {../../../refs/References}
 
 \newpage
-\section{MIS of Input Format Module} \label{Module} 
+\section{MIS of Input Format Module} \label{MIS:Input} 
 % \wss{Use labels for cross-referencing}
 
 % \wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
 
-% \wss{It is also possible to use \LaTeX for hypperlinks to external documents.}
+% \wss{It is also possible to use \LaTeX for hyperlinks to external documents.}
 
 \subsection{Module}
 MEG/EEG Data Formatter and Experiment Configuration.
@@ -267,6 +267,12 @@ Uses M1 for reading raw MEG/EEG data.
 \subsection{Syntax}
 
 \subsubsection{Exported Constants}
+% Constants defining predictor file naming conventions.
+\begin{itemize}
+\item \texttt{PREDICTOR\_FILE\_EXT} = \texttt{".pickle"}
+\item \texttt{PREDICTOR\_NAME\_SEP} = \texttt{"\textasciitilde"}
+\item \texttt{PREDICTOR\_FILE\_TEMPLATE} = \texttt{"\{stimulus\}\textasciitilde\{predictor\}.pickle"}
+\end{itemize}
 
 \subsubsection{Exported Access Programs}
 
@@ -371,11 +377,12 @@ stimulus/shuffle qualifiers.
 
 
 
-\section{MIS of Estimator Resolve Module} \label{Module}
+\section{MIS of Estimator Resolve Module} \label{MIS:Estimator}
 
 \subsection{Module}
 
-Estimator resolution logic embedded in \texttt{load\_trf} (not a standalone API).
+Estimator resolution service for selecting estimator objects and producing
+effective TRF options.
 \subsection{Uses}
 Uses M2 for experiment state/configuration and M4 for TRF fitting execution.
 
@@ -383,6 +390,10 @@ Uses M2 for experiment state/configuration and M4 for TRF fitting execution.
 \subsection{Syntax}
 
 \subsubsection{Exported Constants}
+% Supported estimator identifiers accepted by \texttt{load\_trf}.
+\begin{itemize}
+\item \texttt{ESTIMATOR\_KEYS} = \{\texttt{"boosting"}, \texttt{"ncrf"}\}
+\end{itemize}
 
 \subsubsection{Exported Access Programs}
 
@@ -391,10 +402,10 @@ Uses M2 for experiment state/configuration and M4 for TRF fitting execution.
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-\texttt{load\_trf} & 
-\texttt{x}, \texttt{tstart}, \texttt{tstop}, optional \texttt{estimator} (\texttt{str} or \texttt{Estimator}) & 
-TRF result object or cache path (\texttt{path\_only=True}) & 
-\texttt{ValueError} (invalid estimator key or invalid estimator map), \texttt{IOError} (cache miss with \texttt{make=False}) \\
+\texttt{resolve\_estimator} & 
+\texttt{estimator}, \texttt{estimators}, \texttt{opts} &
+resolved estimator object and effective TRF options &
+\texttt{ValueError} (invalid estimator key or invalid estimator map) \\
 \hline
 \end{tabular}
 \end{center}
@@ -423,23 +434,24 @@ dictionary \texttt{estimators} and contains the requested key.
 \item Estimator objects implement \texttt{parameters\_for\_partial()} and return
 keyword arguments compatible with the selected backend fitter.
 \item Predictor and response data are already prepared by upstream modules.
-\item Estimator resolution is performed inline in \texttt{load\_trf} before the
-fitting job is created.
+\item Estimator resolution occurs before the TRF fitting job is created.
 \end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \texttt{load\_trf(x, tstart, tstop, ..., estimator, make, path\_only)}:
+\noindent \texttt{resolve\_estimator(estimator, estimators, opts)}:
 \begin{itemize}
-\item transition: No internal state transition. May create/update TRF cache file
-when \texttt{make=True}.
-\item output: Returns resolved cached TRF, newly fitted TRF, or TRF path.
-Estimator resolution (inline logic) rule:
+\item transition: None.
+\item output: Returns a pair \texttt{(estimator\_obj, effective\_opts)} where
+\texttt{estimator\_obj} is the resolved estimator instance (or \texttt{None})
+and \texttt{effective\_opts} is the TRF option map after applying estimator
+defaults.
+Estimator resolution rule:
 \[
 \texttt{estimator is str} \Rightarrow \texttt{estimator := estimators[estimator]}
 \]
 If resolved estimator is not \texttt{None}, its parameter map overrides explicit
-call options (for example
+options (for example
 \texttt{delta}, \texttt{basis}, \texttt{partitions}, \texttt{cv},
 \texttt{selective\_stopping}, \texttt{partition\_results}) before passing
 effective options to TRF computation in M4.
@@ -449,15 +461,12 @@ effective options to TRF computation in M4.
 \texttt{estimators} is missing/not a dictionary.
 \item \texttt{ValueError} if estimator key is not found in
 \texttt{estimators}.
-\item \texttt{IOError} if requested TRF is absent and \texttt{make=False}.
 \end{itemize}
 \end{itemize}
 
 \subsubsection{Local Functions}
 
-None. In current implementation, estimator resolution is not separated into
-named helper functions; it is implemented directly inside
-\texttt{load\_trf(...)}.
+None.
 
 \newpage
 
@@ -469,7 +478,7 @@ named helper functions; it is implemented directly inside
 
 
 
-\section{MIS of TRF Calculation Module} \label{Module}
+\section{MIS of TRF Calculation Module} \label{MIS:TRF}
 
 \subsection{Module}
 
@@ -482,6 +491,7 @@ options.
 \subsection{Syntax}
 
 \subsubsection{Exported Constants}
+NA
 
 \subsubsection{Exported Access Programs}
 
