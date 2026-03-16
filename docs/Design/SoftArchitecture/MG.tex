@@ -157,10 +157,10 @@ adapted here is called design for
 change.
 
 \begin{description}
-\item[\refstepcounter{acnum} \actheacnum \label{acHardware}:] Hardware platform (e.g., OS compatibility)
-\item[\refstepcounter{acnum} \actheacnum \label{acInput}:] The format of the
-  initial input data. (e.g., MEG/EEG Data)
-\item[\refstepcounter{acnum} \actheacnum \label{acLaunch}:] Launching method (e.g., terminal command)
+\item[\refstepcounter{acnum} \actheacnum \label{acHardware}:] Hardware platform and OS compatibility.
+\item[\refstepcounter{acnum} \actheacnum \label{acInput}:] Input data schema and storage conventions for MEG/EEG signals and predictors.
+\item[\refstepcounter{acnum} \actheacnum \label{acEstimator}:] Estimator selection and parameter resolution strategy (e.g., boosting vs NCRF).
+\item[\refstepcounter{acnum} \actheacnum \label{acTRF}:] TRF computation method and related estimation parameters.
 \end{description}
 
 % \wss{Anticipated changes relate to changes that would be made in requirements,
@@ -283,8 +283,8 @@ to be implemented.
   using the experiment configuration in the TRF pipeline.
 \item[Services:]Coordinates execution of the NCRF/TRF workflow through
   experiment-level operations (for example, subject selection, predictor
-  availability, and estimator choice) and invokes model computation through
-  \texttt{load\_trf(...)}. This layer isolates requirement-driven behaviour from core
+  availability, and estimator choice) and invokes TRF computation via the TRF
+  Calculation Module. This layer isolates requirement-driven behaviour from core
   numerical implementation details.
 \item[Implemented By:] --
 \end{description}
@@ -303,7 +303,7 @@ to be implemented.
 
 \begin{description}
 \item[Secrets:] The strategies for how to resolving parameters in estimators and applying to experiment.
-\item[Services:] Accept 'boosting' and 'ncrf' two types of estimator and make it effective.
+\item[Services:] Accept 'boosting' and 'ncrf' two types of estimator which defined by the user and make it effective.
 \item[Implemented By:] \progname{}
 \item[Type of Module:] Library
 \end{description}
@@ -313,7 +313,9 @@ to be implemented.
 
 \begin{description}
 \item[Secrets:] The impletion of calcualtion for TRF with different estimation parameters.
-\item[Services:] Compute the related TRF
+\item[Services:] Compute TRF model outputs given preprocessed MEG/EEG data,
+  predictor signals, and estimator parameters. Returns TRF weights and fit
+  metrics needed for downstream reporting and output generation.
   % Changes in these modules are more likely to be motivated by a desire to
   % improve performance than by externally imposed changes.
 \item[Implemented By:] Elbrain (Python backend)
@@ -353,7 +355,8 @@ NFR3 (\textit{Portability}) & \mref{mHH}\\
 \midrule
 \acref{acHardware} & \mref{mHH}\\
 \acref{acInput} & \mref{mInput}\\
-\acref{acLaunch} & \mref{mEstimator}\\
+\acref{acEstimator} & \mref{mEstimator}\\
+\acref{acTRF} & \mref{mTRF}\\
 \bottomrule
 \end{tabular}
 \caption{Trace Between Anticipated Changes and Modules}
@@ -409,10 +412,26 @@ NA
 % it is not appropriate for a given project.}
 
 \section{Timeline}
+This section lists the timeline of the project.
 
-\wss{Schedule of tasks and who is responsible}
+\begin{table}[H]
+  \centering
+  \caption{Module Development Timeline}
+  \begin{tabular}{l l l l}
+  \toprule
+  \textbf{Module} & \textbf{ID} & \textbf{Start Date} & \textbf{End Date} \\
+  \midrule
+  Hardware-Hiding Module & \mref{mHH} & 2026-03-16 & 2026-03-19 \\
+  Input Format Module & \mref{mInput} & 2026-03-18 & 2026-03-22 \\
+  Estimator Resolve Module & \mref{mEstimator} & 2026-03-21 & 2026-03-26 \\
+  TRF Calculation Module & \mref{mTRF} & 2026-03-24 & 2026-03-30 \\
+  Integration, Testing, and Refinement & -- & 2026-03-28 & 2026-04-02 \\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+% \wss{Schedule of tasks and who is responsible}
 
-\wss{You can point to GitHub if this information is included there}
+% \wss{You can point to GitHub if this information is included there}
 
 \bibliographystyle {plainnat}
 \bibliography{../../../refs/References}
