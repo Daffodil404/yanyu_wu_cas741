@@ -178,7 +178,8 @@ decisions will be changed.
 
 \begin{description}
 \item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Input/Output devices
-  (Input: MEG/EEG data and predictors, Output: ).
+  (Input: MEG/EEG data and predictors, Output: serialized TRF results and
+  diagnostic plots/reports).
 \item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Core TRF-based stimulus-response model.
 
 \end{description}
@@ -318,7 +319,7 @@ to be implemented.
   metrics needed for downstream reporting and output generation.
   % Changes in these modules are more likely to be motivated by a desire to
   % improve performance than by externally imposed changes.
-\item[Implemented By:] Elbrain (Python backend)
+\item[Implemented By:] Eelbrain (Python backend)
 \end{description}
 
 
@@ -337,7 +338,7 @@ requirements and between the modules and the anticipated changes.
 \midrule
 R1 (\textit{R-Inputs}) & \mref{mInput}, \mref{mHH}\\
 R2 (\textit{R-Calculate}) & \mref{mEstimator}, \mref{mTRF}\\
-R3 (\textit{R-Output}) & \mref{mTRF}, \mref{mEstimator}\\
+R3 (\textit{R-Output}) & \mref{mTRF}\\
 NFR1 (\textit{Accuracy}) & \mref{mEstimator}, \mref{mTRF}\\
 NFR2 (\textit{Maintainability}) & \mref{mInput}, \mref{mEstimator}, \mref{mTRF}\\
 NFR3 (\textit{Portability}) & \mref{mHH}\\
@@ -395,12 +396,15 @@ because they use modules from the lower levels.
 %\section*{References}
 
 \section{User Interfaces}
-NA
+NA. The deliverable targets a backend analysis pipeline invoked programmatically
+or via scripts; no dedicated GUI or interactive UI is part of the system scope.
 % \wss{Design of user interface for software and hardware.  Attach an appendix if
 % needed. Drawings, Sketches, Figma}
 
 \section{Design of Communication Protocols}
-The modules for Integrating NCRF into existing pipeline communicates via structured API calls, and function attributes passing, allowing for clean and efficient data flow for data processing and estimator handling.
+NA. The system is a single-process analysis pipeline; modules communicate via
+in-process function calls and shared data structures, so no external or network
+protocol is required.
 % \wss{If there is communication between hardware and software, it may be necessary 
 % to explain the design of the communication protocol.  This section should be filled 
 % in with NA if it is not appropriate for a given project.}
