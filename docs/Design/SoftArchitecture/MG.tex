@@ -192,10 +192,10 @@ below, which are leaves in the hierarchy tree, are the modules that will
 actually be implemented.
 
 \begin{description}
-\item [\refstepcounter{mnum} \mthemnum \label{mHH}:] Hardware-Hiding Module
-\item  [\refstepcounter{mnum} \mthemnum \label{mInput}:]  Input Format Module
-\item [\refstepcounter{mnum} \mthemnum \label{mEstimator}:] Estimator Resolve Module
-\item [\refstepcounter{mnum} \mthemnum \label{mTRF}:] TRF Calculation Module
+\item [\refstepcounter{mnum} \mthemnum \label{mHH}:] Data Loading Module
+\item  [\refstepcounter{mnum} \mthemnum \label{mInput}:]  Data Preprocessing Module
+\item [\refstepcounter{mnum} \mthemnum \label{mEstimator}:] Estimator Resolution Module
+\item [\refstepcounter{mnum} \mthemnum \label{mTRF}:] TRF Computation Module
 \end{description}
 
 
@@ -206,14 +206,14 @@ actually be implemented.
 \textbf{Level 1} & \textbf{Level 2}\\
 \midrule
 
-{Hardware-Hiding Module} & Hardware \\
+{Hardware-Hiding Module} & Data Loading Module \\
 \midrule
 
-\multirow{2}{0.3\textwidth}{Behaviour-Hiding Module} & Input Format Module\\
-& Estimator Resolve Module\\
+\multirow{2}{0.3\textwidth}{Behaviour-Hiding Module} & Data Preprocessing Module\\
+& TRF Computation Module\\
 \midrule
 
-\multirow{1}{0.3\textwidth}{Software Decision Module}  & TRF Calculation Module\\
+\multirow{1}{0.3\textwidth}{Software Decision Module}  & Estimator Resolution Module\\
 \bottomrule
 
 \end{tabular}
@@ -272,7 +272,7 @@ to be implemented.
 
 \begin{description}
 \item[Secrets:]The detailed environment implementation for the hardware.
-\item[Services:] Interfaces with system hardware for data input and display.
+\item[Services:] Interfaces with system hardware and filesystem for data loading.
 \item[Implemented By:] OS libraries
 \end{description}
 
@@ -280,17 +280,17 @@ to be implemented.
 
 \begin{description}
 \item[Secrets:]The workflow-level behaviours that realize the functional
-  requirements (input ingestion, estimator invocation, and result preparation)
+  requirements (data preprocessing, TRF computation, and result preparation)
   using the experiment configuration in the TRF pipeline.
 \item[Services:]Coordinates execution of the NCRF/TRF workflow through
   experiment-level operations (for example, subject selection, predictor
-  availability, and estimator choice) and invokes TRF computation via the TRF
-  Calculation Module. This layer isolates requirement-driven behaviour from core
-  numerical implementation details.
+  availability, and TRF computation) while treating estimator selection as a
+  policy decision handled in the Software Decision Module. This layer isolates
+  requirement-driven behaviour from core numerical implementation details.
 \item[Implemented By:] --
 \end{description}
 
-\subsubsection{Input Format Module (\mref{mInput})}
+\subsubsection{Data Preprocessing Module (\mref{mInput})}
 
 \begin{description}
 \item[Secrets:]The accepted schema and storage conventions for predictors and
@@ -300,17 +300,7 @@ to be implemented.
 \item[Type of Module:] Library
 \end{description}
 
-\subsubsection{Estimator Resolve Module (\mref{mEstimator})}
-
-\begin{description}
-\item[Secrets:] The strategies for resolving parameters in estimators and applying them to experiments.
-\item[Services:] Accept 'boosting' and 'ncrf' two types of estimator which defined by the user and make it effective.
-\item[Implemented By:] \progname{}
-\item[Type of Module:] Library
-\end{description}
-
-
-\subsection{Software Decision Module (\mref{mTRF})}
+\subsubsection{TRF Computation Module (\mref{mTRF})}
 
 \begin{description}
 \item[Secrets:] The implementation of TRF calculation with different estimation parameters.
@@ -320,8 +310,19 @@ to be implemented.
   % Changes in these modules are more likely to be motivated by a desire to
   % improve performance than by externally imposed changes.
 \item[Implemented By:] Eelbrain (Python backend)
+\item[Type of Module:] Library
 \end{description}
 
+\subsection{Software Decision Module (\mref{mEstimator})}
+
+\begin{description}
+\item[Secrets:] The strategies for resolving estimator policies and parameters that
+  determine data flow and fitting configuration.
+\item[Services:] Accepts \texttt{boosting} and \texttt{ncrf} estimator choices,
+  resolves effective options, and provides policy decisions used by TRF
+  computation.
+\item[Implemented By:] \progname{}
+\end{description}
 
 \section{Traceability Matrix} \label{SecTM}
 
@@ -425,10 +426,10 @@ This section lists the timeline of the project.
   \toprule
   \textbf{Module} & \textbf{ID} & \textbf{Start Date} & \textbf{End Date} \\
   \midrule
-  Hardware-Hiding Module & \mref{mHH} & 2026-03-16 & 2026-03-19 \\
-  Input Format Module & \mref{mInput} & 2026-03-18 & 2026-03-22 \\
-  Estimator Resolve Module & \mref{mEstimator} & 2026-03-21 & 2026-03-26 \\
-  TRF Calculation Module & \mref{mTRF} & 2026-03-24 & 2026-03-30 \\
+  Data Loading Module & \mref{mHH} & 2026-03-16 & 2026-03-19 \\
+  Data Preprocessing Module & \mref{mInput} & 2026-03-18 & 2026-03-22 \\
+  Estimator Resolution Module & \mref{mEstimator} & 2026-03-21 & 2026-03-26 \\
+  TRF Computation Module & \mref{mTRF} & 2026-03-24 & 2026-03-30 \\
   Integration, Testing, and Refinement & -- & 2026-03-28 & 2026-04-02 \\
   \bottomrule
   \end{tabular}

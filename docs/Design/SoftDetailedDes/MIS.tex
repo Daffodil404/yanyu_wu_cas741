@@ -151,14 +151,14 @@ The following table is taken directly from the Module Guide document for this pr
 \textbf{Level 1} & \textbf{Level 2}\\
 \midrule
 
-{Hardware-Hiding Module} & Hardware \\
+{Hardware-Hiding Module} & Data Loading Module \\
 \midrule
 
-\multirow{2}{0.3\textwidth}{Behaviour-Hiding Module} & Input Format Module\\
-& Estimator Resolve Module\\
+\multirow{2}{0.3\textwidth}{Behaviour-Hiding Module} & Data Preprocessing Module\\
+& TRF Computation Module\\
 \midrule
 
-\multirow{1}{0.3\textwidth}{Software Decision Module} & TRF Calculation Module\\
+\multirow{1}{0.3\textwidth}{Software Decision Module} & Estimator Resolution Module\\
 \bottomrule
 
 \end{tabular}
@@ -177,7 +177,7 @@ The following table is taken directly from the Module Guide document for this pr
 
 \subsection{Module}
 
-M1: OS Abstraction Layer
+M1: Data Loading Module
 
 \subsection{Uses}
 OS filesystem APIs, Eelbrain data-loading interfaces.
@@ -249,7 +249,7 @@ None.
 \bibliography {../../../refs/References}
 
 \newpage
-\section{MIS of Input Format Module} \label{MIS:Input} 
+\section{MIS of Data Preprocessing Module} \label{MIS:Input} 
 % \wss{Use labels for cross-referencing}
 
 % \wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
@@ -257,7 +257,7 @@ None.
 % \wss{It is also possible to use \LaTeX for hyperlinks to external documents.}
 
 \subsection{Module}
-MEG/EEG Data Formatter and Experiment Configuration.
+MEG/EEG Data Preprocessing and Experiment Configuration.
 % \wss{Short name for the module}
 
 \subsection{Uses}
@@ -377,12 +377,12 @@ stimulus/shuffle qualifiers.
 
 
 
-\section{MIS of Estimator Resolve Module} \label{MIS:Estimator}
+\section{MIS of Estimator Resolution Module} \label{MIS:Estimator}
 
 \subsection{Module}
 
-Estimator resolution service for selecting estimator objects and producing
-effective TRF options.
+Estimator resolution service for selecting estimator policies and producing
+effective TRF options that determine downstream data flow.
 \subsection{Uses}
 Uses M2 for experiment state/configuration and M4 for TRF fitting execution.
 
@@ -471,7 +471,7 @@ None.
 \newpage
 
 
-\section{MIS of TRF Calculation Module} \label{MIS:TRF}
+\section{MIS of TRF Computation Module} \label{MIS:TRF}
 
 \subsection{Module}
 
