@@ -419,11 +419,9 @@ None. M3 only specifies the in-function resolution behavior.
 \subsubsection{Environment Variables}
 
 \begin{itemize}
-\item \texttt{estimators}: optional dictionary mapping estimator names
-(\texttt{str}) to estimator objects (\texttt{Estimator} subclasses such as
-\texttt{BoostingEstimator} or \texttt{NCRFEstimator}).
 \item Filesystem cache for TRF artifacts (read/write via path resolution).
-\item Backend fitting functions from Eelbrain and NCRF libraries.
+\item Forward model/covariance inputs for NCRF path when source-space inversion
+is requested.
 \end{itemize}
 
 \subsubsection{Assumptions}
@@ -499,7 +497,7 @@ TRF result object, or cache path if \texttt{path\_only=True} &
 \texttt{IOError} (cache miss with \texttt{make=False}), propagated cache/load/runtime errors \\
 \texttt{\_trf\_job} & 
 effective TRF options, prepared response \texttt{y} and predictor(s) \texttt{x} &
-deferred callable created with \texttt{partial(...)} for \texttt{boosting} or \texttt{fit\_ncrf} &
+A deferred callable created with \texttt{partial(...)}\, representing a TRF fitting task (e.g., \texttt{boosting} or NCRF). &
 \texttt{ValueError} (invalid backward multi-predictor case), runtime fitting exceptions from backend libraries \\
 \hline
 \end{tabular}
@@ -512,13 +510,9 @@ deferred callable created with \texttt{partial(...)} for \texttt{boosting} or \t
 None. Computation is request-scoped.
 
 \subsubsection{Environment Variables}
-
 \begin{itemize}
 \item Filesystem cache for TRF artifacts (read/write via path resolution).
-\item Backend fitting functions: Eelbrain \texttt{boosting(...)} and NCRF
-\texttt{fit\_ncrf(...)}.
-\item Forward model/covariance inputs for NCRF path when source-space inversion
-is requested.
+
 \end{itemize}
 
 \subsubsection{Assumptions}
