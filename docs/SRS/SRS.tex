@@ -149,6 +149,7 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
   \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
   \midrule
+  Mar 25, 2026 & 1.2 & Address peer review issues for SRS\\
   Feb 2,2026 & 1.1 & Initial Draft\\
   \bottomrule
 \end{tabularx}
@@ -174,12 +175,12 @@ description of the unit and the SI name.
 \noindent
 \begin{tabular}{l l l}
   \toprule
-  \textbf{symbol} & \textbf{unit} & \textbf{SI}\\
+  \textbf{symbol} & \textbf{quantity} & \textbf{SI unit name}\\
   \midrule
-  \si db & sound & decibel\\
+  \si{\decibel} & sound level & decibel\\
   \si{\second} & time & second\\
-  \si ms & time & millisecond\\
-  \si Hz & frequency & hertz \\
+  \si{\milli\second} & time & millisecond\\
+  \si{\hertz} & frequency & hertz \\
   \bottomrule
 \end{tabular}
 %  \caption{Provide a caption}
@@ -242,11 +243,12 @@ systems.  The symbols are listed in alphabetical order.
   GS & Goal Statement\\
   IM & Instance Model\\
   LC & Likely Change\\
+  NCRF & Neuro-Current Response Function\\
   PS & Physical System Description\\
   R & Requirement\\
   SRS & Software Requirements Specification\\
-  \progname{} & analyzing pipeline for eeg data via NCRF method\\
   TM & Theoretical Model\\
+  TRF & Temporal Response Function\\
   \bottomrule
 \end{tabular}\\
 
@@ -657,9 +659,8 @@ includes the following elements:
     %     sentence description of the goal.  There may be more than one.  Each Goal
     %     should have a meaningful label.}
 
-  \item[GS1:] Accept continuous stimulus signals and corresponding EEG/MEG recordings.
-  \item[GS2:] Estimate source-level neuro-current responses using NCRF methodology.
-  \item[GS3:] Format results to be compatible with existing pipeline outputs and analysis workflows.
+  \item[GS1:] Estimate source-level neuro-current responses using NCRF methodology.
+  \item[GS2:] Format results to be compatible with existing pipeline outputs and analysis workflows.
 
 \end{itemize}
 
@@ -872,7 +873,7 @@ instance models.
     NCRF theoretical model and assumes a discrete-time representation of the stimulus.
     \\
     \hline
-    Source & M:NCRF Model \cite{DasBrodbeckSimonBabadi2020}\\
+    Source & TM1: NCRF Model \cite{DasBrodbeckSimonBabadi2020}\\
     \hline
     Ref.\ By & \ddref{FluxCoil}, \ddref{FluxPCM}\\
     \hline
@@ -897,7 +898,7 @@ instance models.
     It represents intrinsic neural dynamics and other unmodeled processes that are not captured by the stimulus-driven response.
     \\
     \hline
-    Source & Citation here \\
+    Source & \cite{DasBrodbeckSimonBabadi2020} \\
     \hline
     Ref.\ By & \ddref{FluxCoil}, \ddref{FluxPCM}\\
     \hline
@@ -955,7 +956,7 @@ models. The dimension of each quantity is also given.
     These coefficients are treated as given data by the instance models and are used to construct the stimulus-driven component of the neural source current.
     \\
     \hline
-    Sources& Citation here \\
+    Sources& \cite{DasBrodbeckSimonBabadi2020} \\
     \hline
     Ref.\ By & \iref{ewat}\\
     \hline
@@ -1044,7 +1045,7 @@ identified in Sections~\ref{sec-theoretical} and~\ref{sec-gendef}.
     & $e(t)$ is the stimulus input feature signal. \\
     & $v_{m,t,i}$ is the background source activity.\\
     \hline
-    Sources& Citation here \\
+    Sources& \cite{DasBrodbeckSimonBabadi2020} \\
     \hline
     Ref.\ By & \iref{epcm}\\
     \hline
@@ -1201,6 +1202,9 @@ qualities that the software is expected to exhibit.
   \item[R\refstepcounter{reqnum}\thereqnum \label{R-Calculate}:]
     The system shall compute source-level neural current estimates using the NCRF model (e.g., by applying the learned/estimated response functions to $e(t)$).
 
+  \item[R\refstepcounter{reqnum}\thereqnum \label{R-Calculate-Boosting}:]
+    The system shall support TRF estimation via the boosting algorithm to preserve the baseline pipeline behavior.
+
   % \item[R\refstepcounter{reqnum}\thereqnum \label{R-VerifyOutput}:]
   %   The system shall provide a mechanism to verify that the computed outputs are consistent with the corresponding inputs and the specified instance models (e.g., by checking dimensions, sampling rates, and expected value ranges).
 
@@ -1238,7 +1242,7 @@ qualities that the software is expected to exhibit.
 The system shall produce numerically stable and reproducible results that can be verified against established TRF/NCRF benchmarks or reference implementations.
 
 \item[NFR2:] \textbf{Maintainability}  
-The system shall be modularly designed such that future extensions and defect fixes require substantially less effort than the initial development.
+The system shall allow adding or modifying estimator algorithms without changing the input/output interfaces of the pipeline.
 
 \item[NFR3:] \textbf{Portability}  
 The system shall be implemented as a Python package and be executable on macOS, Windows, and Linux platforms.
