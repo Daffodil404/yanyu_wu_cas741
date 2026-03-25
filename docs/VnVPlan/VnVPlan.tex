@@ -35,6 +35,8 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
+Mar 25, 2026 & 1.2 & Address additional VnV peer review issues\\
+Mar 25, 2026 & 1.1 & Address peer review issues for VnV Plan\\
 Feb 11 & 1.0 & Initial draft\\
 \bottomrule
 \end{tabularx}
@@ -221,6 +223,7 @@ checklist:
   \item Domain expert review for scientific validity and consistency with NCRF pipeline goals.
   \item Supervisor review for clarity, completeness, and alignment with project scope.
   \item Developer self-check to ensure functional and non-functional requirements are specific, testable, and traceable.
+  \item SRS checklist inspection using \href{../Checklists/SRS-Checklist.tex}{SRS-Checklist} to ensure required sections and quality criteria are covered.
 \end{itemize}
 
 \subsection{Design Verification}
@@ -296,12 +299,7 @@ Automated verification will use a small set of standard Python tools and CI:
 \end{itemize}
 
 \subsection{Software Validation}
-Software validation will focus on confirming that the pipeline meets the intended scientific use and produces meaningful outputs:
-\begin{itemize}
-  \item Supervisor review of results and workflow to confirm the system addresses the project goals.
-  \item Domain expert feedback on the interpretability and scientific plausibility of NCRF outputs.
-  \item Validation on a small, real dataset to ensure outputs match expected patterns and are usable for downstream analysis.
-\end{itemize}
+Not applicable. This project integrates an existing NCRF model into the pipeline rather than developing a new scientific model. Validation of the underlying model is out of scope and is assumed to be covered by the original NCRF publications and reference implementations.
 
 % \wss{If there is any external data that can be used for validation, you should
 %   point to it here.  If there are no plans for validation, you should state that
@@ -338,8 +336,8 @@ The test cases are derived from the functional requirements in the Software Requ
 % \wss{Include a blurb here to explain why the subsections below
 %   cover the requirements.  References to the SRS would be good here.}
 The subsections below map directly to the SRS functional requirements:
-input handling (\href{../SRS/SRS.tex}{R-Inputs}), NCRF computation (\href{../SRS/SRS.tex}{R-Calculate}), and
-output generation for downstream analysis (\href{../SRS/SRS.tex}{R-Output}). Each test area
+input handling (\hyperref[R-Inputs]{R-Inputs}), NCRF computation (\hyperref[R-Calculate]{R-Calculate}), and
+output generation for downstream analysis (\hyperref[R-Output]{R-Output}). Each test area
 is designed to verify that the implemented pipeline satisfies these specific
 requirements.
 
@@ -348,7 +346,7 @@ requirements.
 %   covers tests for input constraints, you should reference the data constraints
 %   table in the SRS.}
 
-\subsubsection{Input Handling and API Selection (\href{../SRS/SRS.tex}{R-Inputs})}
+\subsubsection{Input Handling and API Selection (\hyperref[R-Inputs]{R-Inputs})}
 This area verifies that the pipeline accepts required inputs and exposes an API for using NCRF estimator.
 		
 \paragraph{Input and Estimator Selection}
@@ -365,7 +363,7 @@ This area verifies that the pipeline accepts required inputs and exposes an API 
 					
 \textbf{Output:} The NCRF pipeline is invoked without input/parameter errors; data and parameters are accepted.
 
-\textbf{Test Case Derivation:} \href{../SRS/SRS.tex}{R-Inputs} requires the system to accept $e(t)$ as input.
+\textbf{Test Case Derivation:} \hyperref[R-Inputs]{R-Inputs} requires the system to accept $e(t)$ as input.
 					
 \textbf{How Test Will Be Performed:} Run the pipeline with a small BIDS dataset and log successful NCRF initialization.
 					
@@ -399,7 +397,7 @@ This area verifies that the pipeline accepts required inputs and exposes an API 
 
 \end{enumerate}
 
-\subsubsection{NCRF Computation (\href{../SRS/SRS.tex}{R-Calculate})}
+\subsubsection{NCRF Computation (\hyperref[R-Calculate]{R-Calculate})}
 This area verifies that NCRF estimation executes and produces valid outputs.
 
 \paragraph{NCRF Execution Sanity}
@@ -416,7 +414,7 @@ This area verifies that NCRF estimation executes and produces valid outputs.
 
 \textbf{Output:} Estimated $j_{m,t}$ and $\tau_{m,i,\ell}$ are produced with expected dimensions.
 
-\textbf{Test Case Derivation:} \href{../SRS/SRS.tex}{R-Calculate} requires computation of source-level neural current estimates.
+\textbf{Test Case Derivation:} \hyperref[R-Calculate]{R-Calculate} requires computation of source-level neural current estimates.
 
 \textbf{How Test Will Be Performed:} Run NCRF on a small dataset and verify output shapes against model settings.
 
@@ -426,17 +424,17 @@ This area verifies that NCRF estimation executes and produces valid outputs.
 
 \textbf{Initial State:} Same as FR-CALC-01 with fixed random seed.
 
-\textbf{Input:} Repeat the same NCRF run twice.
+\textbf{Input:} Valid $e(t)$ and data; NCRF estimator selected; fixed random seed.
 
 \textbf{Output:} Results are numerically consistent across runs (within tolerance).
 
 \textbf{Test Case Derivation:} Supports reproducibility expectations aligned with NFR1 while validating computation.
 
-\textbf{How Test Will Be Performed:} Compare outputs from repeated runs using relative error or norm.
+\textbf{How Test Will Be Performed:} Run the same NCRF computation twice and compare outputs using relative error or norm.
 
 \end{enumerate}
 
-\subsubsection{Output Generation and Downstream Use (\href{../SRS/SRS.tex}{R-Output})}
+\subsubsection{Output Generation and Downstream Use (\hyperref[R-Output]{R-Output})}
 This area verifies output content and compatibility with downstream analysis.
 
 \paragraph{Output Format and Integration}
@@ -453,7 +451,7 @@ This area verifies output content and compatibility with downstream analysis.
 
 \textbf{Output:} Outputs include $j_{m,t}$ and $\tau_{m,i,\ell}$ in the expected structure and format.
 
-\textbf{Test Case Derivation:} \href{../SRS/SRS.tex}{R-Output} requires both outputs in a format suitable for downstream analysis.
+\textbf{Test Case Derivation:} \hyperref[R-Output]{R-Output} requires both outputs in a format suitable for downstream analysis.
 
 \textbf{How Test Will Be Performed:} Inspect output fields and validate metadata/shape consistency.
 
@@ -467,7 +465,7 @@ This area verifies output content and compatibility with downstream analysis.
 
 \textbf{Output:} Downstream analysis successfully loads and processes the outputs without format errors.
 
-\textbf{Test Case Derivation:} \href{../SRS/SRS.tex}{R-Output} requires interoperability with the existing pipeline.
+\textbf{Test Case Derivation:} \hyperref[R-Output]{R-Output} requires interoperability with the existing pipeline.
 
 \textbf{How Test Will Be Performed:} Execute downstream loading script and verify completion.
 
@@ -512,7 +510,7 @@ Type: Dynamic, Automatic
 					
 \textbf{Input}/Condition: Run NCRF on the reference dataset with documented parameters.
 					
-\textbf{Output}/Result: Output matches the reference within an agreed tolerance (relative error or norm).
+\textbf{Output}/Result: Output matches the reference within a relative error tolerance of $1\times 10^{-3}$ (or tighter) using an appropriate norm.
 					
 \textbf{How Test Will Be Performed:} Compare $j_{m,t}$ and $\tau_{m,i,\ell}$ to reference results and report error metrics.
 					
@@ -584,9 +582,9 @@ SRS and the test cases defined in this VnV plan.
 \toprule
 \textbf{Requirement} & \textbf{Test Cases} \\
 \midrule
-\href{../SRS/SRS.tex}{R-Inputs}  & FR-INPUT-01, FR-API-02, FR-API-03 \\
-\href{../SRS/SRS.tex}{R-Calculate} & FR-CALC-01, FR-CALC-02 \\
-\href{../SRS/SRS.tex}{R-Output} & FR-OUT-01, FR-OUT-02 \\
+\hyperref[R-Inputs]{R-Inputs}  & FR-INPUT-01, FR-API-02, FR-API-03 \\
+\hyperref[R-Calculate]{R-Calculate} & FR-CALC-01, FR-CALC-02 \\
+\hyperref[R-Output]{R-Output} & FR-OUT-01, FR-OUT-02 \\
 NFR1 (Accuracy) & NFR-ACC-01, NFR-ACC-02 \\
 NFR2 (Maintainability) & NFR-MAINT-01 \\
 NFR3 (Portability) & NFR-PORT-01 \\
