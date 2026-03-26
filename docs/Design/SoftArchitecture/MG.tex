@@ -47,6 +47,7 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
+Mar 25, 2026 & 1.1 & Post-presentation refinements based on professor's feedback; remove software decision module; align with feedback\\
 March 5, 2026 & 1.0 & Initial Draft\\
 \bottomrule
 \end{tabularx}
@@ -209,11 +210,9 @@ actually be implemented.
 {Hardware-Hiding Module} & Data Loading Module \\
 \midrule
 
-\multirow{2}{0.3\textwidth}{Behaviour-Hiding Module} & Data Preprocessing Module\\
+\multirow{3}{0.3\textwidth}{Behaviour-Hiding Module} & Data Preprocessing Module\\
+& Estimator Resolution Module\\
 & TRF Computation Module\\
-\midrule
-
-\multirow{1}{0.3\textwidth}{Software Decision Module}  & Estimator Resolution Module\\
 \bottomrule
 
 \end{tabular}
@@ -236,7 +235,7 @@ between requirements and modules is listed in Table~\ref{TblConnection}.
 R1 (\textit{R-Inputs}) & \mref{mInput}, \mref{mHH}\\
 R2 (\textit{R-Calculate}) & \mref{mEstimator}, \mref{mTRF}\\
 R3 (\textit{R-Output}) & \mref{mTRF}\\
-NFR1 (\textit{Accuracy}) & \mref{mTRF}\\
+NFR1 (\textit{Accuracy}) & \mref{mEstimator}, \mref{mTRF}\\
 NFR2 (\textit{Maintainability}) & \mref{mInput}, \mref{mEstimator}, \mref{mTRF}\\
 NFR3 (\textit{Portability}) & \mref{mHH}\\
 \bottomrule
@@ -284,9 +283,9 @@ to be implemented.
   using the experiment configuration in the TRF pipeline.
 \item[Services:]Coordinates execution of the NCRF/TRF workflow through
   experiment-level operations (for example, subject selection, predictor
-  availability, and TRF computation) while treating estimator selection as a
-  policy decision handled in the Software Decision Module. This layer isolates
-  requirement-driven behaviour from core numerical implementation details.
+  availability, and TRF computation) while handling estimator selection in the
+  Estimator Resolution Module. This layer isolates requirement-driven behaviour
+  from core numerical implementation details.
 \item[Implemented By:] --
 \end{description}
 
@@ -313,7 +312,7 @@ to be implemented.
 \item[Type of Module:] Library
 \end{description}
 
-\subsection{Software Decision Module (\mref{mEstimator})}
+\subsubsection{Estimator Resolution Module (\mref{mEstimator})}
 
 \begin{description}
 \item[Secrets:] The strategies for resolving estimator policies and parameters that

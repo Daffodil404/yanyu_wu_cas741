@@ -53,6 +53,7 @@ urlcolor=cyan          % color of external links
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
+Mar 25, 2026 & 1.1 & Post-presentation refinements based on professor's feedback\\
 March 5, 2026 & 1.0 & Initial version\\
 \bottomrule
 \end{tabularx}
@@ -154,11 +155,9 @@ The following table is taken directly from the Module Guide document for this pr
 {Hardware-Hiding Module} & Data Loading Module \\
 \midrule
 
-\multirow{2}{0.3\textwidth}{Behaviour-Hiding Module} & Data Preprocessing Module\\
+\multirow{3}{0.3\textwidth}{Behaviour-Hiding Module} & Data Preprocessing Module\\
+& Estimator Resolution Module\\
 & TRF Computation Module\\
-\midrule
-
-\multirow{1}{0.3\textwidth}{Software Decision Module} & Estimator Resolution Module\\
 \bottomrule
 
 \end{tabular}
@@ -242,11 +241,6 @@ serialization exceptions for unsupported object graphs.
 \subsubsection{Local Functions}
 
 None.
-
-\newpage
-
-\bibliographystyle {plainnat}
-\bibliography {../../../refs/References}
 
 \newpage
 \section{MIS of Data Preprocessing Module} \label{MIS:Input} 
@@ -369,14 +363,6 @@ stimulus/shuffle qualifiers.
 \end{itemize}
 
 \newpage
-
-\bibliographystyle {plainnat}
-\bibliography {../../../refs/References}
-
-\newpage
-
-
-
 \section{MIS of Estimator Resolution Module} \label{MIS:Estimator}
 
 \subsection{Module}
@@ -386,11 +372,9 @@ effective TRF options that determine downstream data flow.
 \subsection{Uses}
 Uses M2 for experiment state/configuration and M4 for TRF fitting execution.
 
-
 \subsection{Syntax}
 
 \subsubsection{Exported Constants}
-% Supported estimator identifiers accepted by \texttt{load\_trf}.
 \begin{itemize}
 \item \texttt{ESTIMATOR\_KEYS} = \{\texttt{"boosting"}, \texttt{"ncrf"}\}
 \end{itemize}
@@ -402,10 +386,10 @@ Uses M2 for experiment state/configuration and M4 for TRF fitting execution.
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-\texttt{resolve\_estimator} & 
-\texttt{estimator}, \texttt{estimators}, \texttt{opts} &
-resolved estimator object and effective TRF options &
-\texttt{ValueError} (invalid estimator key or invalid estimator map) \\
+\texttt{\_resolve\_estimator} &
+\texttt{estimator: str|Estimator|None} &
+\texttt{Estimator|None} &
+\texttt{ValueError} (invalid estimator key or type) \\
 \hline
 \end{tabular}
 \end{center}
@@ -437,37 +421,28 @@ keyword arguments compatible with the selected backend fitter.
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \texttt{resolve\_estimator(estimator, estimators, opts)}:
+\noindent \texttt{\_resolve\_estimator(estimator)}:
 \begin{itemize}
 \item transition: None.
-\item output: Returns a pair \texttt{(estimator\_obj, effective\_opts)} where
-\texttt{estimator\_obj} is the resolved estimator instance (or \texttt{None})
-and \texttt{effective\_opts} is the TRF option map after applying estimator
-defaults.
-Estimator resolution rule:
-\[
-\texttt{estimator is str} \Rightarrow \texttt{estimator := estimators[estimator]}
-\]
-If resolved estimator is not \texttt{None}, its parameter map overrides explicit
-options (for example
-\texttt{delta}, \texttt{basis}, \texttt{partitions}, \texttt{cv},
-\texttt{selective\_stopping}, \texttt{partition\_results}) before passing
-effective options to TRF computation in M4.
+\item output: Returns a resolved estimator instance (or \texttt{None}) and
+validates estimator type and key.
 \item exception:
 \begin{itemize}
 \item \texttt{ValueError} if \texttt{estimator} is a string but
 \texttt{estimators} is missing/not a dictionary.
 \item \texttt{ValueError} if estimator key is not found in
-\texttt{estimators}.
+\texttt{estimators} or if the resolved object is not an \texttt{Estimator}.
 \end{itemize}
 \end{itemize}
 
 \subsubsection{Local Functions}
 
-None.
+\begin{itemize}
+\item \texttt{\_apply\_estimator\_params(estimator: Estimator|None, **kwargs: dict)}:
+merge estimator defaults into explicit TRF options.
+\end{itemize}
 
 \newpage
-
 
 \section{MIS of TRF Computation Module} \label{MIS:TRF}
 
