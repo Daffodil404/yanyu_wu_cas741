@@ -400,6 +400,11 @@ Uses M2 for experiment state/configuration and M4 for TRF fitting execution.
 
 None. M3 only specifies the in-function resolution behavior.
 
+\subsubsection{Design Pattern}
+
+Strategy pattern with a registry-based resolver: the estimator key selects a
+concrete estimator object whose parameters are applied before TRF computation.
+
 \subsubsection{Environment Variables}
 
 \begin{itemize}
