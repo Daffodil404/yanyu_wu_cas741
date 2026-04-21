@@ -193,7 +193,7 @@ NA
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
 \texttt{RawSource.\_load} & \texttt{subject}: \texttt{str}, \texttt{recording}: \texttt{Path}, \texttt{preload}: $\mathbb{B}$ & MNE \texttt{Raw} object & \texttt{FileNotFoundError}, \texttt{OSError} (reader I/O errors) \\
-\texttt{save.pickle} & \texttt{res}: Python object, \texttt{dst}: \texttt{Path} & written pickle file at \texttt{dst} & \texttt{OSError}, pickle serialization errors \\
+\texttt{save.pickle} & \texttt{res}: Python object, \texttt{dst}: \texttt{Path} & written pickle file at \texttt{dst} & \texttt{OSError}, \texttt{pickle.PicklingError}, \texttt{TypeError} \\
 \hline
 \end{tabular}
 \end{center}
@@ -233,8 +233,7 @@ located, or \texttt{OSError} when low-level reader I/O fails.
 \item transition: Writes serialized object \texttt{res} to destination path
 \texttt{dst}.
 \item output: Produces a persisted pickle artifact for cache/results reuse.
-\item exception: Raises \texttt{OSError} for filesystem write failures and
-serialization exceptions for unsupported object graphs.
+\item exception: Raises \texttt{OSError} for filesystem write failures, \texttt{pickle.PicklingError} when pickle serialization fails, and \texttt{TypeError} when the object graph contains values that cannot be serialized by pickle.
 \end{itemize}
 
 \subsubsection{Local Functions}
