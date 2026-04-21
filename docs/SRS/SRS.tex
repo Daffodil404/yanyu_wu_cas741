@@ -1223,10 +1223,10 @@ qualities that the software is expected to exhibit.
 \begin{itemize}
 
   \item[R\refstepcounter{reqnum}\thereqnum \label{R-Inputs}:]
-    The system shall accept a continuous stimulus feature signal $e(t)$ as input to the NCRF pipeline.
+    The system shall accept either (i) a precomputed continuous stimulus feature signal $e(t)$ or (ii) a raw continuous stimulus signal from which $e(t)$ can be extracted using a configured feature-extraction method (for example, speech-envelope extraction), and ensure the resulting $e(t)$ is time-aligned with EEG/MEG recordings.
 
   \item[R\refstepcounter{reqnum}\thereqnum \label{R-Calculate}:]
-    The system shall compute source-level neural current estimates using the NCRF model (e.g., by applying the learned/estimated response functions to $e(t)$).
+    The system shall compute source-level neural current estimates using the NCRF model by applying learned/estimated response functions to the stimulus feature signal $e(t)$, where $e(t)$ is the aligned feature signal accepted or derived in \rref{R-Inputs}.
 
   \item[R\refstepcounter{reqnum}\thereqnum \label{R-Calculate-Boosting}:]
     The system shall support TRF estimation via the boosting algorithm to preserve the baseline pipeline behavior.
