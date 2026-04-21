@@ -303,7 +303,7 @@ Evidence collected from this process will include test logs, pass/fail outcomes,
 %   implementation.}
 Automated verification will use a small set of standard Python tools and CI:
 \begin{itemize}
-  \item Continuous Integration (CI) to run tests and checks on each update to the repository.
+  \item A GitHub Actions CI workflow (triggered on push/pull request) to run automated tests and checks on each repository update.
   \item Unit testing with `pytest` for functional correctness of modules and utilities.
   \item Coverage tracking with `Coverage.py` to summarize test coverage.
 \end{itemize}
