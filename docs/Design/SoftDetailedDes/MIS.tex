@@ -192,8 +192,8 @@ NA
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-\texttt{RawSource.\_load} & \texttt{subject}, \texttt{recording}, \texttt{preload} & MNE \texttt{Raw} object loaded from EEG/MEG file & \texttt{FileNotFoundError}, \texttt{OSError} (reader I/O errors) \\
-\texttt{save.pickle} & Python object (\texttt{res}) + destination path (\texttt{dst}) & Pickle file written to disk (TRF cache/result file) & \texttt{OSError}, pickle serialization errors \\
+\texttt{RawSource.\_load} & \texttt{subject}: \texttt{str}, \texttt{recording}: \texttt{Path}, \texttt{preload}: $\mathbb{B}$ & MNE \texttt{Raw} object & \texttt{FileNotFoundError}, \texttt{OSError} (reader I/O errors) \\
+\texttt{save.pickle} & \texttt{res}: Python object, \texttt{dst}: \texttt{Path} & written pickle file at \texttt{dst} & \texttt{OSError}, pickle serialization errors \\
 \hline
 \end{tabular}
 \end{center}
