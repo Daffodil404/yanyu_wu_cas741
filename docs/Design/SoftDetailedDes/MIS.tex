@@ -396,8 +396,7 @@ None. M3 only specifies the in-function resolution behavior.
 
 \subsubsection{Design Pattern}
 
-Strategy pattern with a registry-based resolver: the estimator key selects a
-concrete estimator object whose parameters are applied before TRF computation.
+Strategy pattern with a registry-based resolver: M3 (Estimator Resolution Module) defines the estimator-selection interface by resolving an estimator key to a concrete estimator policy before TRF computation. The concrete strategy implementations are the \texttt{boosting} estimator and the \texttt{ncrf} estimator, each of which provides its own parameter set and computation path.
 
 \subsubsection{Environment Variables}
 
