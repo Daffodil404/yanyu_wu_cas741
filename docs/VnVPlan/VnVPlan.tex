@@ -532,11 +532,11 @@ Type: Dynamic, Automatic
 					
 \textbf{Initial State:} Fixed random seed and configuration.
 					
-\textbf{Input}/Condition: Repeat NCRF estimation twice.
+\textbf{Input}/Condition: Repeat the same NCRF estimation twice with the same predictor file, subject, parameter configuration, and fixed random seed.
 					
-\textbf{Output}/Result: Outputs are numerically consistent across runs within tolerance.
+\textbf{Output}/Result: The NCRF coefficient tensor $\tau_{m,i,\ell}$ from both runs has identical shape and relative error $\leq 10^{-6}$; if $j_{m,t}$ is exposed by the result object, it must also have identical shape and relative error $\leq 10^{-6}$.
 					
-\textbf{How Test Will Be Performed:} Compute relative error or norm between repeated runs and report results.
+\textbf{How Test Will Be Performed:} Execute the same NCRF call twice, compute relative error separately for $\tau_{m,i,\ell}$ (and for $j_{m,t}$ if present), and report both the tensor shape comparison and the numeric error values.
 
 \end{enumerate}
 
