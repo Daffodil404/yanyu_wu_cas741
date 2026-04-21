@@ -149,6 +149,7 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
   \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
   \midrule
+  Apr 21, 2026 & 1.3 & Updated based on supervisor feedback\\
   Mar 25, 2026 & 1.2 & Address peer review issues for SRS\\
   Feb 2,2026 & 1.1 & Initial Draft\\
   \bottomrule
@@ -179,7 +180,6 @@ description of the unit and the SI name.
   \midrule
   \si{\decibel} & sound level & decibel\\
   \si{\second} & time & second\\
-  \si{\milli\second} & time & millisecond\\
   \si{\hertz} & frequency & hertz \\
   \bottomrule
 \end{tabular}
@@ -243,6 +243,7 @@ systems.  The symbols are listed in alphabetical order.
   GS & Goal Statement\\
   IM & Instance Model\\
   LC & Likely Change\\
+  BIDS & Brain Imaging Data Structure\\
   NCRF & Neuro-Current Response Function\\
   PS & Physical System Description\\
   R & Requirement\\
@@ -338,6 +339,8 @@ systems.  The symbols are listed in alphabetical order.
 
 \section{Introduction}
 
+This Software Requirements Specification defines the software system \progname{}.
+
 The ability to understand how the human brain processes continuous auditory stimuli, such as speech, is a central problem in cognitive neuroscience. Non-invasive measurements, such as magnetoencephalography (MEG) and electroencephalogram (EEG), provide high temporal resolution recordings of neural activities.
 Typically, modeling how the brain's cortical sources respond to time-varying stimuli from these measurement statistics is challenging.
 However, the Neuro-Current Response Function (NCRF) directly models the 3D cortical dipole currents as linear filters of stimulus features, avoiding the need for separate source reconstruction or fixed dipole orientations. By combining vector-valued impulse responses with the forward model and regularized estimation, NCRF enables accurate prediction of neural responses while flexibly adapting to each source's spatial characteristics.
@@ -387,7 +390,7 @@ The following aspects are explicitly out of scope:
 
 \subsection{Characteristics of Intended Reader} \label{sec-IntendedReader}
 
-The intended readers of this Software Requirements Specification should have an undergraduate-level understanding of programming and math.
+The intended readers of this Software Requirements Specification should have at least upper-year undergraduate preparation in programming, linear algebra, probability, and signal processing, as typically covered in senior undergraduate or introductory graduate courses in neuroscience, machine learning, biomedical engineering, or scientific computing.
 The users of the NCRF pipeline may have a lower level of expertise, as explained in Section~\ref{SecUserCharacteristics}.
 
 % \plt{This section summarizes the skills and knowledge of the readers of the
@@ -467,7 +470,7 @@ characteristics and lists the system constraints.
 \subsection{System Context}
 
 The Figure1 below indicates the system context about this project.
-The user could be a researcher or graduate student works on neuro-science, who will provide time-series stimuli and related neuro data and it has been represented by the circle in Fig 1. The rectangle represents the software system (NCRF pipeline) and the the arrow indicates the workflow of data.
+The user could be a researcher or graduate student works on neuro-science, who will provide time-series stimuli and related neuro data, including datasets organized using the Brain Imaging Data Structure (BIDS) format, and it has been represented by the circle in Fig 1. The rectangle represents the software system (NCRF pipeline), which validates input data organization and compatibility before analysis, and the the arrow indicates the workflow of data.
 
 % \plt{Your system context will include a figure that shows the abstract view of
 %   the software.  Often in a scientific context, the program can be viewed
@@ -532,7 +535,7 @@ The software is intended to be used in neuroscience research, where researchers 
 % automotive hazard analyses.}
 
 \subsection{User Characteristics} \label{SecUserCharacteristics}
-The users of NCRF pipeline should have a basic understanding of Neuro Science, such as basic neuro data structure, basic neuro science analysis algorithm. Programming ability is also required for end users, to accessing the pipeline by python.
+The users of the NCRF pipeline should have at least senior undergraduate or introductory graduate-level preparation in neuroscience or biomedical engineering, including familiarity with EEG/MEG data organization, signal-processing concepts, and standard analysis workflows. Users should also be able to run and modify Python-based analysis scripts or Jupyter notebooks to access the pipeline.
 
 % \plt{This section summarizes the knowledge/skills expected of the user.
 %   Measuring usability, which is often a required non-function requirement,
@@ -544,7 +547,7 @@ The users of NCRF pipeline should have a basic understanding of Neuro Science, s
 %   Calculus and Physics.''}
 
 \subsection{System Constraints}
-The system should be built based on the existing TRF Experiment pipeline and the related NCRF modules of Eelbrain. The pipeline will be built via Python and interactive functions should be in Jupyter Notebook.
+The system should be built based on the existing TRF experiment pipeline and the related NCRF modules of the Eelbrain software library \citep{BrodbeckEelbrain}. This constraint is required to preserve compatibility with the current research workflow, reuse existing preprocessing and baseline TRF analysis components, and support direct comparison between the integrated NCRF results and prior pipeline outputs. The pipeline will therefore remain Python-based, and its interactive functions will remain available through Jupyter Notebook.
 % \plt{System constraints differ from other type of requirements because they
 %   limit the developers' options in the system design and they identify how the
 %   eventual system must fit into the world. This is the only place in the SRS
@@ -582,11 +585,12 @@ This subsection provides a list of terms that are used in the subsequent section
 
 \begin{itemize}
 
+  \item \textbf{Continuous stimulus}: A continuously varying input signal, such as speech or another time-series stimulus feature, that is sampled over time rather than represented as isolated events.
   \item \textbf{TRF}: TRF is the short for (Temporal Response Function). It is an encoding model, that describes
     how the continous stimuli will be mapped to neural signal by brain.
   \item \textbf{NCRF}: NCRF is short for Neuro-Current Response Function. It is a source-level linear response function that models how cortical dipole currents in the brain respond over time to external stimulus features.
   \item \textbf{Dipole}: Dipole is a simplified model of a small localized neural current in the brain, representing  direction of electrical activity at a cortical source.
-
+  \item \textbf{BIDS}: Brain Imaging Data Structure, a standardized format for organizing and describing neuroimaging data \citep{gorgolewski2016bids}.
 \end{itemize}
 
 \subsubsection{Physical System Description} \label{sec-phySystDescrip}
@@ -651,7 +655,7 @@ includes the following elements:
 %   amount of technical language.  They should be understandable by non-domain
 %   experts.}
 
-\noindent Given the time-series stimuli, the goal statements are:
+\noindent The goal statements are:
 
 \begin{itemize}
 
@@ -659,8 +663,8 @@ includes the following elements:
     %     sentence description of the goal.  There may be more than one.  Each Goal
     %     should have a meaningful label.}
 
-  \item[GS1:] Estimate source-level neuro-current responses using NCRF methodology.
-  \item[GS2:] Format results to be compatible with existing pipeline outputs and analysis workflows.
+  \item[GS1:] Provide source-level characterization of neural responses to continuous stimulus feature signals using the NCRF framework.
+  \item[GS2:] Support downstream neuroscience analysis by producing outputs that integrate with the existing research workflow.
 
 \end{itemize}
 
@@ -758,16 +762,16 @@ change [LC], in which the respective assumption is used.
     %     explicit (or implicit) ``and'' in the text of an assumption.}
 
   \item[A\refstepcounter{assumpnum}\theassumpnum \label{A1}:]
-  Preprocessed, time-aligned stimulus features and EEG/MEG recordings are available as inputs.
+  Preprocessed, time-aligned stimulus features and EEG/MEG recordings are available as inputs (used by \iref{IM-NeuralStimResponse}).
 
   \item[A\refstepcounter{assumpnum}\theassumpnum \label{A2}:]
-  Cortical source responses are modeled using linear temporal filters; nonlinear dynamics are not considered.
+  Cortical source responses are modeled using linear temporal filters; nonlinear dynamics are not considered (used by \tref{TM-NCRF-Model}, \dref{GD-StimulusDriven}, and \iref{IM-NeuralStimResponse}).
 
   \item[A\refstepcounter{assumpnum}\theassumpnum \label{A3}:]
-  The cortical source space and the corresponding forward model are assumed to be fixed and known.
+  The cortical source space and the corresponding forward model are assumed to be fixed and known (used by \tref{TM-NCRF-Model} and \iref{IM-NeuralStimResponse}).
 
   \item[A\refstepcounter{assumpnum}\theassumpnum \label{A4}:]
-  The brain response to a stimulus is not instantaneous; it occurs with a non-zero time lag.
+  The brain response to a stimulus is not instantaneous; it occurs with a non-zero time lag (used by \tref{TM-NCRF-Model}, \dref{GD-StimulusDriven}, and \iref{IM-NeuralStimResponse}).
 \end{itemize}
 
 \subsubsection{Theoretical Models}\label{sec-theoretical}
@@ -799,11 +803,11 @@ on. Under the linear temporal response assumption (A3), the stimulus-driven neur
 {\ensuremath{\mathbf{j}_m(t)=\sum_{\ell=0}^{L-1}\boldsymbol{\tau}_m(\ell)\, e(t-\ell)+\mathbf{v}_m(t)}}
 % #5 description
 {%
-  The NCRF model defines how the stimulus feature drives the neural source current at cortical source location $m$.
+  The NCRF model defines how the stimulus feature drives the neural source current at cortical source location $m$. The location index $m$ refers to a dipole position in a discretized cortical source space embedded in $\mathbb{R}^3$.
   Here, $\mathbf{j}_m(t)$ is the (vector-valued) equivalent current dipole moment at source $m$ (SI unit: \si{\ampere\metre}).
   The term $e(t-\ell)$ is the stimulus feature at lag $\ell$ (feature-dependent unit; commonly dimensionless or arbitrary units).
   The vector-valued kernel $\boldsymbol{\tau}_m(\ell)$ is the neuro-current response function (NCRF) at source $m$ and lag $\ell$
-  (unit: \si{\ampere\metre} per stimulus unit), and $L$ is the number of discrete lags.
+  (unit: \si{\ampere\metre} per stimulus unit), where $\ell \in \{0,1,\ldots,L-1\}$ is an integer lag index and $L \in \mathbb{N}$ is the total number of discrete lags. Thus, $\ell$ indexes individual lag values, while $L$ specifies the overall lag-window length.
   $\mathbf{v}_m(t)$ represents stimulus-independent background source activity (same unit as $\mathbf{j}_m(t)$).
 }
 % #6 Notes
@@ -814,7 +818,7 @@ on. Under the linear temporal response assumption (A3), the stimulus-driven neur
 {\citep{DasBrodbeckSimonBabadi2020}}
 % #8 Referenced by
 {%
-  None.
+  \dref{GD-StimulusDriven}, \dref{GD-BackgroundActivity}, and \iref{IM-NeuralStimResponse}.
 }
 % #9 Preconditions
 {%
@@ -868,7 +872,7 @@ instance models.
     at source location $m$, orientation $i$, and time $t$. \\
     & It is defined as a finite-lag linear convolution between the stimulus feature
     signal $e(t)$ and the neuro-current response function (NCRF) coefficients
-    $\tau_{m,i,\ell}$. \\
+    $\tau_{m,i,\ell}$, where $\ell \in \{0,1,\ldots,L-1\}$ is an integer lag index. \\
     & This definition is obtained by isolating the stimulus-dependent term in the
     NCRF theoretical model and assumes a discrete-time representation of the stimulus.
     \\
@@ -933,6 +937,28 @@ models. The dimension of each quantity is also given.
 \noindent
 \begin{minipage}{\textwidth}
   \renewcommand*{\arraystretch}{1.5}
+  \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+    \hline
+    \rowcolor[gray]{0.9}
+    Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{DD-StimulusFeature}\\
+    \hline
+    Label& \bf Stimulus Feature Signal \\
+    \hline
+    Symbol &$e(t)$\\
+    \hline
+    SI Units & feature-dependent (commonly normalized or decibel-derived) \\
+    \hline
+    Equation&$e:[0,T] \rightarrow \mathbb{R}$, sampled at interval $\Delta t$\\
+    \hline
+    Description &
+    The stimulus feature signal $e(t)$ is a scalar time series extracted from a continuous stimulus, such as a speech envelope. It is assumed to be time-aligned with the EEG/MEG recordings before NCRF estimation.\\
+    \hline
+    Sources& \cite{DasBrodbeckSimonBabadi2020, BrodbeckEelbrain} \\
+    \hline
+    Ref.\ By & \dref{GD-StimulusDriven}, \dref{GD-BackgroundActivity}, \iref{IM-NeuralStimResponse}\\
+    \hline
+  \end{tabular}
+
   \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
     \hline
     \rowcolor[gray]{0.9}
@@ -1041,13 +1067,14 @@ identified in Sections~\ref{sec-theoretical} and~\ref{sec-gendef}.
     Description&
     Given preprocessed and time-aligned stimulus features and EEG/MEG recordings (A1), the NCRF pipeline accepts these continuous signals as inputs. \\
     &This instance model specifies the neural stimulation--response relationship at the level of individual cortical dipole sources. \\
-    & $j_{m,t,i}$ is the neuro source current at position m and time t. \\
-    & $e(t)$ is the stimulus input feature signal. \\
-    & $v_{m,t,i}$ is the background source activity.\\
+    & For each source location $m$, orientation $i$, and time index $t$, the system first computes the stimulus-driven component by convolving the stimulus feature signal $e(t)$ with the NCRF coefficients $\tau_{m,i,\ell}$ over the lag range $\ell \in \{0,1,\ldots,L-1\}$. \\
+    & It then adds the background activity term $v_{m,t,i}$ to obtain the source current estimate, that is, $j_{m,t,i}=\sum_{\ell=0}^{L-1}\tau_{m,i,\ell} e(t-\ell)+v_{m,t,i}$. \\
+    & $j_{m,t,i}$ is the neuro source current at position $m$, orientation $i$, and time $t$. \\
+    & $e(t)$ is the stimulus input feature signal, $\tau_{m,i,\ell}$ are the NCRF coefficients, and $v_{m,t,i}$ is the background source activity.\\
     \hline
     Sources& \cite{DasBrodbeckSimonBabadi2020} \\
     \hline
-    Ref.\ By & \iref{epcm}\\
+    Ref.\ By & None.\\
     \hline
   \end{tabular}
 \end{minipage}\\
@@ -1110,9 +1137,9 @@ Table~\ref{TblSpecParams}.
     \midrule
 
     $L$
-    & $L \in \mathbb{Z}^+$
+    & N/A
     & $L_{\text{min}} \le L \le L_{\text{max}}$
-    & 50 samples
+    & See Section~\ref{SecAuxConstants}
     & None \\
 
     $e(t)$
@@ -1124,13 +1151,13 @@ Table~\ref{TblSpecParams}.
     $\tau_{m,i,\ell}$
     & Finite real values
     & $|\tau_{m,i,\ell}| \le \tau_{\text{max}}$
-    & Problem-dependent
+    & Small-magnitude coefficients (e.g., in $[-0.1,0.1]$)
     & Model-dependent \\
 
     $v_{m,t,i}$
     & Finite real values
     & Bounded variance
-    & Zero-mean
+    & Zero-mean noise with variance approximately 1
     & High \\
 
     \bottomrule
@@ -1197,10 +1224,10 @@ qualities that the software is expected to exhibit.
 \begin{itemize}
 
   \item[R\refstepcounter{reqnum}\thereqnum \label{R-Inputs}:]
-    The system shall accept a continuous stimulus feature signal $e(t)$ as input to the NCRF pipeline.
+    The system shall accept either (i) a precomputed continuous stimulus feature signal $e(t)$ or (ii) a raw continuous stimulus signal from which $e(t)$ can be extracted using a configured feature-extraction method (for example, speech-envelope extraction), and ensure the resulting $e(t)$ is time-aligned with EEG/MEG recordings.
 
   \item[R\refstepcounter{reqnum}\thereqnum \label{R-Calculate}:]
-    The system shall compute source-level neural current estimates using the NCRF model (e.g., by applying the learned/estimated response functions to $e(t)$).
+    The system shall compute source-level neural current estimates using the NCRF model by applying learned/estimated response functions to the stimulus feature signal $e(t)$, where $e(t)$ is the aligned feature signal accepted or derived in \rref{R-Inputs}. Verification of this computation shall be performed through the test cases and acceptance checks documented in the project V\&V plan (docs/VnVPlan/VnVPlan.tex).
 
   \item[R\refstepcounter{reqnum}\thereqnum \label{R-Calculate-Boosting}:]
     The system shall support TRF estimation via the boosting algorithm to preserve the baseline pipeline behavior.
@@ -1209,7 +1236,7 @@ qualities that the software is expected to exhibit.
   %   The system shall provide a mechanism to verify that the computed outputs are consistent with the corresponding inputs and the specified instance models (e.g., by checking dimensions, sampling rates, and expected value ranges).
 
   \item[R\refstepcounter{reqnum}\thereqnum \label{R-Output}:]
-    The system shall output (i) the estimated source currents $j_{m,t}$ and (ii) the NCRF coefficients $\tau_{m,i,\ell}$ in a format suitable for downstream analysis in the existing pipeline.
+    The system shall output (i) the estimated source currents $j_{m,t}$ and (ii) the NCRF coefficients $\tau_{m,i,\ell}$ in documented machine-readable formats suitable for downstream analysis in the existing pipeline, such as NumPy arrays, delimited tables, or BIDS-derivative files.
 
 \end{itemize}
 
@@ -1239,13 +1266,16 @@ qualities that the software is expected to exhibit.
 \begin{itemize}
 
 \item[NFR1:] \textbf{Accuracy}  
-The system shall produce numerically stable and reproducible results that can be verified against established TRF/NCRF benchmarks or reference implementations.
+The system shall produce numerically stable results that can be verified against established TRF/NCRF benchmarks or reference implementations. Verification activities for this requirement are documented in the project V\&V plan (docs/VnVPlan/VnVPlan.tex).
 
-\item[NFR2:] \textbf{Maintainability}  
+\item[NFR2:] \textbf{Reproducibility}  
+The system shall produce repeatable results for the same validated inputs, configuration parameters, and software version.
+
+\item[NFR3:] \textbf{Maintainability}  
 The system shall allow adding or modifying estimator algorithms without changing the input/output interfaces of the pipeline.
 
-\item[NFR3:] \textbf{Portability}  
-The system shall be implemented as a Python package and be executable on macOS, Windows, and Linux platforms.
+\item[NFR4:] \textbf{Portability}  
+The system shall produce equivalent outputs for the same validated inputs and configuration when run on macOS, Windows, and Linux platforms, without requiring platform-specific changes to the documented user workflow.
 
 \end{itemize}
 
@@ -1317,7 +1347,7 @@ the assumptions.
         \dref{GD-StimulusDriven} & & X & X & X \\ \hline
         \dref{GD-BackgroundActivity} & & X & & \\ \hline
         \ddref{DD-NCRF-Coefficients} & & & X & X \\ \hline
-        \iref{IM-NeuralStimResponse} & & X & X & X \\ \hline
+        \iref{IM-NeuralStimResponse} & X & X & X & X \\ \hline
         \lcref{LC-OutputFormat} & & & & \\ \hline
         \lcref{LC-ModelParameters} & & & X & X \\ \hline
         \lcref{LC-CoreMethods} & & & & \\ \hline
@@ -1330,15 +1360,16 @@ the assumptions.
 
 \begin{table}[h!]
   \centering
-  \begin{tabular}{|c|c|c|c|c|}
+  \begin{tabular}{|c|c|c|c|c|c|}
     \hline
-    & \tref{TM-NCRF-Model} & \dref{GD-StimulusDriven} & \dref{GD-BackgroundActivity} & \ddref{DD-NCRF-Coefficients} \\
+    & \tref{TM-NCRF-Model} & \dref{GD-StimulusDriven} & \dref{GD-BackgroundActivity} & \ddref{DD-StimulusFeature} & \ddref{DD-NCRF-Coefficients} \\
     \hline
-    \tref{TM-NCRF-Model} & & & & \\ \hline
-    \dref{GD-StimulusDriven} & X & & & \\ \hline
-    \dref{GD-BackgroundActivity} & X & & & \\ \hline
-    \ddref{DD-NCRF-Coefficients} & X & & & \\ \hline
-    \iref{IM-NeuralStimResponse} & X & X & X & X \\ \hline
+    \tref{TM-NCRF-Model} & & & & & \\ \hline
+    \dref{GD-StimulusDriven} & X & & & & \\ \hline
+    \dref{GD-BackgroundActivity} & X & & & & \\ \hline
+    \ddref{DD-StimulusFeature} & & & & & \\ \hline
+    \ddref{DD-NCRF-Coefficients} & X & & & & \\ \hline
+    \iref{IM-NeuralStimResponse} & X & X & X & X & X \\ \hline
   \end{tabular}
   \caption{Traceability Matrix Showing the Connections Between Items of Different Sections}
   \label{Table:trace}
@@ -1395,12 +1426,16 @@ component is changed, the components that it points to should also be changed.
 %   organized as a prioritized list of requirements, or it could should the
 % requirements that will be implemented for ``phase 1'', ``phase 2'', etc.}
 
-\section{Values of Auxiliary Constants}
+\section{Values of Auxiliary Constants}\label{SecAuxConstants}
 
 \begin{itemize}
   \item \textbf{Sampling rate}: EEG/MEG and stimulus signals are assumed to be sampled at a fixed rate (e.g., 1000 Hz).
   \item \textbf{Lag window}: The temporal response functions are defined over a fixed lag window (e.g., 0--500 ms).
   \item \textbf{Lag resolution}: Lags are discretized according to the sampling interval.
+  \item $L_{\text{min}} = 1$ sample and $L_{\text{max}} = 500$ samples.
+  \item Representative lag-window length: $L = 50$ samples.
+  \item $e_{\text{max}} = 1$ for normalized stimulus features.
+  \item $\tau_{\text{max}}$ is problem-dependent and selected during model configuration.
 \end{itemize}
 
 % \plt{Show the values of the symbolic parameters introduced in the report.}
