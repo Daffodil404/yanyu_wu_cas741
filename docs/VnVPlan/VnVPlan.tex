@@ -357,15 +357,27 @@ This area verifies that the pipeline accepts required inputs and exposes an API 
 
 \textbf{Control:} Automatic
 					
-\textbf{Initial State:} BIDS dataset and stimulus features are available; configuration is valid.
+\textbf{Initial State:} Test data is staged with BIDS MEG recordings under
+\texttt{\textasciitilde/Data/BIDS} (for example \texttt{sub-01}, task
+\texttt{Appleseed}) and predictor files exist in
+\texttt{<deriv-dir>/predictors/}, including
+\texttt{Appleseed\textasciitilde acoustic\_envelop.pickle} and
+\texttt{Tone\textasciitilde acoustic\_envelop.pickle}.
 					
-\textbf{Input:} Valid stimulus feature signal $e(t)$ and EEG/MEG data; call \texttt{load\_trf(estimator="ncrf")}.
+\textbf{Input:} Stimulus feature signal $e(t)$ is the acoustic envelope
+(\texttt{NDVar}) loaded from
+\texttt{<deriv-dir>/predictors/Appleseed\textasciitilde acoustic\_envelop.pickle};
+neural input is MEG data from BIDS subject \texttt{sub-01} (task
+\texttt{Appleseed}); call \texttt{load\_trf(estimator="ncrf")}.
 					
 \textbf{Output:} The NCRF pipeline is invoked without input/parameter errors; data and parameters are accepted.
 
 \textbf{Test Case Derivation:} \hyperref[R-Inputs]{R-Inputs} requires the system to accept $e(t)$ as input.
 					
-\textbf{How Test Will Be Performed:} Run the pipeline with a small BIDS dataset and log successful NCRF initialization.
+\textbf{How Test Will Be Performed:} Run with subject \texttt{sub-01}, task
+\texttt{Appleseed}, and the predictor file
+\texttt{Appleseed\textasciitilde acoustic\_envelop.pickle}; verify logs show the
+NCRF path is selected and no input/parameter validation error is raised.
 					
 \item{FR-API-02\\}
 
@@ -393,7 +405,7 @@ This area verifies that the pipeline accepts required inputs and exposes an API 
 
 \textbf{Test Case Derivation:} Check API unification without breaking existing TRF usage.
 
-\textbf{How Test Will Be Performed:} Run a known TRF configuration and compare outputs to baseline.
+\textbf{How Test Will Be Performed:} Run one fixed baseline configuration (same subject, epoch, predictor, \texttt{tstart/tstop}, and sampling rate) once with legacy call style and once with \texttt{load\_trf()} default estimator. Pass criteria: (1) both runs complete without exception, (2) both return \texttt{BoostingResult}, (3) output dimensions match exactly, and (4) relative error of key numeric outputs (\texttt{r} and TRF coefficients) is $\leq 10^{-6}$.
 
 \end{enumerate}
 
@@ -410,13 +422,13 @@ This area verifies that NCRF estimation executes and produces valid outputs.
 
 \textbf{Initial State:} Small, controlled dataset with fixed configuration.
 
-\textbf{Input:} Valid $e(t)$ and data; NCRF estimator selected.
+\textbf{Input:} Acoustic-envelope predictor $e(t)$ loaded from \texttt{<deriv-dir>/predictors/Appleseed\textasciitilde acoustic\_envelop.pickle}, MEG data for BIDS subject \texttt{sub-01} and task \texttt{Appleseed}, \texttt{tstart=0}, \texttt{tstop=0.5}, sampling rate \SI{100}{Hz}, and \texttt{NCRFEstimator(mu=0.1, n\_iter=100)}.
 
-\textbf{Output:} Estimated $j_{m,t}$ and $\tau_{m,i,\ell}$ are produced with expected dimensions.
+\textbf{Output:} NCRF result object is created and contains source-current output $j_{m,t}$ and coefficient tensor $\tau_{m,i,\ell}$ with one predictor axis (\(i=1\)), non-zero source and lag dimensions, and only finite values (no NaN/Inf).
 
 \textbf{Test Case Derivation:} \hyperref[R-Calculate]{R-Calculate} requires computation of source-level neural current estimates.
 
-\textbf{How Test Will Be Performed:} Run NCRF on a small dataset and verify output shapes against model settings.
+\textbf{How Test Will Be Performed:} Run NCRF once with the fixed configuration above and verify that the returned object contains both $j_{m,t}$ and $\tau_{m,i,\ell}$, that the predictor dimension equals 1, and that all numeric entries are finite.
 
 \item{FR-CALC-02\\}
 
@@ -424,13 +436,13 @@ This area verifies that NCRF estimation executes and produces valid outputs.
 
 \textbf{Initial State:} Same as FR-CALC-01 with fixed random seed.
 
-\textbf{Input:} Valid $e(t)$ and data; NCRF estimator selected; fixed random seed.
+\textbf{Input:} Same predictor file, subject, task, and NCRF configuration as FR-CALC-01, with a fixed random seed and unchanged runtime environment.
 
-\textbf{Output:} Results are numerically consistent across runs (within tolerance).
+\textbf{Output:} Two NCRF runs produce matching output shapes and numerically consistent $\tau_{m,i,\ell}$ values with relative error $\leq 10^{-6}$ under the same fixed configuration.
 
 \textbf{Test Case Derivation:} Supports reproducibility expectations aligned with NFR1 while validating computation.
 
-\textbf{How Test Will Be Performed:} Run the same NCRF computation twice and compare outputs using relative error or norm.
+\textbf{How Test Will Be Performed:} Execute the same NCRF call twice and compare the returned $\tau_{m,i,\ell}$ tensors; the test passes if shapes are identical and relative error is $\leq 10^{-6}$.
 
 \end{enumerate}
 
@@ -498,7 +510,7 @@ This area verifies output content and compatibility with downstream analysis.
 
 \subsubsection{Accuracy and Reproducibility (NFR1)}
 		
-\paragraph{Numerical Accuracy Against Reference}
+\paragraph{Numerical Stability Against Documented Baseline}
 
 \begin{enumerate}
 
@@ -506,13 +518,13 @@ This area verifies output content and compatibility with downstream analysis.
 
 Type: Dynamic, Automatic
 					
-\textbf{Initial State:} Reference TRF/NCRF benchmark or baseline outputs are available.
+\textbf{Initial State:} A documented baseline NCRF run is available for one fixed dataset, predictor file, and parameter configuration.
 					
-\textbf{Input}/Condition: Run NCRF on the reference dataset with documented parameters.
+\textbf{Input}/Condition: Run NCRF on the same fixed dataset and predictor configuration used to create the documented baseline.
 					
-\textbf{Output}/Result: Output matches the reference within a relative error tolerance of $1\times 10^{-3}$ (or tighter) using an appropriate norm.
+\textbf{Output}/Result: Output matches the documented baseline within a relative error tolerance of $1\times 10^{-3}$ using the same output tensor comparison method.
 					
-\textbf{How Test Will Be Performed:} Compare $j_{m,t}$ and $\tau_{m,i,\ell}$ to reference results and report error metrics.
+\textbf{How Test Will Be Performed:} Compare $j_{m,t}$ and $\tau_{m,i,\ell}$ from the current run to the stored baseline run under the same configuration and report relative error metrics.
 					
 \item{NFR-ACC-02\\}
 
@@ -520,11 +532,11 @@ Type: Dynamic, Automatic
 					
 \textbf{Initial State:} Fixed random seed and configuration.
 					
-\textbf{Input}/Condition: Repeat NCRF estimation twice.
+\textbf{Input}/Condition: Repeat the same NCRF estimation twice with the same predictor file, subject, parameter configuration, and fixed random seed.
 					
-\textbf{Output}/Result: Outputs are numerically consistent across runs within tolerance.
+\textbf{Output}/Result: The NCRF coefficient tensor $\tau_{m,i,\ell}$ from both runs has identical shape and relative error $\leq 10^{-6}$; if $j_{m,t}$ is exposed by the result object, it must also have identical shape and relative error $\leq 10^{-6}$.
 					
-\textbf{How Test Will Be Performed:} Compute relative error or norm between repeated runs and report results.
+\textbf{How Test Will Be Performed:} Execute the same NCRF call twice, compute relative error separately for $\tau_{m,i,\ell}$ (and for $j_{m,t}$ if present), and report both the tensor shape comparison and the numeric error values.
 
 \end{enumerate}
 
@@ -544,7 +556,7 @@ Type: Static, Manual
 					
 \textbf{Output}/Result: NCRF integration is localized to well-defined modules, with minimal changes to unrelated code.
 					
-\textbf{How Test Will Be Performed:} Checklist-based review of module boundaries and interface usage (MG/MIS checklist).
+\textbf{How Test Will Be Performed:} Conduct a manual design review against the module hierarchy and decomposition in \texttt{docs/Design/SoftArchitecture/MG.tex} and the interface specifications in \texttt{docs/Design/SoftDetailedDes/MIS.tex}, especially the Input Preprocessing, Estimator Resolution, and TRF Computation modules. The review is performed by the project author together with at least one peer reviewer; identified issues are recorded in the review notes and re-checked after revisions.
 
 \end{enumerate}
 
