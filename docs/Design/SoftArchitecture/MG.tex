@@ -325,6 +325,8 @@ to be implemented.
 \item[Implemented By:] \progname{}
 \end{description}
 
+The Estimator Resolution Module follows the Strategy design pattern to separate shared experiment orchestration from estimator-specific fitting policies. \texttt{TRFExperiment} acts as the context: it accepts an estimator selection, looks up the corresponding strategy object from the estimator registry, and delegates parameter normalization to that object. Concrete strategies such as \texttt{BoostingEstimator} and \texttt{NCRFEstimator} encapsulate the policy for backend-specific defaults and argument preparation, while the shared workflow in \texttt{TRFExperiment} remains unchanged. This design improves maintainability, since adding a new estimator mainly requires introducing a new strategy class and registering it, rather than modifying the full TRF execution path.
+
 \section{Traceability Matrix} \label{SecTM}
 
 This section shows two traceability matrices: between the modules and the
@@ -393,6 +395,15 @@ because they use modules from the lower levels.
 \includegraphics[width=0.5\textwidth]{useHierarchy.png}
 \caption{Use hierarchy among modules}
 \label{FigUH}
+\end{figure}
+
+Figure \ref{FigEstimatorStrategy} provides a more detailed view of the use relations inside the estimator-selection part of the design. The \texttt{TRFExperiment} context depends on the abstract \texttt{Estimator} interface, resolves a concrete strategy from the registry, and then dispatches execution to either the boosting backend or the NCRF backend. This structure keeps estimator-specific policy decisions localized while preserving a single entry point for the overall workflow.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{estimator_strategy_design.png}
+\caption{Estimator resolution strategy design in the TRF tools workflow}
+\label{FigEstimatorStrategy}
 \end{figure}
 
 %\section*{References}
