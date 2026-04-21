@@ -432,13 +432,13 @@ This area verifies that NCRF estimation executes and produces valid outputs.
 
 \textbf{Initial State:} Small, controlled dataset with fixed configuration.
 
-\textbf{Input:} Valid $e(t)$ and data; NCRF estimator selected.
+\textbf{Input:} Acoustic-envelope predictor $e(t)$ loaded from \texttt{<deriv-dir>/predictors/Appleseed\textasciitilde acoustic\_envelop.pickle}, MEG data for BIDS subject \texttt{sub-01} and task \texttt{Appleseed}, \texttt{tstart=0}, \texttt{tstop=0.5}, sampling rate \SI{100}{Hz}, and \texttt{NCRFEstimator(mu=0.1, n\_iter=100)}.
 
-\textbf{Output:} Estimated $j_{m,t}$ and $\tau_{m,i,\ell}$ are produced with expected dimensions, and all entries are finite (no NaN/Inf).
+\textbf{Output:} NCRF result object is created and contains source-current output $j_{m,t}$ and coefficient tensor $\tau_{m,i,\ell}$ with one predictor axis (\(i=1\)), non-zero source and lag dimensions, and only finite values (no NaN/Inf).
 
 \textbf{Test Case Derivation:} \hyperref[R-Calculate]{R-Calculate} requires computation of source-level neural current estimates.
 
-\textbf{How Test Will Be Performed:} Run NCRF on a small dataset; verify the run exits successfully, output objects are created, shapes match model settings, and numeric arrays contain no NaN/Inf.
+\textbf{How Test Will Be Performed:} Run NCRF once with the fixed configuration above and verify that the returned object contains both $j_{m,t}$ and $\tau_{m,i,\ell}$, that the predictor dimension equals 1, and that all numeric entries are finite.
 
 \item{FR-CALC-02\\}
 
@@ -446,13 +446,13 @@ This area verifies that NCRF estimation executes and produces valid outputs.
 
 \textbf{Initial State:} Same as FR-CALC-01 with fixed random seed.
 
-\textbf{Input:} Valid $e(t)$ and data; NCRF estimator selected; fixed random seed.
+\textbf{Input:} Same predictor file, subject, task, and NCRF configuration as FR-CALC-01, with a fixed random seed and unchanged runtime environment.
 
-\textbf{Output:} Results are numerically consistent across runs (within tolerance).
+\textbf{Output:} Two NCRF runs produce matching output shapes and numerically consistent $\tau_{m,i,\ell}$ values with relative error $\leq 10^{-6}$ under the same fixed configuration.
 
 \textbf{Test Case Derivation:} Supports reproducibility expectations aligned with NFR1 while validating computation.
 
-\textbf{How Test Will Be Performed:} Run the same NCRF computation twice and compare outputs using relative error or norm.
+\textbf{How Test Will Be Performed:} Execute the same NCRF call twice and compare the returned $\tau_{m,i,\ell}$ tensors; the test passes if shapes are identical and relative error is $\leq 10^{-6}$.
 
 \end{enumerate}
 
