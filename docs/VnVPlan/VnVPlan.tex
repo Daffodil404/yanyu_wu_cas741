@@ -367,15 +367,27 @@ This area verifies that the pipeline accepts required inputs and exposes an API 
 
 \textbf{Control:} Automatic
 					
-\textbf{Initial State:} BIDS dataset and stimulus features are available; configuration is valid.
+\textbf{Initial State:} Test data is staged with BIDS MEG recordings under
+\texttt{\textasciitilde/Data/BIDS} (for example \texttt{sub-01}, task
+\texttt{Appleseed}) and predictor files exist in
+\texttt{<deriv-dir>/predictors/}, including
+\texttt{Appleseed\textasciitilde acoustic\_envelop.pickle} and
+\texttt{Tone\textasciitilde acoustic\_envelop.pickle}.
 					
-\textbf{Input:} Valid stimulus feature signal $e(t)$ and EEG/MEG data; call \texttt{load\_trf(estimator="ncrf")}.
+\textbf{Input:} Stimulus feature signal $e(t)$ is the acoustic envelope
+(\texttt{NDVar}) loaded from
+\texttt{<deriv-dir>/predictors/Appleseed\textasciitilde acoustic\_envelop.pickle};
+neural input is MEG data from BIDS subject \texttt{sub-01} (task
+\texttt{Appleseed}); call \texttt{load\_trf(estimator="ncrf")}.
 					
 \textbf{Output:} The NCRF pipeline is invoked without input/parameter errors; data and parameters are accepted.
 
 \textbf{Test Case Derivation:} \hyperref[R-Inputs]{R-Inputs} requires the system to accept $e(t)$ as input.
 					
-\textbf{How Test Will Be Performed:} Run the pipeline with a small BIDS dataset and log successful NCRF initialization.
+\textbf{How Test Will Be Performed:} Run with subject \texttt{sub-01}, task
+\texttt{Appleseed}, and the predictor file
+\texttt{Appleseed\textasciitilde acoustic\_envelop.pickle}; verify logs show the
+NCRF path is selected and no input/parameter validation error is raised.
 					
 \item{FR-API-02\\}
 
