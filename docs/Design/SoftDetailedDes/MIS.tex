@@ -279,7 +279,7 @@ Dataset &
 \texttt{ValueError} \\
 
 \texttt{add\_predictor} &
-dataset, predictor, optional \texttt{filter\_x}, optional target \texttt{y} &
+\texttt{ds}: Dataset, \texttt{code}: predictor descriptor object with field \texttt{key}: \texttt{str}, optional \texttt{filter\_x}: \texttt{bool}, optional target \texttt{y}: Dataset &
 \texttt{ds} extended with predictor column \texttt{code.key} &
 \texttt{ValueError}, \texttt{NotImplementedError}, undefined predictor errors \\
 \hline
@@ -317,7 +317,7 @@ sampling constraints.
 \noindent \texttt{add\_predictor(ds, code, filter\_x, y)}:
 \begin{itemize}
 \item transition: Extends dataset \texttt{ds} by assigning predictor signal(s) to
-column \texttt{code.key}. Predictor values are aligned to the response time axis
+column \texttt{code.key}, where \texttt{code} is a predictor descriptor object and \texttt{code.key} is its string identifier. Predictor values are aligned to the response time axis
 for each epoch/trial.
 \item output: None (in-place update of \texttt{ds}).
 \item exception:
