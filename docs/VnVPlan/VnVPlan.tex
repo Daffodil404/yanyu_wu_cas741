@@ -424,11 +424,11 @@ This area verifies that NCRF estimation executes and produces valid outputs.
 
 \textbf{Input:} Valid $e(t)$ and data; NCRF estimator selected.
 
-\textbf{Output:} Estimated $j_{m,t}$ and $\tau_{m,i,\ell}$ are produced with expected dimensions.
+\textbf{Output:} Estimated $j_{m,t}$ and $\tau_{m,i,\ell}$ are produced with expected dimensions, and all entries are finite (no NaN/Inf).
 
 \textbf{Test Case Derivation:} \hyperref[R-Calculate]{R-Calculate} requires computation of source-level neural current estimates.
 
-\textbf{How Test Will Be Performed:} Run NCRF on a small dataset and verify output shapes against model settings.
+\textbf{How Test Will Be Performed:} Run NCRF on a small dataset; verify the run exits successfully, output objects are created, shapes match model settings, and numeric arrays contain no NaN/Inf.
 
 \item{FR-CALC-02\\}
 
