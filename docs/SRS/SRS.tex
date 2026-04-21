@@ -589,7 +589,7 @@ This subsection provides a list of terms that are used in the subsequent section
     how the continous stimuli will be mapped to neural signal by brain.
   \item \textbf{NCRF}: NCRF is short for Neuro-Current Response Function. It is a source-level linear response function that models how cortical dipole currents in the brain respond over time to external stimulus features.
   \item \textbf{Dipole}: Dipole is a simplified model of a small localized neural current in the brain, representing  direction of electrical activity at a cortical source.
-
+  \item \textbf{BIDS}: Brain Imaging Data Structure, a standardized format for organizing and describing neuroimaging data.
 \end{itemize}
 
 \subsubsection{Physical System Description} \label{sec-phySystDescrip}
@@ -936,6 +936,28 @@ models. The dimension of each quantity is also given.
 \noindent
 \begin{minipage}{\textwidth}
   \renewcommand*{\arraystretch}{1.5}
+  \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+    \hline
+    \rowcolor[gray]{0.9}
+    Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{DD-StimulusFeature}\\
+    \hline
+    Label& \bf Stimulus Feature Signal \\
+    \hline
+    Symbol &$e(t)$\\
+    \hline
+    SI Units & feature-dependent (commonly normalized or decibel-derived) \\
+    \hline
+    Equation&$e:[0,T] \rightarrow \mathbb{R}$, sampled at interval $\Delta t$\\
+    \hline
+    Description &
+    The stimulus feature signal $e(t)$ is a scalar time series extracted from a continuous stimulus, such as a speech envelope. It is assumed to be time-aligned with the EEG/MEG recordings before NCRF estimation.\\
+    \hline
+    Sources& \cite{DasBrodbeckSimonBabadi2020} \\
+    \hline
+    Ref.\ By & \iref{IM-NeuralStimResponse}\\
+    \hline
+  \end{tabular}
+
   \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
     \hline
     \rowcolor[gray]{0.9}
