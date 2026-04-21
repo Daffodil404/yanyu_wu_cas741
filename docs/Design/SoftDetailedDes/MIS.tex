@@ -261,9 +261,9 @@ Uses M1 for reading raw MEG/EEG data.
 \subsubsection{Exported Constants}
 % Constants defining predictor file naming conventions.
 \begin{itemize}
-\item \texttt{PREDICTOR\_FILE\_EXT} = \texttt{".pickle"}
-\item \texttt{PREDICTOR\_NAME\_SEP} = \texttt{"\textasciitilde"}
-\item \texttt{PREDICTOR\_FILE\_TEMPLATE} = \texttt{"DATA\_ROOT/\{stimulus\}\textasciitilde\{predictor\}.pickle"}, read as: replace \texttt{\{stimulus\}} with the stimulus name and \texttt{\{predictor\}} with the predictor name, then resolve the resulting filename under the predictor data root. Example: if \texttt{DATA\_ROOT = "/Users/yanyuwoo/Data/Appleseed\_BIDS\_20251216"}, then one instantiated path is \texttt{"/Users/yanyuwoo/Data/Appleseed\_BIDS\_20251216/quiet\textasciitilde envelope.pickle"}.
+\item \texttt{PREDICTOR\_FILE\_EXT}: \texttt{str} = \texttt{".pickle"}
+\item \texttt{PREDICTOR\_NAME\_SEP}: \texttt{str} = \texttt{"\textasciitilde"}
+\item \texttt{PREDICTOR\_FILE\_TEMPLATE}: \texttt{str} = \texttt{"DATA\_ROOT/\{stimulus\}\textasciitilde\{predictor\}.pickle"}, read as: replace \texttt{\{stimulus\}} with the stimulus name and \texttt{\{predictor\}} with the predictor name, then resolve the resulting filename under the predictor data root. Example: if \texttt{DATA\_ROOT = "/Users/yanyuwoo/Data/Appleseed\_BIDS\_20251216"}, then one instantiated path is \texttt{"/Users/yanyuwoo/Data/Appleseed\_BIDS\_20251216/quiet\textasciitilde envelope.pickle"}.
 \end{itemize}
 
 \subsubsection{Exported Access Programs}
