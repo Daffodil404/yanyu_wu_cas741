@@ -510,7 +510,7 @@ This area verifies output content and compatibility with downstream analysis.
 
 \subsubsection{Accuracy and Reproducibility (NFR1)}
 		
-\paragraph{Numerical Accuracy Against Reference}
+\paragraph{Numerical Stability Against Documented Baseline}
 
 \begin{enumerate}
 
@@ -518,13 +518,13 @@ This area verifies output content and compatibility with downstream analysis.
 
 Type: Dynamic, Automatic
 					
-\textbf{Initial State:} Reference TRF/NCRF benchmark or baseline outputs are available.
+\textbf{Initial State:} A documented baseline NCRF run is available for one fixed dataset, predictor file, and parameter configuration.
 					
-\textbf{Input}/Condition: Run NCRF on the reference dataset with documented parameters.
+\textbf{Input}/Condition: Run NCRF on the same fixed dataset and predictor configuration used to create the documented baseline.
 					
-\textbf{Output}/Result: Output matches the reference within a relative error tolerance of $1\times 10^{-3}$ (or tighter) using an appropriate norm.
+\textbf{Output}/Result: Output matches the documented baseline within a relative error tolerance of $1\times 10^{-3}$ using the same output tensor comparison method.
 					
-\textbf{How Test Will Be Performed:} Compare $j_{m,t}$ and $\tau_{m,i,\ell}$ to reference results and report error metrics.
+\textbf{How Test Will Be Performed:} Compare $j_{m,t}$ and $\tau_{m,i,\ell}$ from the current run to the stored baseline run under the same configuration and report relative error metrics.
 					
 \item{NFR-ACC-02\\}
 
