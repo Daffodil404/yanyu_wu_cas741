@@ -1138,7 +1138,7 @@ Table~\ref{TblSpecParams}.
     $L$
     & N/A
     & $L_{\text{min}} \le L \le L_{\text{max}}$
-    & 50 samples
+    & See Section~\ref{SecAuxConstants}
     & None \\
 
     $e(t)$
@@ -1422,12 +1422,16 @@ component is changed, the components that it points to should also be changed.
 %   organized as a prioritized list of requirements, or it could should the
 % requirements that will be implemented for ``phase 1'', ``phase 2'', etc.}
 
-\section{Values of Auxiliary Constants}
+\section{Values of Auxiliary Constants}\label{SecAuxConstants}
 
 \begin{itemize}
   \item \textbf{Sampling rate}: EEG/MEG and stimulus signals are assumed to be sampled at a fixed rate (e.g., 1000 Hz).
   \item \textbf{Lag window}: The temporal response functions are defined over a fixed lag window (e.g., 0--500 ms).
   \item \textbf{Lag resolution}: Lags are discretized according to the sampling interval.
+  \item $L_{\text{min}} = 1$ sample and $L_{\text{max}} = 500$ samples.
+  \item Representative lag-window length: $L = 50$ samples.
+  \item $e_{\text{max}} = 1$ for normalized stimulus features.
+  \item $\tau_{\text{max}}$ is problem-dependent and selected during model configuration.
 \end{itemize}
 
 % \plt{Show the values of the symbolic parameters introduced in the report.}
