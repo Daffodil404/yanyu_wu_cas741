@@ -279,10 +279,11 @@ with the SRS:
 Implementation verification will focus on test execution, requirements coverage,
 and inspection:
 \begin{itemize}
-  \item Execute planned test cases (unit and system-level) and record results against expected outputs.
-  \item Verify coverage by checking each SRS requirement is implemented and has at least one corresponding test.
-  \item Conduct code walkthroughs to inspect critical logic, edge cases, and consistency with the design (MG/MIS).
+  \item Execute planned test cases (unit and system-level) and record results against expected outputs. For each test, the executed input, observed output, and pass/fail decision will be documented so that the result can be checked and repeated later.
+  \item Verify coverage by checking each SRS requirement is implemented and has at least one corresponding test. This check will be recorded in the traceability tables so uncovered requirements or partially verified requirements can be identified explicitly.
+  \item Conduct code walkthroughs to inspect critical logic, edge cases, and consistency with the design (MG/MIS). Walkthrough findings will be recorded as review notes or issues, together with any follow-up actions needed to resolve discrepancies.
 \end{itemize}
+Evidence collected from this process will include test logs, pass/fail outcomes, recorded walkthrough findings, and updated traceability records. The expected outcome is that each implemented requirement has corresponding verification evidence and that any issues found are documented for correction.
 
 \subsection{Automated Testing and Verification Tools}
 
