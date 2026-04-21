@@ -1265,13 +1265,16 @@ qualities that the software is expected to exhibit.
 \begin{itemize}
 
 \item[NFR1:] \textbf{Accuracy}  
-The system shall produce numerically stable and reproducible results that can be verified against established TRF/NCRF benchmarks or reference implementations.
+The system shall produce numerically stable results that can be verified against established TRF/NCRF benchmarks or reference implementations.
 
-\item[NFR2:] \textbf{Maintainability}  
+\item[NFR2:] \textbf{Reproducibility}  
+The system shall produce repeatable results for the same validated inputs, configuration parameters, and software version.
+
+\item[NFR3:] \textbf{Maintainability}  
 The system shall allow adding or modifying estimator algorithms without changing the input/output interfaces of the pipeline.
 
-\item[NFR3:] \textbf{Portability}  
-The system shall be implemented as a Python package and be executable on macOS, Windows, and Linux platforms.
+\item[NFR4:] \textbf{Portability}  
+The system shall be executable on macOS, Windows, and Linux platforms without changing the required user workflow.
 
 \end{itemize}
 
