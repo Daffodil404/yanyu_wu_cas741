@@ -290,10 +290,7 @@ dataset, predictor, optional \texttt{filter\_x}, optional target \texttt{y} &
 
 \subsubsection{State Variables}
 
-\begin{itemize}
-\item \texttt{predictors}: map from predictor name (\texttt{str}) to predictor
-generator/loader objects.
-\end{itemize}
+None. 
 
 \subsubsection{Environment Variables}
 
@@ -310,7 +307,7 @@ files in naming form \texttt{\{stimulus\}\textasciitilde\{predictor\}.pickle}.
 \begin{itemize}
 \item Input dataset contains event metadata required to identify stimulus
 instances (for example task/stimulus label).
-\item Predictor definitions are registered in \texttt{predictors} before loading.
+\item Predictor definitions are registered in the external predictor registry before loading.
 \item Time axis requested by TRF routines is valid and compatible with predictor
 sampling constraints.
 \end{itemize}
@@ -325,7 +322,7 @@ for each epoch/trial.
 \item output: None (in-place update of \texttt{ds}).
 \item exception:
 \begin{itemize}
-\item Undefined predictor code (not registered in \texttt{predictors}).
+\item Undefined predictor code (not registered in the external predictor registry).
 \item \texttt{ValueError} when \texttt{filter\_x} is requested for unsupported
 predictor types.
 \item \texttt{NotImplementedError} for unsupported combinations (for example
