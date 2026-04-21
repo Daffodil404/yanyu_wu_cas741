@@ -1226,7 +1226,7 @@ qualities that the software is expected to exhibit.
     The system shall accept either (i) a precomputed continuous stimulus feature signal $e(t)$ or (ii) a raw continuous stimulus signal from which $e(t)$ can be extracted using a configured feature-extraction method (for example, speech-envelope extraction), and ensure the resulting $e(t)$ is time-aligned with EEG/MEG recordings.
 
   \item[R\refstepcounter{reqnum}\thereqnum \label{R-Calculate}:]
-    The system shall compute source-level neural current estimates using the NCRF model by applying learned/estimated response functions to the stimulus feature signal $e(t)$, where $e(t)$ is the aligned feature signal accepted or derived in \rref{R-Inputs}.
+    The system shall compute source-level neural current estimates using the NCRF model by applying learned/estimated response functions to the stimulus feature signal $e(t)$, where $e(t)$ is the aligned feature signal accepted or derived in \rref{R-Inputs}. Verification of this computation shall be performed through the test cases and acceptance checks documented in the project V\&V plan (docs/VnVPlan/VnVPlan.tex).
 
   \item[R\refstepcounter{reqnum}\thereqnum \label{R-Calculate-Boosting}:]
     The system shall support TRF estimation via the boosting algorithm to preserve the baseline pipeline behavior.
