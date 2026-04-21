@@ -954,7 +954,7 @@ models. The dimension of each quantity is also given.
     \hline
     Sources& \cite{DasBrodbeckSimonBabadi2020} \\
     \hline
-    Ref.\ By & \iref{IM-NeuralStimResponse}\\
+    Ref.\ By & \dref{GD-StimulusDriven}, \dref{GD-BackgroundActivity}, \iref{IM-NeuralStimResponse}\\
     \hline
   \end{tabular}
 
@@ -1355,15 +1355,16 @@ the assumptions.
 
 \begin{table}[h!]
   \centering
-  \begin{tabular}{|c|c|c|c|c|}
+  \begin{tabular}{|c|c|c|c|c|c|}
     \hline
-    & \tref{TM-NCRF-Model} & \dref{GD-StimulusDriven} & \dref{GD-BackgroundActivity} & \ddref{DD-NCRF-Coefficients} \\
+    & \tref{TM-NCRF-Model} & \dref{GD-StimulusDriven} & \dref{GD-BackgroundActivity} & \ddref{DD-StimulusFeature} & \ddref{DD-NCRF-Coefficients} \\
     \hline
-    \tref{TM-NCRF-Model} & & & & \\ \hline
-    \dref{GD-StimulusDriven} & X & & & \\ \hline
-    \dref{GD-BackgroundActivity} & X & & & \\ \hline
-    \ddref{DD-NCRF-Coefficients} & X & & & \\ \hline
-    \iref{IM-NeuralStimResponse} & X & X & X & X \\ \hline
+    \tref{TM-NCRF-Model} & & & & & \\ \hline
+    \dref{GD-StimulusDriven} & X & & & & \\ \hline
+    \dref{GD-BackgroundActivity} & X & & & & \\ \hline
+    \ddref{DD-StimulusFeature} & & & & & \\ \hline
+    \ddref{DD-NCRF-Coefficients} & X & & & & \\ \hline
+    \iref{IM-NeuralStimResponse} & X & X & X & X & X \\ \hline
   \end{tabular}
   \caption{Traceability Matrix Showing the Connections Between Items of Different Sections}
   \label{Table:trace}
