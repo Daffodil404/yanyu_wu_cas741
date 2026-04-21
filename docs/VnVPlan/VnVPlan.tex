@@ -405,7 +405,7 @@ NCRF path is selected and no input/parameter validation error is raised.
 
 \textbf{Test Case Derivation:} Check API unification without breaking existing TRF usage.
 
-\textbf{How Test Will Be Performed:} Run a known TRF configuration and compare outputs to baseline.
+\textbf{How Test Will Be Performed:} Run one fixed baseline configuration (same subject, epoch, predictor, \texttt{tstart/tstop}, and sampling rate) once with legacy call style and once with \texttt{load\_trf()} default estimator. Pass criteria: (1) both runs complete without exception, (2) both return \texttt{BoostingResult}, (3) output dimensions match exactly, and (4) relative error of key numeric outputs (\texttt{r} and TRF coefficients) is $\leq 10^{-6}$.
 
 \end{enumerate}
 
