@@ -1066,9 +1066,10 @@ identified in Sections~\ref{sec-theoretical} and~\ref{sec-gendef}.
     Description&
     Given preprocessed and time-aligned stimulus features and EEG/MEG recordings (A1), the NCRF pipeline accepts these continuous signals as inputs. \\
     &This instance model specifies the neural stimulation--response relationship at the level of individual cortical dipole sources. \\
-    & $j_{m,t,i}$ is the neuro source current at position m and time t. \\
-    & $e(t)$ is the stimulus input feature signal. \\
-    & $v_{m,t,i}$ is the background source activity.\\
+    & For each source location $m$, orientation $i$, and time index $t$, the system first computes the stimulus-driven component by convolving the stimulus feature signal $e(t)$ with the NCRF coefficients $\tau_{m,i,\ell}$ over the lag range $\ell \in \{0,1,\ldots,L-1\}$. \\
+    & It then adds the background activity term $v_{m,t,i}$ to obtain the source current estimate, that is, $j_{m,t,i}=\sum_{\ell=0}^{L-1}\tau_{m,i,\ell} e(t-\ell)+v_{m,t,i}$. \\
+    & $j_{m,t,i}$ is the neuro source current at position $m$, orientation $i$, and time $t$. \\
+    & $e(t)$ is the stimulus input feature signal, $\tau_{m,i,\ell}$ are the NCRF coefficients, and $v_{m,t,i}$ is the background source activity.\\
     \hline
     Sources& \cite{DasBrodbeckSimonBabadi2020} \\
     \hline
