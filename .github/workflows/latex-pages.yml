@@ -47,6 +47,8 @@ jobs:
           docs/ProblemStatementAndGoals/ProblemStatement.tex
           docs/SRS/SRS.tex
           docs/VnVPlan/VnVPlan.tex
+          docs/VnVReport/VnVReport.tex
+          docs/ReflectAndTrace/ReflectAndTrace.tex
           docs/Design/SoftArchitecture/MG.tex
           docs/Design/SoftDetailedDes/MIS.tex
           "
