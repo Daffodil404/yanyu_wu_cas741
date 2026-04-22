@@ -3,6 +3,7 @@
 \usepackage{tabularx}
 \usepackage{booktabs}
 \usepackage{hyperref}
+\usepackage{float}
 
 \title{Reflection and Traceability Report on \progname}
 
@@ -59,11 +60,11 @@
 % document, and likely the Revision 1 versions of the other documents will be
 % low.} 
 
-Feedback was tracked primarily through GitHub issues and through revision notes in the project documents. The most important change across the project was a shift from describing NCRF as an isolated new function to describing it as an estimator integrated into the existing TRF-Tools experiment pipeline. This changed the SRS requirements, the MG module decomposition, the MIS interfaces, the VnV test cases, and the user-facing README.
+Feedback was tracked primarily through GitHub issues and through revision notes in the project documents. The most important change across the project was refining the project from the broad goal of ``integrating NCRFs into the pipeline'' into a concrete integration strategy for the existing TRF-Tools workflow. The problem statement frames NCRFs as a way to address error propagation in the current two-stage TRF-based analysis by estimating spatial and temporal response properties jointly rather than sequentially. In response to feedback and implementation work, the design introduced an \texttt{estimator} abstraction so NCRF-based analysis can be selected through the same experiment pipeline used for baseline TRF analysis. This changed the SRS requirements, the MG module decomposition, the MIS interfaces, the VnV test cases, and the user-facing README.
 
 \subsection{SRS and Hazard Analysis}
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \begin{tabularx}{\textwidth}{p{0.18\textwidth} p{0.36\textwidth} X}
 \toprule
@@ -79,11 +80,11 @@ Peer review issue \#9 & Early SRS tables had unclear symbols, units, and abbrevi
 \caption{SRS feedback and responses}
 \end{table}
 
-No separate Hazard Analysis document was central to this project because the deliverable is a research software pipeline integration rather than a safety-critical deployed device. Risk discussion was instead handled through requirements, assumptions, verification scope, and documentation of external data/environment dependencies.
+No separate Hazard Analysis document was completed for this project.
 
 \subsection{Design and Design Documentation}
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \begin{tabularx}{\textwidth}{p{0.18\textwidth} p{0.36\textwidth} X}
 \toprule
@@ -102,7 +103,7 @@ Peer review issue \#22 & The Hardware-Hiding Module in the MIS had a typing issu
 
 \subsection{VnV Plan and Report}
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \begin{tabularx}{\textwidth}{p{0.18\textwidth} p{0.36\textwidth} X}
 \toprule
