@@ -201,8 +201,8 @@ NA
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-\texttt{RawSource.\_load} & \texttt{subject}, \texttt{recording}, \texttt{preload} & MNE \texttt{Raw} object loaded from EEG/MEG file & \texttt{FileNotFoundError}, \texttt{OSError} (reader I/O errors) \\
-\texttt{save.pickle} & Python object (\texttt{res}) + destination path (\texttt{dst}) & Pickle file written to disk (TRF cache/result file) & \texttt{OSError}, pickle serialization errors \\
+\texttt{RawSource.\_load} & \texttt{subject: str}, \texttt{recording: str}, \texttt{preload: bool|-1} & \texttt{Raw} object loaded from EEG/MEG file & \texttt{FileNotFoundError}, \texttt{OSError} (reader I/O errors) \\
+\texttt{save.pickle} & \texttt{obj: Any}, optional \texttt{dest: Path|str|None}, optional \texttt{protocol: int} & \texttt{None}; pickle file written to disk & \texttt{OSError}, \texttt{RuntimeError}, pickle serialization errors \\
 \hline
 \end{tabular}
 \end{center}
@@ -285,12 +285,12 @@ Uses M1 for reading raw MEG/EEG data.
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
 \texttt{load\_epochs} &
-\texttt{samplingrate, data, interpolate\_bads} &
+\texttt{samplingrate: int|None}, \texttt{data: str}, \texttt{interpolate\_bads: bool|"keep"} &
 Dataset &
 \texttt{ValueError} \\
 
 \texttt{add\_predictor} &
-\texttt{ds: Dataset}, \texttt{code: PredictorCode}, optional \texttt{filter\_x}, optional target \texttt{y} &
+\texttt{ds: Dataset}, \texttt{code: str|PredictorCode}, optional \texttt{filter\_x: bool|"continuous"}, optional target \texttt{y: str|UTS|NDVar|None} &
 \texttt{None} &
 \texttt{ValueError}, \texttt{NotImplementedError}, undefined predictor errors \\
 \hline
