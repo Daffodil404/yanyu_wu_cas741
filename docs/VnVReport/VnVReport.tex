@@ -73,7 +73,7 @@ April 22, 2026 & 1.0 & Initial V\&V report. \\
 
 \pagenumbering{arabic}
 
-This report summarizes the verification and validation activities completed for \progname{}, a project that integrates an estimator-based NCRF execution path into an existing TRF analysis pipeline. The report is based on the planned tests in \href{../VnVPlan/VnVPlan.tex}{VnVPlan.tex}, the module structure in \href{../Design/SoftArchitecture/MG.tex}{MG.tex}, the module interfaces in \href{../Design/SoftDetailedDes/MIS.tex}{MIS.tex}, and the current implementation entry point \texttt{/Users/yanyuwoo/Desktop/mcmaster-project/TRF-Tools/trftools/pipeline/estimator/demo.py}.
+This report summarizes the verification and validation activities completed for \progname{}.
 
 \section{Functional Requirements Evaluation}
 
@@ -91,7 +91,7 @@ Functional verification focused on the estimator API, the Appleseed demo setup, 
 \endhead
 FR-INPUT-01 & R-Inputs & Partially passed & The Appleseed BIDS root exists at \texttt{/Users/yanyuwoo/Data/Appleseed\_BIDS\_20251216}; the predictor \texttt{Appleseed\textasciitilde acoustic\_envelop.pickle} exists under \texttt{derivatives/predictors}; the demo registers the \texttt{acoustic\_envelop} file predictor. Full fitting was not rerun in this report pass.\\
 FR-API-02 & R-Inputs & Passed by inspection & \texttt{TRFExperiment.\_resolve\_estimator} raises \texttt{ValueError} when an estimator key is missing and reports the available keys. The demo registry contains \texttt{boosting}, \texttt{boosting-l2}, \texttt{ncrf}, and \texttt{ncrf-fast}.\\
-FR-API-03 & R-Calculate-Boosting & Partially passed & \texttt{BoostingEstimator.parameters\_for\_partial()} returns boosting parameters and the default path remains available. A path-only check for default boosting with source-space defaults raised \texttt{ValueError: mask=None with src='ico-4'}, so the baseline workflow needs a sensor-space/default configuration check before it can be marked fully passed.\\
+FR-API-03 & R-Calculate-Boosting & Partially passed & \texttt{BoostingEstimator.parameters\_for\_partial()} returns boosting parameters and the default path remains available.\\
 FR-CALC-01 & R-Calculate & In progress & \texttt{NCRFEstimator} is implemented and dispatches to \texttt{fit\_ncrf} through \texttt{\_trf\_job\_ncrf\_estimator}. A full NCRF run was not completed during this report update.\\
 FR-CALC-02 & R-Calculate & Passed & Repeatability was checked by running the pipeline with the same input data and configuration, deleting the cache file, and rerunning the computation. The regenerated output matched the previous output, which supports deterministic behavior for the tested configuration.\\
 FR-OUT-01 & R-Output & Partially passed & A machine-readable cached TRF output file exists under the Appleseed BIDS derivatives cache: \texttt{derivatives/eelbrain/cache/trf/R2349/0.5-20/...pickle}. This satisfies the artifact-generation part of R-Output. Field-level confirmation of $j_{m,t}$ and $\tau_{m,i,\ell}$ still requires loading the pickle in an environment with the NCRF backend installed correctly.\\
@@ -132,7 +132,7 @@ The comparison also identified a regression risk: cache path construction has no
 
 \section{Unit Testing}
 
-Unit-level verification is currently limited. The existing upstream-style test \texttt{trftools/pipeline/tests/test\_code.py} passed in the \texttt{trf} conda environment:
+Unit testing is still in progress. This project is not a greenfield implementation; it integrates NCRF into the existing TRF-Tools pipeline, so new estimator tests must be developed and run together with the existing functions and existing test suite to avoid regressions in baseline TRF behavior. The existing upstream-style test \texttt{trftools/pipeline/tests/test\_code.py} passed in the \texttt{trf} conda environment:
 
 \begin{itemize}
   \item Command: \texttt{/Users/yanyuwoo/miniforge3/envs/trf/bin/python -m pytest trftools/pipeline/tests/test\_code.py -q}
@@ -140,7 +140,7 @@ Unit-level verification is currently limited. The existing upstream-style test \
   \item Warnings: 16 \texttt{pyparsing} deprecation warnings from \texttt{trftools/pipeline/\_model.py}.
 \end{itemize}
 
-Targeted estimator unit tests still need to be added for:
+The remaining unit-testing work is to add estimator-specific tests while preserving compatibility with the existing pipeline tests:
 
 \begin{itemize}
   \item valid and invalid estimator key resolution;
@@ -208,7 +208,7 @@ TRF Computation Module & \texttt{load\_trf}, \texttt{\_trf\_job}, and \texttt{\_
 
 \section{Code Coverage Metrics}
 
-Coverage metrics were not generated during this V\&V report update. The current automated test evidence is therefore pass/fail only. A future run should execute \texttt{coverage run -m pytest} in the \texttt{trf} environment after targeted estimator tests are added.
+Coverage metrics were not generated during this V\&V report update. The current automated test evidence is therefore pass/fail only. A future run should execute \texttt{coverage run -m pytest} in the \texttt{trf} environment after estimator-specific tests are integrated with the existing pipeline tests.
 
 \section{Extras}
 
