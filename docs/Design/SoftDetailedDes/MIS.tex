@@ -53,7 +53,7 @@ urlcolor=cyan          % color of external links
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Apr 22, 2026 & 1.2 & Addressed peer review feedback on estimator notation and in-place predictor output\\
+April 21, 2026 & 1.2 & Refinements based on professor's feedback\\
 Mar 25, 2026 & 1.1 & Post-presentation refinements based on professor's feedback\\
 March 5, 2026 & 1.0 & Initial version\\
 \bottomrule
@@ -215,8 +215,7 @@ None.
 
 \subsubsection{Environment Variables}
 
-Filesystem interface (\texttt{fs}) for reading raw EEG/MEG recordings and writing
-serialized outputs.
+\texttt{fs}: filesystem interface provided by the operating system for reading raw EEG/MEG recordings and writing serialized outputs.
 
 \subsubsection{Assumptions}
 
@@ -243,8 +242,7 @@ located, or \texttt{OSError} when low-level reader I/O fails.
 \item transition: Writes serialized object \texttt{res} to destination path
 \texttt{dst}.
 \item output: Produces a persisted pickle artifact for cache/results reuse.
-\item exception: Raises \texttt{OSError} for filesystem write failures and
-serialization exceptions for unsupported object graphs.
+\item exception: Raises \texttt{OSError} for filesystem write failures, \texttt{pickle.PicklingError} when pickle serialization fails, and \texttt{TypeError} when the object graph contains values that cannot be serialized by pickle.
 \end{itemize}
 
 \subsubsection{Local Functions}
@@ -272,9 +270,9 @@ Uses M1 for reading raw MEG/EEG data.
 \subsubsection{Exported Constants}
 % Constants defining predictor file naming conventions.
 \begin{itemize}
-\item \texttt{PREDICTOR\_FILE\_EXT} = \texttt{".pickle"}
-\item \texttt{PREDICTOR\_NAME\_SEP} = \texttt{"\textasciitilde"}
-\item \texttt{PREDICTOR\_FILE\_TEMPLATE} = \texttt{"\{stimulus\}\textasciitilde\{predictor\}.pickle"}
+\item \texttt{PREDICTOR\_FILE\_EXT}: \texttt{str} = \texttt{".pickle"}
+\item \texttt{PREDICTOR\_NAME\_SEP}: \texttt{str} = \texttt{"\textasciitilde"}
+\item \texttt{PREDICTOR\_FILE\_TEMPLATE}: \texttt{str} = \texttt{"DATA\_ROOT/\{stimulus\}\textasciitilde\{predictor\}.pickle"}, read as: replace \texttt{\{stimulus\}} with the stimulus name and \texttt{\{predictor\}} with the predictor name, then resolve the resulting filename under the predictor data root. Example: if \texttt{DATA\_ROOT = "/Users/yanyuwoo/Data/Appleseed\_BIDS\_20251216"}, then one instantiated path is \texttt{"/Users/yanyuwoo/Data/Appleseed\_BIDS\_20251216/quiet\textasciitilde envelope.pickle"}.
 \end{itemize}
 
 \subsubsection{Exported Access Programs}
@@ -301,10 +299,7 @@ Dataset &
 
 \subsubsection{State Variables}
 
-\begin{itemize}
-\item \texttt{predictors}: map from predictor name (\texttt{str}) to predictor
-generator/loader objects.
-\end{itemize}
+None. 
 
 \subsubsection{Environment Variables}
 
@@ -321,7 +316,7 @@ files in naming form \texttt{\{stimulus\}\textasciitilde\{predictor\}.pickle}.
 \begin{itemize}
 \item Input dataset contains event metadata required to identify stimulus
 instances (for example task/stimulus label).
-\item Predictor definitions are registered in \texttt{predictors} before loading.
+\item Predictor definitions are registered in the external predictor registry before loading.
 \item Time axis requested by TRF routines is valid and compatible with predictor
 sampling constraints.
 \end{itemize}
@@ -331,12 +326,12 @@ sampling constraints.
 \noindent \texttt{add\_predictor(ds, code, filter\_x, y)}:
 \begin{itemize}
 \item transition: Extends dataset \texttt{ds} by assigning predictor signal(s) to
-column \texttt{code.key}. Predictor values are aligned to the response time axis
+column \texttt{code.key}, where \texttt{code} is a predictor descriptor object and \texttt{code.key} is its string identifier. Predictor values are aligned to the response time axis
 for each epoch/trial.
 \item output: None (in-place update of \texttt{ds}).
 \item exception:
 \begin{itemize}
-\item Undefined predictor code (not registered in \texttt{predictors}).
+\item Undefined predictor code (not registered in the external predictor registry).
 \item \texttt{ValueError} when \texttt{filter\_x} is requested for unsupported
 predictor types.
 \item \texttt{NotImplementedError} for unsupported combinations (for example
@@ -347,8 +342,7 @@ epochs).
 
 \noindent \texttt{load\_epochs(samplingrate, data, interpolate\_bads)}:
 \begin{itemize}
-\item transition: No module state transition. Reads epoch definitions and raw
-recordings to construct an analysis dataset for the current subject/recording.
+\item transition: None.
 \item output: Returns epoch dataset \texttt{ds} containing response variable
 (for example MEG/EEG channels), event metadata, and a time axis consistent with
 \texttt{samplingrate}.
@@ -411,8 +405,7 @@ None. M3 only specifies the in-function resolution behavior.
 
 \subsubsection{Design Pattern}
 
-Strategy pattern with a registry-based resolver: the estimator key selects a
-concrete estimator object whose parameters are applied before TRF computation.
+Strategy pattern with a registry-based resolver: M3 (Estimator Resolution Module) defines the estimator-selection interface by resolving an estimator key to a concrete estimator policy before TRF computation. The concrete strategy implementations are the \texttt{boosting} estimator and the \texttt{ncrf} estimator, each of which provides its own parameter set and computation path.
 
 \subsubsection{Environment Variables}
 
