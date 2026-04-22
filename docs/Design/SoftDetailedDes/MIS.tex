@@ -53,6 +53,7 @@ urlcolor=cyan          % color of external links
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
+Apr 22, 2026 & 1.2 & Addressed peer review feedback on estimator notation and in-place predictor output\\
 Mar 25, 2026 & 1.1 & Post-presentation refinements based on professor's feedback\\
 March 5, 2026 & 1.0 & Initial version\\
 \bottomrule
@@ -120,6 +121,9 @@ real tensor & $\mathbb{R}^{m \times i \times \ell}$ & a three-dimensional real-v
 EEG/MEG signal & $\mathbb{R}^{c \times t}$ & multichannel real-valued time series, where $c$ is channel/sensor count and $t$ is time index\\
 string & str & text identifier such as subject, task, or estimator name\\
 path & Path & filesystem location for input/output artifacts\\
+dataset & Dataset & tabular/epoch data object containing response variables, predictor columns, event metadata, and time axes\\
+predictor code & PredictorCode & structured predictor request with string field \texttt{key} naming the dataset column to be filled\\
+estimator policy & Estimator & strategy/configuration object that identifies an analysis method and its estimator-specific options\\
 \bottomrule
 \end{tabular} 
 \end{center}
@@ -130,16 +134,21 @@ the table above: $\mathbb{B}$ (boolean), $\mathbb{Z}$ (integer),
 $\mathbb{N}$ (natural number), $\mathbb{R}$ (real scalar),
 $\mathbb{R}^{n}$ (real vector), $\mathbb{R}^{m \times n}$ (real matrix), and
 $\mathbb{R}^{m \times i \times \ell}$ (real tensor), plus \texttt{str} and
-\texttt{Path}. In this project, stimulus features are modeled as
+\texttt{Path}. The additional project-level types are \texttt{Dataset},
+\texttt{PredictorCode}, and \texttt{Estimator}. In this project, stimulus features are modeled as
 $\mathbb{R}^{n}$ time series, EEG/MEG observations are modeled as
 $\mathbb{R}^{c \times t}$, source estimates are modeled as
 $\mathbb{R}^{m \times n}$, and NCRF coefficients are modeled as
 $\mathbb{R}^{m \times i \times \ell}$. Strings are used for identifiers such
 as subject, task, stimulus, and estimator name (for example,
 \texttt{boosting} and \texttt{ncrf}), while paths denote filesystem locations
-for predictors, intermediate artifacts, and outputs. Functions are specified by
-explicit input/output type signatures, followed by behavioral requirements and
-exception conditions where applicable.
+for predictors, intermediate artifacts, and outputs. A \texttt{Dataset}
+represents the epoch table passed between pipeline stages, a
+\texttt{PredictorCode} carries the predictor identity and its \texttt{key}
+field for naming the output column, and an \texttt{Estimator} is a Strategy
+contract for describing the analysis method, defaults, and option-resolution
+rules for concrete estimator policies such as boosting and NCRF. Functions are specified by explicit input/output type signatures,
+followed by behavioral requirements and exception conditions where applicable.
 
 \section{Module Decomposition}
 
@@ -281,8 +290,8 @@ Dataset &
 \texttt{ValueError} \\
 
 \texttt{add\_predictor} &
-dataset, predictor, optional \texttt{filter\_x}, optional target \texttt{y} &
-\texttt{ds} extended with predictor column \texttt{code.key} &
+\texttt{ds: Dataset}, \texttt{code: PredictorCode}, optional \texttt{filter\_x}, optional target \texttt{y} &
+\texttt{None} &
 \texttt{ValueError}, \texttt{NotImplementedError}, undefined predictor errors \\
 \hline
 \end{tabular}
@@ -418,8 +427,8 @@ is requested.
 \begin{itemize}
 \item If \texttt{estimator} is provided as a string, the experiment defines a
 dictionary \texttt{estimators} and contains the requested key.
-\item Estimator objects implement \texttt{parameters\_for\_partial()} and return
-keyword arguments compatible with the selected backend fitter.
+\item Estimator objects define an estimator key and option-resolution rules that
+produce backend-compatible TRF fitting options.
 \item Predictor and response data are already prepared by upstream modules.
 \item Estimator resolution occurs before the TRF fitting job is created.
 \end{itemize}
@@ -443,8 +452,8 @@ validates estimator type and key.
 \subsubsection{Local Functions}
 
 \begin{itemize}
-\item \texttt{\_apply\_estimator\_params(estimator: Estimator|None, **kwargs: dict)}:
-merge estimator defaults into explicit TRF options.
+\item \texttt{\_apply\_estimator\_options(estimator: Estimator|None, **kwargs: dict)}:
+merge estimator defaults and explicit user options into effective TRF options.
 \end{itemize}
 
 \newpage

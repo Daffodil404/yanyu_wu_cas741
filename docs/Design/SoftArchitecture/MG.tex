@@ -47,6 +47,7 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
+Apr 22, 2026 & 1.2 & Addressed peer review feedback on TRF computation backend ownership\\
 Mar 25, 2026 & 1.1 & Post-presentation refinements based on professor's feedback; remove software decision module; align with feedback\\
 March 5, 2026 & 1.0 & Initial Draft\\
 \bottomrule
@@ -305,10 +306,14 @@ to be implemented.
 \item[Secrets:] The implementation of TRF calculation with different estimation parameters.
 \item[Services:] Compute TRF model outputs given preprocessed MEG/EEG data,
   predictor signals, and estimator parameters. Returns TRF weights and fit
-  metrics needed for downstream reporting and output generation.
+  metrics needed for downstream reporting and output generation. The module
+  dispatches baseline TRF fitting to the TRF-Tools/Eelbrain boosting path and
+  NCRF fitting to the \texttt{neuro-currentRF} backend through the integrated
+  TRF-Tools workflow.
   % Changes in these modules are more likely to be motivated by a desire to
   % improve performance than by externally imposed changes.
-\item[Implemented By:] Eelbrain (Python backend)
+\item[Implemented By:] TRF-Tools estimator workflow, with NCRF numerical fitting
+provided by \href{https://github.com/Eelbrain/neuro-currentRF}{neuro-currentRF}.
 \item[Type of Module:] Library
 \end{description}
 
