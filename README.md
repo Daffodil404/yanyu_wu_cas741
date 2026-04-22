@@ -202,9 +202,3 @@ If the demo does not run, check the following first:
 - The Appleseed BIDS dataset path is correct.
 - The stimulus `.wav` directory path is correct.
 - `make_demo_predictor.py` has generated `Appleseed~acoustic_envelop.pickle`.
-
-For a more detailed step-by-step procedure, see the local SOP used as the reference for this README:
-
-```text
-/Users/yanyuwoo/Desktop/mcmaster-project/TRF-Tools/demo_sop.md
-```
