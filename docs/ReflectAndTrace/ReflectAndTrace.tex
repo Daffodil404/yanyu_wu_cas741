@@ -89,13 +89,12 @@ No separate Hazard Analysis document was central to this project because the del
 \toprule
 \textbf{Source} & \textbf{Feedback} & \textbf{Response}\\
 \midrule
-Supervisor checklist issue \#30 & Types, names, and notation were missing or unclear in the MIS. & Added explicit types where the reviewer needed them, especially in Section 6 and Section 7 function signatures such as \texttt{RawSource.\_load}, \texttt{save.pickle}, \texttt{load\_epochs}, and \texttt{add\_predictor}.\\
-Supervisor checklist issue \#30 & The strategy pattern was not visible enough. & Updated the MG and MIS to describe the estimator resolver as a Strategy pattern: \texttt{TRFExperiment} acts as the context, while \texttt{BoostingEstimator} and \texttt{NCRFEstimator} are concrete strategies selected through an estimator registry.\\
-Supervisor checklist issue \#30 & The mapping between NLES modules and implementation code needed to be clearer. & Improved the MG module descriptions so M2 handles data preprocessing, M3 handles estimator resolution, and M4 handles TRF computation/backend dispatch.\\
+Professor feedback issue \#15 & MG and MIS feedback was provided as annotated PDF attachments. & Revised the design documents to better align the module decomposition, estimator strategy design, and module interfaces with the implemented TRF-Tools integration.\\
 Peer review issue \#18 & The MG incorrectly suggested that Eelbrain implements the NCRF computation service. & Revised M4 to state that the integrated TRF-Tools workflow dispatches baseline fitting through the TRF-Tools/Eelbrain boosting path and NCRF fitting through the \texttt{neuro-currentRF} backend.\\
 Peer review issue \#19 & The MIS used \texttt{Estimator} without defining the type. & Added \texttt{Estimator} as a strategy/configuration object for selecting an analysis method and estimator-specific options.\\
 Peer review issue \#20 & \texttt{add\_predictor} output was inconsistent with its in-place behavior. & Changed the exported access program table so \texttt{add\_predictor} returns \texttt{None}, matching the TRF-Tools implementation.\\
-Documentation review & Links to companion documents pointed to source \texttt{.tex} files rather than generated PDFs. & Updated MIS companion-document links to the generated SRS and MG PDF pages.\\
+Peer review issue \#21 & The link in Section 2 of the MIS should point readers to the correct companion documentation. & Updated the MIS documentation references so readers can locate the related SRS and MG material more reliably.\\
+Peer review issue \#22 & The Hardware-Hiding Module in the MIS had a typing issue. & Corrected the relevant Hardware-Hiding Module type/interface description so the documented access routines match the intended data and filesystem behavior.\\
 \bottomrule
 \end{tabularx}
 \caption{Design feedback and responses}
@@ -112,7 +111,9 @@ Documentation review & Links to companion documents pointed to source \texttt{.t
 Peer review issue \#10 & The SRS checklist review should be referenced directly. & Added checklist references and made the review evidence more explicit in the VnV plan.\\
 Peer review issue \#11 & Hyperlinks to \texttt{R-Inputs}, \texttt{R-Calculate}, and \texttt{R-Output} were broken. & Corrected requirement labels and traceability references so the VnV plan maps tests to the SRS requirements.\\
 Peer review issue \#12 & FR-CALC-02 described repeated NCRF runs as input rather than procedure. & Revised the test case so the input matches FR-CALC-01 and the repeated run is described as the test procedure for reproducibility.\\
-Supervisor feedback & Test inputs and outputs needed to be reproducible and concrete. & Specified the Appleseed BIDS dataset, acoustic-envelope predictor, subject/task assumptions, estimator configuration, lag window, and acceptance checks for NCRF execution.\\
+Peer review issue \#13 & NFR-ACC-01 needed a clearer accuracy comparison and acceptance criterion. & Revised the accuracy test description to compare outputs under a fixed configuration and report relative-error metrics where a suitable baseline is available.\\
+Peer review issue \#14 & The Software Validation section needed to state whether model validation was in scope. & Clarified that validating the underlying NCRF scientific model is out of scope; the project verifies integration of the existing NCRF model into the TRF pipeline.\\
+Professor feedback issue \#4 & Professor feedback on the submitted VnV Plan requested more concrete and feasible test evidence. & Specified the Appleseed BIDS dataset, acoustic-envelope predictor, subject/task assumptions, estimator configuration, lag window, and acceptance checks for NCRF execution.\\
 \bottomrule
 \end{tabularx}
 \caption{VnV feedback and responses}
