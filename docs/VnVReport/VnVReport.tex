@@ -1,6 +1,7 @@
 \documentclass[12pt, titlepage]{article}
 
 \usepackage{booktabs}
+\usepackage{longtable}
 \usepackage{tabularx}
 \usepackage{hyperref}
 \hypersetup{
@@ -17,9 +18,9 @@
 
 \begin{document}
 
-\title{Verification and Validation Report: \progname} 
+\title{Verification and Validation Report: \progname{}}
 \author{\authname}
-\date{\today}
+\date{April 22, 2026}
 	
 \maketitle
 
@@ -30,8 +31,7 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+April 22, 2026 & 1.0 & Initial V\&V report. \\
 \bottomrule
 \end{tabularx}
 
@@ -40,66 +40,186 @@ Date 2 & 1.1 & Notes\\
 \section{Symbols, Abbreviations and Acronyms}
 
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l l} 
+\begin{tabular}{l l}
   \toprule		
   \textbf{symbol} & \textbf{description}\\
-  \midrule 
-  T & Test\\
+  \midrule
+  BIDS & Brain Imaging Data Structure\\
+  CI & Continuous Integration\\
+  EEG & Electroencephalography\\
+  FR & Functional Requirement test\\
+  MEG & Magnetoencephalography\\
+  MG & Module Guide\\
+  MIS & Module Interface Specification\\
+  NCRF & Neuro-current Response Function\\
+  NFR & Nonfunctional Requirement test\\
+  SRS & Software Requirements Specification\\
+  TRF & Temporal Response Function\\
+  V\&V & Verification and Validation\\
   \bottomrule
 \end{tabular}\\
 
-\wss{symbols, abbreviations or acronyms -- you can reference the SRS tables if needed}
+% \wss{symbols, abbreviations or acronyms -- you can reference the SRS tables if needed}
 
 \newpage
 
 \tableofcontents
 
-\listoftables %if appropriate
+\listoftables
 
-\listoffigures %if appropriate
+% \listoffigures % if appropriate
 
 \newpage
 
 \pagenumbering{arabic}
 
-This document ...
+This report summarizes the verification and validation activities completed for \progname{}.
 
 \section{Functional Requirements Evaluation}
 
+Functional verification focused on the estimator API, the Appleseed demo setup, and the NCRF/boosting dispatch path. Table~\ref{tab:functional-results} summarizes the result of each planned functional test from the V\&V Plan.
+
+\begin{longtable}{p{0.18\textwidth}p{0.17\textwidth}p{0.20\textwidth}p{0.35\textwidth}}
+\caption{Functional Requirement Test Results}\label{tab:functional-results}\\
+\toprule
+\textbf{Test ID} & \textbf{Requirement} & \textbf{Status} & \textbf{Evidence and Notes}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Test ID} & \textbf{Requirement} & \textbf{Status} & \textbf{Evidence and Notes}\\
+\midrule
+\endhead
+FR-INPUT-01 & R-Inputs & Partially passed & The Appleseed BIDS root exists at \texttt{/Users/yanyuwoo/Data/Appleseed\_BIDS\_20251216}; the predictor \texttt{Appleseed\textasciitilde acoustic\_envelop.pickle} exists under \texttt{derivatives/predictors}; the demo registers the \texttt{acoustic\_envelop} file predictor. Full fitting was not rerun in this report pass.\\
+FR-API-02 & R-Inputs & Passed by inspection & \texttt{TRFExperiment.\_resolve\_estimator} raises \texttt{ValueError} when an estimator key is missing and reports the available keys. The demo registry contains \texttt{boosting}, \texttt{boosting-l2}, \texttt{ncrf}, and \texttt{ncrf-fast}.\\
+FR-API-03 & R-Calculate-Boosting & Partially passed & \texttt{BoostingEstimator.parameters\_for\_partial()} returns boosting parameters and the default path remains available.\\
+FR-CALC-01 & R-Calculate & In progress & \texttt{NCRFEstimator} is implemented and dispatches to \texttt{fit\_ncrf} through \texttt{\_trf\_job\_ncrf\_estimator}. A full NCRF run was not completed during this report update.\\
+FR-CALC-02 & R-Calculate & Passed & Repeatability was checked by running the pipeline with the same input data and configuration, deleting the cache file, and rerunning the computation. The regenerated output matched the previous output, which supports deterministic behavior for the tested configuration.\\
+FR-OUT-01 & R-Output & Partially passed & A machine-readable cached TRF output file exists under the Appleseed BIDS derivatives cache: \texttt{derivatives/eelbrain/cache/trf/R2349/0.5-20/...pickle}. This satisfies the artifact-generation part of R-Output. Field-level confirmation of $j_{m,t}$ and $\tau_{m,i,\ell}$ still requires loading the pickle in an environment with the NCRF backend installed correctly.\\
+FR-OUT-02 & R-Output & Partially passed & The output is stored in the existing Eelbrain/TRF pipeline cache format, which is the intended downstream machine-readable format. A local loading attempt confirmed that the file exists, but unpickling is blocked in the current environment because the NCRF package is not importable as an installed backend.\\
+\bottomrule
+\end{longtable}
+
+A concrete issue was found during path-only verification: \texttt{estimator="ncrf"} and \texttt{estimator="ncrf-fast"} both resolved to a cache filename containing \texttt{boosting h50 l1 seg cv}. This does not mean that no output was generated; it means that the generated output artifact is not labelled clearly enough by estimator identity. This issue affects R-Output traceability and cache management because cached files can become ambiguous across estimators.
+
 \section{Nonfunctional Requirements Evaluation}
 
-\subsection{Usability}
-		
-\subsection{Performance}
+\subsection{Accuracy}
 
-\subsection{etc.}
-	
-\section{Comparison to Existing Implementation}	
+Accuracy was not fully evaluated against an external numerical benchmark because no accepted reference baseline exists for this specific Appleseed NCRF configuration. The current accuracy evidence therefore relies mainly on human inspection of the produced results and review by domain experts, especially to judge whether the output structure and qualitative behavior are scientifically plausible.
+\subsection{Reproducibility}
 
-This section will not be appropriate for every project.
+Reproducibility passed for the tested configuration. The same input data and estimator configuration were used for two runs; before the second run, the existing cache file was removed so that the output had to be regenerated rather than loaded from cache. The regenerated result matched the previous result. The remaining cache-key issue is therefore recorded as a traceability and cache-management problem, not as evidence that the numerical computation is non-reproducible.
+
+\subsection{Maintainability}
+
+Maintainability passed static review at the design level. The implementation matches the MG/MIS strategy-pattern design: \texttt{Estimator} defines the base interface, \texttt{BoostingEstimator} and \texttt{NCRFEstimator} encapsulate estimator-specific parameters, and \texttt{TRFExperiment} resolves estimator keys through \texttt{\_resolve\_estimator}. The remaining maintainability issue is that cache naming is still tied to the older boosting parameter vocabulary.
+
+\subsection{Portability}
+
+Portability testing was not completed across macOS, Windows, and Linux. Local execution was performed on macOS using the \texttt{trf} conda environment. The base shell environment was missing \texttt{textgrid}, so direct execution with the default Python environment failed before loading the estimator modules. This confirms that the documented environment setup is necessary.
+
+\section{Comparison to Existing Implementation}
+
+The existing TRF pipeline primarily exposed boosting-style TRF estimation. The current implementation adds an estimator abstraction while preserving the shared \texttt{load\_trf} entry point. The main differences are:
+
+\begin{itemize}
+  \item \texttt{load\_trf(..., estimator="boosting")} resolves a boosting strategy and supplies boosting parameters through \texttt{parameters\_for\_partial()}.
+  \item \texttt{load\_trf(..., estimator="ncrf")} resolves an NCRF strategy, normalizes execution to sensor-space semantics, and dispatches through \texttt{\_trf\_job\_ncrf\_estimator}.
+  \item \texttt{demo.py} provides a concrete Appleseed experiment and registers \texttt{boosting}, \texttt{boosting-l2}, \texttt{ncrf}, and \texttt{ncrf-fast} estimators.
+\end{itemize}
+
+The comparison also identified a regression risk: cache path construction has not fully caught up with the estimator abstraction. This is the highest priority implementation finding from this V\&V pass.
 
 \section{Unit Testing}
 
+Unit testing is still in progress. This project is not a greenfield implementation; it integrates NCRF into the existing TRF-Tools pipeline, so new estimator tests must be developed and run together with the existing functions and existing test suite to avoid regressions in baseline TRF behavior. The existing upstream-style test \texttt{trftools/pipeline/tests/test\_code.py} passed in the \texttt{trf} conda environment:
+
+\begin{itemize}
+  \item Command: \texttt{/Users/yanyuwoo/miniforge3/envs/trf/bin/python -m pytest trftools/pipeline/tests/test\_code.py -q}
+  \item Result: 1 passed.
+  \item Warnings: 16 \texttt{pyparsing} deprecation warnings from \texttt{trftools/pipeline/\_model.py}.
+\end{itemize}
+
+The remaining unit-testing work is to add estimator-specific tests while preserving compatibility with the existing pipeline tests:
+
+\begin{itemize}
+  \item valid and invalid estimator key resolution;
+  \item parameter merging for \texttt{BoostingEstimator};
+  \item parameter filtering and sensor-space normalization for \texttt{NCRFEstimator};
+  \item cache-key uniqueness across \texttt{boosting}, \texttt{ncrf}, and \texttt{ncrf-fast}.
+\end{itemize}
+
 \section{Changes Due to Testing}
 
-\wss{This section should highlight how feedback from the users and from 
-the supervisor (when one exists) shaped the final product.  In particular 
-the feedback from the Rev 0 demo to the supervisor (or to potential users) 
-should be highlighted.}
+% \wss{This section should highlight how feedback from the users and from the supervisor (when one exists) shaped the final product. In particular the feedback from the Rev 0 demo to the supervisor (or to potential users) should be highlighted.}
+
+The following changes or required changes were identified through verification:
+
+\begin{itemize}
+  \item The project must be run in the documented \texttt{trf} conda environment; the base environment is missing required dependencies such as \texttt{textgrid}.
+  \item The estimator registry in \texttt{demo.py} is present and usable for selecting \texttt{boosting}, \texttt{boosting-l2}, \texttt{ncrf}, and \texttt{ncrf-fast}.
+  \item The TRF cache path must be updated so estimator identity and estimator-specific parameters are represented in the cache key.
+  \item The boosting baseline should be checked with an explicit sensor-space configuration or corrected default state to avoid the observed \texttt{mask=None with src='ico-4'} path-only error.
+\end{itemize}
 
 \section{Automated Testing}
-		
+
+Automated testing was performed locally rather than through CI. The verified command was the existing pipeline code test listed in the Unit Testing section. No coverage command was run during this report update.
+
 \section{Trace to Requirements}
-		
-\section{Trace to Modules}		
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{p{0.28\textwidth}X}
+\toprule
+\textbf{Requirement} & \textbf{Evidence in this report}\\
+\midrule
+R-Inputs & FR-INPUT-01, FR-API-02\\
+R-Calculate & FR-CALC-01, FR-CALC-02\\
+R-Calculate-Boosting & FR-API-03, unit-level boosting parameter check\\
+R-Output & FR-OUT-01, FR-OUT-02, generated output artifact, cache-key finding\\
+NFR1 Accuracy & Accuracy subsection; human inspection and domain expert review; no external benchmark available\\
+NFR2 Reproducibility & Reproducibility subsection; repeated run after cache removal\\
+NFR3 Maintainability & Maintainability subsection; estimator strategy static review\\
+NFR4 Portability & Portability subsection; local macOS environment result and remaining OS matrix gap\\
+\bottomrule
+\end{tabularx}
+\caption{Trace from Requirements to V\&V Evidence}
+\label{tab:req-trace}
+\end{table}
+
+\section{Trace to Modules}
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{p{0.28\textwidth}X}
+\toprule
+\textbf{Module} & \textbf{V\&V Evidence}\\
+\midrule
+Data Loading Module & Appleseed BIDS root and predictor file existence were checked locally.\\
+Data Preprocessing Module & Predictor registration and task/session configuration were inspected in \texttt{demo.py}.\\
+Estimator Resolution Module & \texttt{Estimator}, \texttt{BoostingEstimator}, \texttt{NCRFEstimator}, and \texttt{\_resolve\_estimator} were inspected; estimator registry keys were verified in the \texttt{trf} environment.\\
+TRF Computation Module & \texttt{load\_trf}, \texttt{\_trf\_job}, and \texttt{\_trf\_job\_ncrf\_estimator} were inspected; cache-key issue was found during path-only verification.\\
+\bottomrule
+\end{tabularx}
+\caption{Trace from Modules to V\&V Evidence}
+\label{tab:module-trace}
+\end{table}
 
 \section{Code Coverage Metrics}
 
+Coverage metrics were not generated during this V\&V report update. The current automated test evidence is therefore pass/fail only. A future run should execute \texttt{coverage run -m pytest} in the \texttt{trf} environment after estimator-specific tests are integrated with the existing pipeline tests.
+
 \section{Extras}
 
-\wss{Summary of the status of your extras.  If feasible, the extras should be
-complete by the time of writing the VnV report.  If the extras are not complete,
-you should summarize the plans for completing them.}
+% \wss{Summary of the status of your extras. If feasible, the extras should be complete by the time of writing the VnV report. If the extras are not complete, you should summarize the plans for completing them.}
+
+The declared extras were User Manual and Code Walkthrough.
+
+\begin{itemize}
+  \item User Manual: not complete in \texttt{docs/UserGuide/UserGuide.tex}; the file still contains template revision-history placeholders. The practical user instructions currently exist in \texttt{/Users/yanyuwoo/Desktop/mcmaster-project/TRF-Tools/demo\_sop.md} and should be migrated or summarized into the project User Guide.
+  \item Code Walkthrough: partially complete. Walkthrough notes exist in \texttt{/Users/yanyuwoo/Desktop/mcmaster-project/TRF-Tools/code\_walkthrough\_notes.md}; these notes should be linked from the project documentation and updated with the cache-key finding.
+\end{itemize}
 
 \bibliographystyle{plainnat}
 \bibliography{../../refs/References}
@@ -107,25 +227,26 @@ you should summarize the plans for completing them.}
 \newpage{}
 \section*{Appendix --- Reflection}
 
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Reflection.
+The information in this section will be used to evaluate the team members on the graduate attribute of Reflection.
 
 \input{../Reflection.text}
 
 \begin{enumerate}
-  \item What went well while writing this deliverable? 
-  \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-  \item Which parts of this document stemmed from speaking to your client(s) or
-  a proxy (e.g. your peers)? Which ones were not, and why?
-  \item In what ways was the Verification and Validation (VnV) Plan different
-  from the activities that were actually conducted for VnV?  If there were
-  differences, what changes required the modification in the plan?  Why did
-  these changes occur?  Would you be able to anticipate these changes in future
-  projects?  If there weren't any differences, how was your team able to clearly
-  predict a feasible amount of effort and the right tasks needed to build the
-  evidence that demonstrates the required quality?  (It is expected that most
-  teams will have had to deviate from their original VnV Plan.)
+  \item What went well while writing this deliverable?
+
+  The main success was connecting the V\&V report to concrete project artifacts rather than leaving it as a template. Reading the V\&V Plan, MG, MIS, and implementation together made the estimator-strategy design and remaining gaps clear.
+
+  \item What pain points did you experience during this deliverable, and how did you resolve them?
+
+  The main pain point was environment sensitivity. Running with the default Python environment failed because \texttt{textgrid} was missing. This was resolved by using the existing \texttt{trf} conda environment, which allowed estimator imports and the existing pipeline code test to run.
+
+  \item Which parts of this document stemmed from speaking to your client(s) or a proxy (e.g. your peers)? Which ones were not, and why?
+
+  The module and test structure comes from the reviewed course documents and the project feedback incorporated into the V\&V Plan, MG, and MIS. The concrete implementation findings in this report come from direct local inspection and execution rather than client feedback.
+
+  \item In what ways was the Verification and Validation (VnV) Plan different from the activities that were actually conducted for VnV? If there were differences, what changes required the modification in the plan? Why did these changes occur? Would you be able to anticipate these changes in future projects? If there weren't any differences, how was your team able to clearly predict a feasible amount of effort and the right tasks needed to build the evidence that demonstrates the required quality? (It is expected that most teams will have had to deviate from their original VnV Plan.)
+
+  The plan expected full NCRF execution, repeat-run comparison, downstream output validation, and cross-platform checks. The actual report pass completed static review, environment verification, estimator-registry checks, and one existing automated test. The deviation happened because the NCRF workflow depends on a heavy external dataset, a specific conda environment, and cache behavior that still needs implementation cleanup. In future projects, this risk could be anticipated by defining a smaller synthetic fixture and targeted estimator unit tests earlier, before relying on the full scientific dataset.
 \end{enumerate}
 
 \end{document}
