@@ -87,7 +87,7 @@
   \newpage
   \noindent \rule{\textwidth}{0.5mm}
 
-  \paragraph{RefName: } \textbf{#2} \phantomsection
+  \paragraph{RefName: } \textbf{TM\refstepcounter{theorynum}\thetheorynum: #3} \phantomsection
   \label{#2}
 
   \paragraph{Label:} #3
@@ -796,7 +796,7 @@ on. Under the linear temporal response assumption (A3), the stimulus-driven neur
 \noindent
 \deftheory
 % #2 refname of theory
-{TM1: NCRF Model}
+{TM-NCRF-Model}
 % #3 label
 {Stimulus-to-Source Model (NCRF Model)}
 % #4 equation
@@ -877,9 +877,9 @@ instance models.
     NCRF theoretical model and assumes a discrete-time representation of the stimulus.
     \\
     \hline
-    Source & TM1: NCRF Model \cite{DasBrodbeckSimonBabadi2020}\\
+    Source & \tref{TM-NCRF-Model}: NCRF Model \cite{DasBrodbeckSimonBabadi2020}\\
     \hline
-    Ref.\ By & \ddref{FluxCoil}, \ddref{FluxPCM}\\
+    Ref.\ By & \ddref{DD-StimulusFeature}, \ddref{DD-NCRF-Coefficients}, \iref{IM-NeuralStimResponse}\\
     \hline
   \end{tabular}
 
@@ -904,7 +904,7 @@ instance models.
     \hline
     Source & \cite{DasBrodbeckSimonBabadi2020} \\
     \hline
-    Ref.\ By & \ddref{FluxCoil}, \ddref{FluxPCM}\\
+    Ref.\ By & \iref{IM-NeuralStimResponse}\\
     \hline
   \end{tabular}
 \end{minipage}\\
@@ -962,7 +962,7 @@ models. The dimension of each quantity is also given.
   \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
     \hline
     \rowcolor[gray]{0.9}
-    Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{FluxCoil}\label{DD-NCRF-Coefficients}\\
+    Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{DD-NCRF-Coefficients}\\
     \hline
     Label& \bf Neuro-Current Response Function (NCRF) Coefficients \\
     \hline
