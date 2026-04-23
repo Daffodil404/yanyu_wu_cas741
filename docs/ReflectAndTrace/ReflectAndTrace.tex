@@ -2,6 +2,8 @@
 
 \usepackage{tabularx}
 \usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{float}
 
 \title{Reflection and Traceability Report on \progname}
 
@@ -16,128 +18,239 @@
 
 \maketitle
 
-\plt{Reflection is an important component of getting the full benefits from a
-learning experience.  Besides the intrinsic benefits of reflection, this
-document will be used to help the TAs grade how well your team responded to
-feedback.  Therefore, traceability between Revision 0 and Revision 1 is and
-important part of the reflection exercise.  In addition, several CEAB (Canadian
-Engineering Accreditation Board) Learning Outcomes (LOs) will be assessed based
-on your reflections.}
+% TEMPLATE:
+% \plt{Reflection is an important component of getting the full benefits from a
+% learning experience.  Besides the intrinsic benefits of reflection, this
+% document will be used to help the TAs grade how well your team responded to
+% feedback.  Therefore, traceability between Revision 0 and Revision 1 is and
+% important part of the reflection exercise.  In addition, several CEAB (Canadian
+% Engineering Accreditation Board) Learning Outcomes (LOs) will be assessed based
+% on your reflections.}
 
 \section{Changes in Response to Feedback}
 
-\plt{Summarize the changes made over the course of the project in response to
-feedback from TAs, the instructor, teammates, other teams, the project
-supervisor (if present), and from user testers.}
+% TEMPLATE:
+% \plt{Summarize the changes made over the course of the project in response to
+% feedback from TAs, the instructor, teammates, other teams, the project
+% supervisor (if present), and from user testers.}
+% \plt{For those teams with an external supervisor, please highlight how the feedback 
+% from the supervisor shaped your project.  In particular, you should highlight the 
+% supervisor's response to your Rev 0 demonstration to them.}
+% \plt{Version control can make the summary relatively easy, if you used issues
+% and meaningful commits.  If you feedback is in an issue, and you responded in
+% the issue tracker, you can point to the issue as part of explaining your
+% changes.  If addressing the issue required changes to code or documentation, you
+% can point to the specific commit that made the changes.  Although the links are
+% helpful for the details, you should include a label for each item of feedback so
+% that the reader has an idea of what each item is about without the need to click
+% on everything to find out.}
+% \plt{If you were not organized with your commits, traceability between feedback
+% and commits will not be feasible to capture after the fact.  You will instead
+% need to spend time writing down a summary of the changes made in response to
+% each item of feedback.}
+% \plt{You should address EVERY item of feedback.  A table or itemized list is
+% recommended.  You should record every item of feedback, along with the source of
+% that feedback and the change you made in response to that feedback.  The
+% response can be a change to your documentation, code, or development process.
+% The response can also be the reason why no changes were made in response to the
+% feedback.  To make this information manageable, you will record the feedback and
+% response separately for each deliverable in the sections that follow.}
+% \plt{If the feedback is general or incomplete, the TA (or instructor) will not
+% be able to grade your response to feedback.  In that case your grade on this
+% document, and likely the Revision 1 versions of the other documents will be
+% low.} 
 
-\plt{For those teams with an external supervisor, please highlight how the feedback 
-from the supervisor shaped your project.  In particular, you should highlight the 
-supervisor's response to your Rev 0 demonstration to them.}
-
-\plt{Version control can make the summary relatively easy, if you used issues
-and meaningful commits.  If you feedback is in an issue, and you responded in
-the issue tracker, you can point to the issue as part of explaining your
-changes.  If addressing the issue required changes to code or documentation, you
-can point to the specific commit that made the changes.  Although the links are
-helpful for the details, you should include a label for each item of feedback so
-that the reader has an idea of what each item is about without the need to click
-on everything to find out.}
-
-\plt{If you were not organized with your commits, traceability between feedback
-and commits will not be feasible to capture after the fact.  You will instead
-need to spend time writing down a summary of the changes made in response to
-each item of feedback.}
-
-\plt{You should address EVERY item of feedback.  A table or itemized list is
-recommended.  You should record every item of feedback, along with the source of
-that feedback and the change you made in response to that feedback.  The
-response can be a change to your documentation, code, or development process.
-The response can also be the reason why no changes were made in response to the
-feedback.  To make this information manageable, you will record the feedback and
-response separately for each deliverable in the sections that follow.}
-
-\plt{If the feedback is general or incomplete, the TA (or instructor) will not
-be able to grade your response to feedback.  In that case your grade on this
-document, and likely the Revision 1 versions of the other documents will be
-low.} 
+Feedback was tracked primarily through GitHub issues and through revision notes in the project documents. The most important change across the project was refining the project from the broad goal of ``integrating NCRFs into the pipeline'' into a concrete integration strategy for the existing TRF-Tools workflow. The problem statement frames NCRFs as a way to address error propagation in the current two-stage TRF-based analysis by estimating spatial and temporal response properties jointly rather than sequentially. In response to feedback and implementation work, the design introduced an \texttt{estimator} abstraction so NCRF-based analysis can be selected through the same experiment pipeline used for baseline TRF analysis. This changed the SRS requirements, the MG module decomposition, the MIS interfaces, the VnV test cases, and the user-facing README.
 
 \subsection{SRS and Hazard Analysis}
 
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{p{0.18\textwidth} p{0.36\textwidth} X}
+\toprule
+\textbf{Source} & \textbf{Feedback} & \textbf{Response}\\
+\midrule
+Peer review issue \#5 & The maintainability requirement described a design method rather than the quality requirement. & Revised the SRS nonfunctional requirements so maintainability focuses on the ability to add or modify estimator algorithms without changing pipeline input/output interfaces.\\
+Peer review issue \#6 & References for IM1, GD1, and GD2 were missing or unresolved. & Updated the SRS references and traceability so theoretical and instance-model material points to the NCRF and Eelbrain/TRF literature.\\
+Peer review issue \#7 & The original goal statement was not specific enough about the computation. & Reframed the goal around source-level characterization of neural responses to continuous stimulus features using NCRF.\\
+Peer review issue \#8 & Boosting and NCRF should not be merged into one functional requirement. & Split the calculation requirements so NCRF source-level computation and baseline boosting support are represented separately.\\
+Peer review issue \#9 & Early SRS tables had unclear symbols, units, and abbreviations. & Cleaned the symbol and abbreviation presentation and clarified the project name as a phrase rather than an acronym.\\
+\bottomrule
+\end{tabularx}
+\caption{SRS feedback and responses}
+\end{table}
+
+No separate Hazard Analysis document was completed for this project.
+
 \subsection{Design and Design Documentation}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{p{0.18\textwidth} p{0.36\textwidth} X}
+\toprule
+\textbf{Source} & \textbf{Feedback} & \textbf{Response}\\
+\midrule
+Professor feedback issue \#15 & MG and MIS feedback was provided as annotated PDF attachments. & Revised the design documents to better align the module decomposition, estimator strategy design, and module interfaces with the implemented TRF-Tools integration.\\
+Peer review issue \#18 & The MG incorrectly suggested that Eelbrain implements the NCRF computation service. & Revised M4 to state that the integrated TRF-Tools workflow dispatches baseline fitting through the TRF-Tools/Eelbrain boosting path and NCRF fitting through the \texttt{neuro-currentRF} backend.\\
+Peer review issue \#19 & The MIS used \texttt{Estimator} without defining the type. & Added \texttt{Estimator} as a strategy/configuration object for selecting an analysis method and estimator-specific options.\\
+Peer review issue \#20 & \texttt{add\_predictor} output was inconsistent with its in-place behavior. & Changed the exported access program table so \texttt{add\_predictor} returns \texttt{None}, matching the TRF-Tools implementation.\\
+Peer review issue \#21 & The link in Section 2 of the MIS should point readers to the correct companion documentation. & Updated the MIS documentation references so readers can locate the related SRS and MG material more reliably.\\
+Peer review issue \#22 & The Hardware-Hiding Module in the MIS had a typing issue. & Corrected the relevant Hardware-Hiding Module type/interface description so the documented access routines match the intended data and filesystem behavior.\\
+\bottomrule
+\end{tabularx}
+\caption{Design feedback and responses}
+\end{table}
 
 \subsection{VnV Plan and Report}
 
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{p{0.18\textwidth} p{0.36\textwidth} X}
+\toprule
+\textbf{Source} & \textbf{Feedback} & \textbf{Response}\\
+\midrule
+Peer review issue \#10 & The SRS checklist review should be referenced directly. & Added checklist references and made the review evidence more explicit in the VnV plan.\\
+Peer review issue \#11 & Hyperlinks to \texttt{R-Inputs}, \texttt{R-Calculate}, and \texttt{R-Output} were broken. & Corrected requirement labels and traceability references so the VnV plan maps tests to the SRS requirements.\\
+Peer review issue \#12 & FR-CALC-02 described repeated NCRF runs as input rather than procedure. & Revised the test case so the input matches FR-CALC-01 and the repeated run is described as the test procedure for reproducibility.\\
+Peer review issue \#13 & NFR-ACC-01 needed a clearer accuracy comparison and acceptance criterion. & Revised the accuracy test description to compare outputs under a fixed configuration and report relative-error metrics where a suitable baseline is available.\\
+Peer review issue \#14 & The Software Validation section needed to state whether model validation was in scope. & Clarified that validating the underlying NCRF scientific model is out of scope; the project verifies integration of the existing NCRF model into the TRF pipeline.\\
+Professor feedback issue \#4 & Professor feedback on the submitted VnV Plan requested more concrete and feasible test evidence. & Specified the Appleseed BIDS dataset, acoustic-envelope predictor, subject/task assumptions, estimator configuration, lag window, and acceptance checks for NCRF execution.\\
+\bottomrule
+\end{tabularx}
+\caption{VnV feedback and responses}
+\end{table}
+
+The VnV plan now traces requirements to test cases: input handling maps to FR-INPUT-01, FR-API-02, and FR-API-03; NCRF calculation maps to FR-CALC-01 and FR-CALC-02; output generation maps to FR-OUT-01 and FR-OUT-02; and the nonfunctional requirements map to accuracy, maintainability, and portability checks.
+
 \section{Extras}
 
-\plt{Summarize the extras that were tackled by this project.  Extras
-can include usability testing, code walkthroughs, user documentation, formal
-proof, GenderMag personas, Design Thinking, etc.  Extras should have already
-been approved by the course instructor as included in your problem statement.}
+% TEMPLATE:
+% \plt{Summarize the extras that were tackled by this project.  Extras
+% can include usability testing, code walkthroughs, user documentation, formal
+% proof, GenderMag personas, Design Thinking, etc.  Extras should have already
+% been approved by the course instructor as included in your problem statement.}
+
+Two approved extras were tackled: user documentation and a code walkthrough. The user documentation extra is represented by the root README. This document explains that the runnable implementation is in the separate TRF-Tools repository, identifies the required \texttt{feature/test-pipeline} branch, lists dependency versions, and describes how to download the Appleseed dataset and stimulus WAV files before generating the predictor.
+
+The code walkthrough extra is represented in the design documentation and supporting demo material. The walkthrough explains the path from \texttt{TRFExperiment.load\_trf(..., estimator=...)} to estimator resolution and backend dispatch. The important implementation point is the routing role of the estimator abstraction: different estimator choices correspond to different analysis methods, so a boosting estimator follows the baseline TRF analysis path while an NCRF estimator follows the NCRF analysis path.
 
 \section{Design Iteration (LO11 (PrototypeIterate))}
 
-\plt{Explain how you arrived at your final design and implementation.  How did
-the design evolve from the first version to the final version?} 
+% TEMPLATE:
+% \plt{Explain how you arrived at your final design and implementation.  How did
+% the design evolve from the first version to the final version?} 
+% \plt{Don't just say what you changed, say why you changed it.  The needs of the
+% client should be part of the explanation.  For example, if you made changes in
+% response to usability testing, explain what the testing found and what changes
+% it led to.}
 
-\plt{Don't just say what you changed, say why you changed it.  The needs of the
-client should be part of the explanation.  For example, if you made changes in
-response to usability testing, explain what the testing found and what changes
-it led to.}
+The first version of the design treated NCRF integration as a new analysis capability to be added to the existing TRF workflow. That framing was correct at the problem level, but it was too broad for implementation and documentation because it did not clearly identify where the existing pipeline should change.
+
+The design evolved toward an estimator-selection architecture. In the final design, the existing \texttt{TRFExperiment} workflow remains the main entry point, while estimator-specific behavior is isolated behind strategy objects. The estimator registry accepts keys such as \texttt{boosting}, \texttt{boosting-l2}, \texttt{ncrf}, and \texttt{ncrf-fast}. This structure was chosen because researchers already use the TRF-Tools pipeline, so the most useful integration is not a separate NCRF script but a way to run NCRF through the same experiment configuration style.
+
+The prototype also clarified the data requirements. Running the demo requires the Appleseed BIDS dataset, stimulus WAV files, and a generated acoustic-envelope predictor. This led to stronger documentation of environment setup and local data paths. The demo scripts include example paths, but the README now states that users must replace those paths with their own machine-specific dataset and stimulus locations.
 
 \section{Design Decisions (LO12)}
 
-\plt{Reflect and justify your design decisions.  How did limitations,
- assumptions, and constraints influence your decisions?  Discuss each of these
- separately.}
+% TEMPLATE:
+% \plt{Reflect and justify your design decisions.  How did limitations,
+%  assumptions, and constraints influence your decisions?  Discuss each of these
+%  separately.}
+
+\subsection*{Limitations}
+
+The main limitation is that this project integrates with an existing research pipeline rather than controlling the whole codebase. TRF-Tools, Eelbrain, MNE, and \texttt{neuro-currentRF} already define important data structures and computation paths. Because of this, the design avoids replacing the pipeline and instead adds NCRF through estimator resolution and backend dispatch.
+
+Another limitation is data availability. The Appleseed BIDS dataset and stimulus WAV files are not bundled in the repository. The project therefore depends on documented download locations, local path configuration, and predictor generation before the demo can run.
+
+\subsection*{Assumptions}
+
+The design assumes that input MEG/EEG data follow a BIDS-like organization and that predictors can be represented as Eelbrain data objects aligned to the response time axis. It also assumes that the NCRF backend from \texttt{neuro-currentRF} is the scientific reference implementation for NCRF fitting, while TRF-Tools remains responsible for experiment orchestration.
+
+\subsection*{Constraints}
+
+The main technical constraint was preserving the baseline TRF/boosting workflow. Users should still be able to run the existing boosting path without changing the public experiment interface. This constraint led directly to the Strategy pattern: estimator-specific defaults and preprocessing decisions are localized in concrete estimator objects, while shared pipeline operations remain in \texttt{TRFExperiment}.
 
 \section{Economic Considerations (LO23)}
 
-\plt{Is there a market for your product? What would be involved in marketing your 
-product? What is your estimate of the cost to produce a version that you could 
-sell?  What would you charge for your product?  How many units would you have to 
-sell to make money? If your product isn't something that would be sold, like an 
-open source project, how would you go about attracting users?  How many potential 
-users currently exist?}
+% TEMPLATE:
+% \plt{Is there a market for your product? What would be involved in marketing your 
+% product? What is your estimate of the cost to produce a version that you could 
+% sell?  What would you charge for your product?  How many units would you have to 
+% sell to make money? If your product isn't something that would be sold, like an 
+% open source project, how would you go about attracting users?  How many potential 
+% users currently exist?}
+
+This project is best understood as open-source research infrastructure, not a commercial product. The expected users are lab members, neuroscience researchers, and students who already work with TRF-Tools, Eelbrain, MNE, and BIDS-formatted EEG/MEG data. The value is in reducing duplicated analysis work and making NCRF easier to run in a familiar pipeline.
+
+There is likely a small but real user base in auditory neuroscience, neuroimaging, and continuous-stimulus EEG/MEG analysis. Attracting users would require clear documentation, reproducible demos, stable environment files, and examples that compare boosting and NCRF outputs. The cost to produce a polished public version would mainly be developer time for packaging, tests, documentation, and maintenance. Because the project depends on open scientific tools and specialized datasets, selling licenses would not be appropriate; long-term value would come from adoption, citation, and contribution within the research community.
 
 \section{Reflection on Project Management (LO24)}
 
-\plt{This question focuses on processes and tools used for project management.}
+% TEMPLATE:
+% \plt{This question focuses on processes and tools used for project management.}
 
 \subsection{How Does Your Project Management Compare to Your Development Plan}
 
-\plt{Did you follow your Development plan, with respect to the team meeting plan, 
-team communication plan, team member roles and workflow plan.  Did you use the 
-technology you planned on using?}
+% TEMPLATE:
+% \plt{Did you follow your Development plan, with respect to the team meeting plan, 
+% team communication plan, team member roles and workflow plan.  Did you use the 
+% technology you planned on using?}
+
+The project followed the intended workflow only partially. Git and GitHub issues were useful for tracking feedback and revisions, especially for SRS, VnV, MG, MIS, and README updates. However, the development plan itself remained close to the course template for longer than ideal, so some project-management details were reconstructed later from issues and document revision histories.
+
+The planned technology stack did remain consistent: Python, TRF-Tools, Eelbrain, MNE, and \texttt{neuro-currentRF}. The implementation work happened in the external TRF-Tools checkout, while this repository remained the main documentation repository.
 
 \subsection{What Went Well?}
 
-\plt{What went well for your project management in terms of processes and 
-technology?}
+% TEMPLATE:
+% \plt{What went well for your project management in terms of processes and 
+% technology?}
+
+The most effective process was using feedback issues as a checklist. Peer review and supervisor comments were concrete enough to drive targeted changes: fixing broken links, clarifying requirements, adding estimator type definitions, correcting backend ownership, and improving function signatures. The separation between documentation repository and implementation repository also became clearer over time, which improved the README and demo instructions.
 
 \subsection{What Went Wrong?}
 
-\plt{What went wrong in terms of processes and technology?}
+% TEMPLATE:
+% \plt{What went wrong in terms of processes and technology?}
+
+At the beginning of the project, I misunderstood the concept of NCRF itself. I initially interpreted the ``NC'' in NCRF as ``non-linear convolution,'' which led to an incorrect early framing of the problem. After correcting this misunderstanding, I spent extra time redefining the problem and revising the Problem Statement and parts of the SRS so they correctly described NCRF as Neuro-Current Response Functions for jointly estimating spatial and temporal response properties. Another issue was that implementation details from TRF-Tools sometimes leaked into the wrong documentation level. For example, the MIS needed enough type detail to be readable, but it should not over-specify internal helper functions beyond what the interface requires.
 
 \subsection{What Would you Do Differently Next Time?}
 
-\plt{What will you do differently for your next project?}
+% TEMPLATE:
+% \plt{What will you do differently for your next project?}
+
+For a similar project, I would create a small architecture note earlier that maps the existing codebase to the SRS/MG/MIS modules. I would also keep a living feedback-response table from the first review onward instead of reconstructing traceability near the end. Finally, I would document the demo environment and data-path assumptions earlier, because those details are central to whether another user can reproduce the work.
 
 \section{Ethics and Equity (LO18)}
 
-\plt{Describe how your team applied the principle of equity and universal design
-to ensure equitable treatment of all stakeholders.}
+% TEMPLATE:
+% \plt{Describe how your team applied the principle of equity and universal design
+% to ensure equitable treatment of all stakeholders.}
+
+The project supports equity mainly through documentation and reproducibility. The expected users are researchers and students with different levels of familiarity with TRF-Tools and NCRF. Clear installation steps, explicit data requirements, and notes about local paths reduce hidden knowledge and make the workflow easier to reproduce.
+
+The project also respects limitations around data access. The Appleseed dataset and stimulus files are not redistributed in this repository; users are directed to the approved download locations. This avoids bundling controlled research data while still explaining what is required to run the demo.
 
 \section{Reflection on Capstone}
 
-\plt{This question focuses on what you learned during the course of the capstone project.}
+% TEMPLATE:
+% \plt{This question focuses on what you learned during the course of the capstone project.}
 
 \subsection{Which Courses Were Relevant}
 
-\plt{Which of the courses you have taken were relevant for the capstone project?}
+% TEMPLATE:
+% \plt{Which of the courses you have taken were relevant for the capstone project?}
+
+The relevant course background is the same as the preparation identified in the SRS. Programming was needed because the project integrates with a Python-based analysis pipeline and requires users to run or modify scripts and Jupyter notebooks. Linear algebra, probability, and signal processing were relevant because NCRF/TRF analysis works with time-series stimulus features, EEG/MEG recordings, source-space representations, and model outputs. Neuroscience or biomedical engineering background was also relevant because users need to understand EEG/MEG data organization, BIDS-style datasets, and the goal of estimating spatial and temporal neural responses.
 
 \subsection{Knowledge/Skills Outside of Courses}
 
-\plt{What skills/knowledge did you need to acquire for your capstone project
-that was outside of the courses you took?}
+% TEMPLATE:
+% \plt{What skills/knowledge did you need to acquire for your capstone project
+% that was outside of the courses you took?}
+
+The project required learning domain-specific EEG/MEG analysis concepts, including BIDS organization, Eelbrain data structures, TRF estimation, NCRF modeling, forward/covariance inputs, and acoustic-envelope predictor generation. It also required learning how to read and extend an existing research codebase without redesigning it from scratch. A key skill was deciding which details belong in the implementation, which belong in the MIS, and which belong only in user documentation.
 
 \end{document}
