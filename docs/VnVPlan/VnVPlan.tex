@@ -607,131 +607,325 @@ NFR3 (Portability) & NFR-PORT-01 \\
 \label{tab:traceability}
 \end{table}
 
+
 \section{Unit Test Description}
 
-\wss{This section should not be filled in until after the MIS (detailed design
-  document) has been completed.}
+This section defines the planned unit testing strategy based on the completed MIS. The unit tests are selected from the access programs and semantics specified in \href{../Design/SoftDetailedDes/MIS.tex}{MIS.tex}. The goal is not to re-test third-party scientific libraries, but to verify that the project integration code resolves estimators correctly, prepares predictor/epoch data according to the documented interfaces, dispatches the correct analysis method, and handles cache/output behavior consistently.
 
-\wss{Reference your MIS (detailed design document) and explain your overall
-philosophy for test case selection.}  
-
-\wss{To save space and time, it may be an option to provide less detail in this section.  
-For the unit tests you can potentially layout your testing strategy here.  That is, you 
-can explain how tests will be selected for each module.  For instance, your test building 
-approach could be test cases for each access program, including one test for normal behaviour 
-and as many tests as needed for edge cases.  Rather than create the details of the input 
-and output here, you could point to the unit testing code.  For this to work, you code 
-needs to be well-documented, with meaningful names for all of the tests.}
+The unit tests will be implemented with \texttt{pytest}. Tests will use small fixtures, temporary directories, and mocks/stubs for expensive external calls. Full NCRF fitting on the Appleseed dataset is treated as system/integration testing, not unit testing, because it depends on external data, forward/covariance files, Eelbrain, MNE, and the \texttt{neuro-currentRF} backend.
 
 \subsection{Unit Testing Scope}
 
-\wss{What modules are outside of the scope.  If there are modules that are
-  developed by someone else, then you would say here if you aren't planning on
-  verifying them.  There may also be modules that are part of your software, but
-  have a lower priority for verification than others.  If this is the case,
-  explain your rationale for the ranking of module importance.}
+The unit testing scope is determined by the four MIS modules:
+\begin{itemize}
+  \item M1 Data Loading Module: verify filesystem and serialization behavior at the interface boundary.
+  \item M2 Data Preprocessing Module: verify epoch loading contracts and predictor-column insertion behavior.
+  \item M3 Estimator Resolution Module: verify estimator-key lookup, invalid-estimator handling, and estimator option merging.
+  \item M4 TRF Computation Module: verify cache behavior and dispatch to the correct analysis method based on estimator selection.
+\end{itemize}
+
+The following are outside the unit testing scope:
+\begin{itemize}
+  \item Numerical correctness of Eelbrain, MNE, and \texttt{neuro-currentRF}; these are third-party libraries and are assumed to be verified by their maintainers.
+  \item Full Appleseed BIDS execution and full NCRF model fitting; these are covered by system tests because they require large external data and scientific backend dependencies.
+  \item Operating-system file I/O internals; unit tests only verify that the project calls these interfaces correctly and handles expected exceptions.
+\end{itemize}
 
 \subsection{Tests for Functional Requirements}
 
-\wss{Most of the verification will be through automated unit testing.  If
-  appropriate specific modules can be verified by a non-testing based
-  technique.  That can also be documented in this section.}
+\subsubsection{M1: Data Loading Module}
 
-\subsubsection{Module 1}
-
-\wss{Include a blurb here to explain why the subsections below cover the module.
-  References to the MIS would be good.  You will want tests from a black box
-  perspective and from a white box perspective.  Explain to the reader how the
-  tests were selected.}
+The Data Loading Module is specified in the Hardware-Hiding Module section of the MIS. Unit tests for this module focus on the documented access routines \texttt{RawSource.\_load} and \texttt{save.pickle}. These tests support R-Inputs and R-Output by checking that raw recordings and serialized artifacts are handled through the expected filesystem interfaces.
 
 \begin{enumerate}
 
-\item{test-id1\\}
+\item{UT-DL-01: Raw recording load succeeds\\}
 
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
+\textbf{Type:} Functional, dynamic, automatic.
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+\textbf{Initial State:} A small valid raw-recording fixture or mocked MNE reader is available.
 
-How test will be performed: 
-					
-\item{test-id2\\}
+\textbf{Input:} \texttt{subject="sub-test"}, a valid recording path, and \texttt{preload=False}.
 
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
+\textbf{Output:} \texttt{RawSource.\_load} returns a raw data object and does not raise an exception.
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+\textbf{Test Case Derivation:} The MIS states that \texttt{RawSource.\_load} returns an MNE \texttt{Raw} object loaded from the resolved recording path.
 
-How test will be performed: 
+\textbf{How Test Will Be Performed:} Use \texttt{pytest} with a fixture or mocked MNE reader. Assert that the returned object has the expected raw-object interface and that the reader is called with the resolved recording path.
 
-\item{...\\}
-    
+\item{UT-DL-02: Raw recording load reports missing file\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} No file exists at the requested recording path.
+
+\textbf{Input:} \texttt{subject="sub-test"}, a missing recording path, and \texttt{preload=False}.
+
+\textbf{Output:} \texttt{FileNotFoundError} or an equivalent reader I/O error is raised.
+
+\textbf{Test Case Derivation:} The MIS lists \texttt{FileNotFoundError} and \texttt{OSError} as exceptions for missing or unreadable raw recordings.
+
+\textbf{How Test Will Be Performed:} Use a temporary directory and request a nonexistent file. Assert that the documented exception type is raised.
+
+\item{UT-DL-03: Pickle output is written to disk\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} A temporary output directory exists.
+
+\textbf{Input:} A small serializable Python object and destination path \texttt{tmp/results.pickle}.
+
+\textbf{Output:} \texttt{save.pickle} returns \texttt{None}, creates the pickle file, and the object can be loaded back with matching content.
+
+\textbf{Test Case Derivation:} The MIS states that \texttt{save.pickle} writes a serialized object to disk for cache/results reuse.
+
+\textbf{How Test Will Be Performed:} Use \texttt{pytest}'s \texttt{tmp\_path}; write a small dictionary; assert file existence and round-trip equality.
+
 \end{enumerate}
 
-\subsubsection{Module 2}
+\subsubsection{M2: Data Preprocessing Module}
 
-...
+The Data Preprocessing Module is specified in the Data Preprocessing Module section of the MIS. Unit tests for this module verify \texttt{load\_epochs} and \texttt{add\_predictor}, focusing on data-shape contracts, predictor naming, in-place behavior, and invalid predictor handling.
+
+\begin{enumerate}
+
+\item{UT-DP-01: Epoch loading returns dataset with response and metadata\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} A small experiment fixture or mocked epoch loader is configured with one subject, one task, and a valid sampling rate.
+
+\textbf{Input:} \texttt{samplingrate=100}, \texttt{data="meg"}, and \texttt{interpolate\_bads=False}.
+
+\textbf{Output:} \texttt{load\_epochs} returns a \texttt{Dataset} containing a response variable, event/stimulus metadata, and a time axis compatible with the requested sampling rate.
+
+\textbf{Test Case Derivation:} The MIS states that \texttt{load\_epochs} returns an epoch dataset containing response data, event metadata, and a consistent time axis.
+
+\textbf{How Test Will Be Performed:} Mock the lower-level Eelbrain epoch loader or use a minimal fixture. Assert that required dataset keys exist and that the time-axis sampling rate matches the requested value.
+
+\item{UT-DP-02: Predictor is added in place with the expected key\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} A small dataset exists with event/stimulus metadata, and a registered predictor descriptor has \texttt{code.key="acoustic\_envelop"}.
+
+\textbf{Input:} \texttt{add\_predictor(ds, code, filter\_x=False, y="meg")}.
+
+\textbf{Output:} The function returns \texttt{None}; \texttt{ds} contains a new \texttt{acoustic\_envelop} predictor column aligned with the response time axis.
+
+\textbf{Test Case Derivation:} The MIS specifies that \texttt{add\_predictor} updates the dataset in place and uses \texttt{code.key} as the predictor column name.
+
+\textbf{How Test Will Be Performed:} Use a small dataset fixture and a mocked predictor loader. Assert that the return value is \texttt{None}, the expected key is present, and the predictor length/time axis is compatible with the response.
+
+\item{UT-DP-03: Undefined predictor is rejected\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} A dataset exists, but the requested predictor code is not registered.
+
+\textbf{Input:} \texttt{add\_predictor(ds, code="unknown\_predictor", filter\_x=False, y="meg")}.
+
+\textbf{Output:} A documented undefined-predictor error or \texttt{ValueError} is raised.
+
+\textbf{Test Case Derivation:} The MIS lists undefined predictor errors as exception cases for \texttt{add\_predictor}.
+
+\textbf{How Test Will Be Performed:} Call \texttt{add\_predictor} with an unregistered predictor key and assert that execution fails before a predictor column is added.
+
+\end{enumerate}
+
+\subsubsection{M3: Estimator Resolution Module}
+
+The Estimator Resolution Module is specified in the Estimator Resolution Module section of the MIS. Unit tests for this module are high priority because the estimator resolver is the main integration mechanism that routes different estimator choices to different analysis methods.
+
+\begin{enumerate}
+
+\item{UT-ER-01: Valid estimator key resolves to estimator object\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} A test experiment defines an estimator registry containing \texttt{"boosting"} mapped to \texttt{BoostingEstimator(...)} and \texttt{"ncrf"} mapped to \texttt{NCRFEstimator(...)}.
+
+\textbf{Input:} \texttt{\_resolve\_estimator("ncrf")}.
+
+\textbf{Output:} The corresponding \texttt{NCRFEstimator} instance is returned.
+
+\textbf{Test Case Derivation:} The MIS states that string estimator keys are resolved through the experiment estimator dictionary.
+
+\textbf{How Test Will Be Performed:} Instantiate a small test experiment with a registry and assert object identity or estimator type for \texttt{"boosting"} and \texttt{"ncrf"}.
+
+\item{UT-ER-02: Missing estimator key raises clear error\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} A test experiment defines an estimator registry that does not include \texttt{"unknown"}.
+
+\textbf{Input:} \texttt{\_resolve\_estimator("unknown")}.
+
+\textbf{Output:} \texttt{ValueError} is raised and the message identifies the invalid estimator key or supported options.
+
+\textbf{Test Case Derivation:} The MIS lists \texttt{ValueError} for an estimator key not found in \texttt{estimators}.
+
+\textbf{How Test Will Be Performed:} Use \texttt{pytest.raises(ValueError)} and assert that the error message includes \texttt{"unknown"} or the available estimator keys.
+
+\item{UT-ER-03: Invalid estimator type raises clear error\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} A test experiment is available.
+
+\textbf{Input:} \texttt{\_resolve\_estimator(object())}.
+
+\textbf{Output:} \texttt{ValueError} is raised because the input is neither \texttt{str}, \texttt{Estimator}, nor \texttt{None}.
+
+\textbf{Test Case Derivation:} The MIS specifies that invalid estimator types are rejected.
+
+\textbf{How Test Will Be Performed:} Pass a plain object and assert \texttt{ValueError}.
+
+\item{UT-ER-04: Estimator options merge into effective TRF options\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} A \texttt{BoostingEstimator} or \texttt{NCRFEstimator} is configured with non-default options.
+
+\textbf{Input:} Call the estimator-option merge helper with explicit TRF defaults and the configured estimator.
+
+\textbf{Output:} The effective options contain estimator-specific values needed by the backend fitter.
+
+\textbf{Test Case Derivation:} The MIS local-function description requires estimator defaults and explicit user options to be merged into effective TRF options.
+
+\textbf{How Test Will Be Performed:} Assert that boosting options such as \texttt{basis}, \texttt{partitions}, and \texttt{error}, or NCRF options such as \texttt{mu} and \texttt{n\_iter}, appear in the effective option dictionary.
+
+\end{enumerate}
+
+\subsubsection{M4: TRF Computation Module}
+
+The TRF Computation Module is specified in the TRF Computation Module section of the MIS. Unit tests for this module verify behavior at the dispatch boundary. The tests should not run the expensive scientific fitting routines; instead, they should mock \texttt{boosting} and \texttt{fit\_ncrf} and assert that the correct callable is constructed or invoked.
+
+\begin{enumerate}
+
+\item{UT-TC-01: \texttt{load\_trf} returns cache path when \texttt{path\_only=True}\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} A test experiment can resolve a TRF cache path for a fixed model and estimator configuration.
+
+\textbf{Input:} \texttt{load\_trf("acoustic\_envelop", tstart=0, tstop=0.5, estimator="ncrf", path\_only=True)}.
+
+\textbf{Output:} A filesystem path string is returned; no fitting job is executed.
+
+\textbf{Test Case Derivation:} The MIS specifies that \texttt{load\_trf} returns the cache path when \texttt{path\_only=True}.
+
+\textbf{How Test Will Be Performed:} Mock the fitting job and assert it is not called. Assert that the returned path ends in the expected cache-file extension.
+
+\item{UT-TC-02: Cache miss with \texttt{make=False} raises \texttt{IOError}\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} The resolved TRF cache file does not exist.
+
+\textbf{Input:} \texttt{load\_trf(..., make=False, path\_only=False)}.
+
+\textbf{Output:} \texttt{IOError} is raised.
+
+\textbf{Test Case Derivation:} The MIS lists \texttt{IOError} for a cache miss when \texttt{make=False}.
+
+\textbf{How Test Will Be Performed:} Use a temporary cache directory with no TRF file and assert \texttt{IOError}.
+
+\item{UT-TC-03: Boosting estimator dispatches to boosting analysis path\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} Epoch and predictor fixtures are available, and backend fitting functions are mocked.
+
+\textbf{Input:} \texttt{\_trf\_job(..., estimator=BoostingEstimator(...))}.
+
+\textbf{Output:} A deferred callable is created for the boosting fitting path with boosting-specific options.
+
+\textbf{Test Case Derivation:} The MIS specifies that one branch of \texttt{\_trf\_job} constructs \texttt{partial(boosting, ...)}.
+
+\textbf{How Test Will Be Performed:} Mock \texttt{boosting}; inspect the returned \texttt{partial} or execute it against a mock and assert that boosting arguments such as \texttt{basis} and \texttt{partitions} are passed.
+
+\item{UT-TC-04: NCRF estimator dispatches to NCRF analysis path\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} Epoch, predictor, forward-model, and covariance fixtures are available as lightweight stubs; \texttt{fit\_ncrf} is mocked.
+
+\textbf{Input:} \texttt{\_trf\_job(..., estimator=NCRFEstimator(mu=0.1, n\_iter=100))}.
+
+\textbf{Output:} A deferred callable is created for the NCRF fitting path with NCRF-specific options.
+
+\textbf{Test Case Derivation:} The MIS specifies that the NCRF branch constructs \texttt{partial(fit\_ncrf, ...)} and includes estimator-specific NCRF options.
+
+\textbf{How Test Will Be Performed:} Mock \texttt{fit\_ncrf}; inspect the returned callable or execute it against stubs and assert that \texttt{mu}, \texttt{n\_iter}, \texttt{normalize}, and \texttt{in\_place} are passed.
+
+\item{UT-TC-05: Backward model with multiple predictors is rejected\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} A model expression contains more than one predictor term.
+
+\textbf{Input:} \texttt{\_trf\_job(..., x="x1+x2", backward=True)}.
+
+\textbf{Output:} \texttt{ValueError} is raised.
+
+\textbf{Test Case Derivation:} The MIS lists \texttt{ValueError} for backward models with multiple predictors.
+
+\textbf{How Test Will Be Performed:} Use a model fixture with two predictor terms and assert \texttt{ValueError}.
+
+\end{enumerate}
 
 \subsection{Tests for Nonfunctional Requirements}
 
-% \wss{If there is a module that needs to be independently assessed for
-%   performance, those test cases can go here.  In some projects, planning for
-%   nonfunctional tests of units will not be that relevant.}
+Unit-level nonfunctional testing focuses on maintainability and reproducibility of the integration boundary. Full performance and cross-platform testing remain system-level concerns.
 
-% \wss{These tests may involve collecting performance data from previously
-%   mentioned functional tests.}
-
-\subsubsection{Module ?}
-		
 \begin{enumerate}
 
-\item{test-id1\\}
+\item{UT-NFR-MAINT-01: Estimator addition is localized\\}
 
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input/Condition: 
-					
-Output/Result: 
-					
-How test will be performed: 
-					
-\item{test-id2\\}
+\textbf{Type:} Static, manual/automatic review.
 
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
+\textbf{Initial State:} Estimator classes, estimator registry, and \texttt{TRFExperiment} dispatch code are available.
+
+\textbf{Input/Condition:} Inspect the files implementing \texttt{Estimator}, \texttt{BoostingEstimator}, \texttt{NCRFEstimator}, and estimator dispatch.
+
+\textbf{Output/Result:} Adding or modifying an estimator should require changes to the estimator strategy class and registry, not unrelated preprocessing or raw-data loading code.
+
+\textbf{How Test Will Be Performed:} Use code review and optional import-level tests to confirm that estimator classes can be imported independently and that the resolver accepts new estimator objects through the documented strategy interface.
+
+\item{UT-NFR-REP-01: Cache path is deterministic for fixed options\\}
+
+\textbf{Type:} Functional, dynamic, automatic.
+
+\textbf{Initial State:} A test experiment has fixed subject, epoch, predictor, estimator, and TRF options.
+
+\textbf{Input/Condition:} Call \texttt{load\_trf(..., path\_only=True)} twice with identical arguments.
+
+\textbf{Output/Result:} Both calls return the same path.
+
+\textbf{How Test Will Be Performed:} Use a temporary cache directory and assert path equality. A companion test should change an estimator-relevant option and assert that the path or cache metadata changes accordingly.
 
 \end{enumerate}
 
-\subsubsection{Module ?}
-
-...
-
 \subsection{Traceability Between Test Cases and Modules}
 
-\wss{Provide evidence that all modules have been considered.}
-				
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{p{0.25\textwidth}X}
+\toprule
+\textbf{Module} & \textbf{Unit Test Cases} \\
+\midrule
+M1 Data Loading Module & UT-DL-01, UT-DL-02, UT-DL-03 \\
+M2 Data Preprocessing Module & UT-DP-01, UT-DP-02, UT-DP-03 \\
+M3 Estimator Resolution Module & UT-ER-01, UT-ER-02, UT-ER-03, UT-ER-04 \\
+M4 TRF Computation Module & UT-TC-01, UT-TC-02, UT-TC-03, UT-TC-04, UT-TC-05 \\
+Nonfunctional unit-level checks & UT-NFR-MAINT-01, UT-NFR-REP-01 \\
+\bottomrule
+\end{tabularx}
+\caption{Traceability Between Unit Test Cases and Modules}
+\label{tab:unit-module-trace}
+\end{table}
+
 \bibliographystyle{plainnat}
 
 \bibliography{../../refs/References}
@@ -750,30 +944,5 @@ Their values are defined in this section for easy maintenance.
 \subsection{Usability Survey Questions?}
 
 \wss{This is a section that would be appropriate for some projects.}
-
-\newpage{}
-\section*{Appendix --- Reflection}
-
-\wss{This section is not required for CAS 741}
-
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Lifelong Learning.
-
-\input{../Reflection.text}
-
-\begin{enumerate}
-  \item What went well while writing this deliverable? 
-  \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-  \item What knowledge and skills will the team collectively need to acquire to
-  successfully complete the verification and validation of your project?
-  Examples of possible knowledge and skills include dynamic testing knowledge,
-  static testing knowledge, specific tool usage, Valgrind etc.  You should look to
-  identify at least one item for each team member.
-  \item For each of the knowledge areas and skills identified in the previous
-  question, what are at least two approaches to acquiring the knowledge or
-  mastering the skill?  Of the identified approaches, which will each team
-  member pursue, and why did they make this choice?
-\end{enumerate}
 
 \end{document}
