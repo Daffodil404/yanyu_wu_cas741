@@ -130,9 +130,9 @@ The VnV plan now traces requirements to test cases: input handling maps to FR-IN
 % proof, GenderMag personas, Design Thinking, etc.  Extras should have already
 % been approved by the course instructor as included in your problem statement.}
 
-Two approved extras were tackled: user documentation and a code walkthrough. The user documentation extra is represented by the root README and the demo SOP for the TRF-Tools checkout. These documents explain that the runnable implementation is in the separate TRF-Tools repository, identify the required \texttt{feature/test-pipeline} branch, list dependency versions, and describe how to download the Appleseed dataset and stimulus WAV files before generating the predictor.
+Two approved extras were tackled: user documentation and a code walkthrough. The user documentation extra is represented by the root README. This document explains that the runnable implementation is in the separate TRF-Tools repository, identifies the required \texttt{feature/test-pipeline} branch, lists dependency versions, and describes how to download the Appleseed dataset and stimulus WAV files before generating the predictor.
 
-The code walkthrough extra is represented in the design documentation and supporting demo material. The walkthrough explains the path from \texttt{TRFExperiment.load\_trf(..., estimator=...)} to estimator resolution and backend dispatch. The important implementation elements are the estimator registry, the abstract \texttt{Estimator} contract, \texttt{BoostingEstimator}, \texttt{NCRFEstimator}, and the TRF computation job that eventually dispatches to boosting or \texttt{fit\_ncrf}.
+The code walkthrough extra is represented in the design documentation and supporting demo material. The walkthrough explains the path from \texttt{TRFExperiment.load\_trf(..., estimator=...)} to estimator resolution and backend dispatch. The important implementation point is the routing role of the estimator abstraction: different estimator choices correspond to different analysis methods, so a boosting estimator follows the baseline TRF analysis path while an NCRF estimator follows the NCRF analysis path.
 
 \section{Design Iteration (LO11 (PrototypeIterate))}
 
@@ -214,14 +214,14 @@ The most effective process was using feedback issues as a checklist. Peer review
 % TEMPLATE:
 % \plt{What went wrong in terms of processes and technology?}
 
-Some early documents stayed too close to the template and did not explain the actual integration architecture clearly enough. Another issue was that implementation details from TRF-Tools sometimes leaked into the wrong documentation level. For example, the MIS needed enough type detail to be readable, but it should not over-specify internal helper functions beyond what the interface requires.
+At the beginning of the project, I misunderstood the concept of NCRF itself. I initially interpreted the ``NC'' in NCRF as ``non-linear convolution,'' which led to an incorrect early framing of the problem. After correcting this misunderstanding, I spent extra time redefining the problem and revising the Problem Statement and parts of the SRS so they correctly described NCRF as Neuro-Current Response Functions for jointly estimating spatial and temporal response properties. Another issue was that implementation details from TRF-Tools sometimes leaked into the wrong documentation level. For example, the MIS needed enough type detail to be readable, but it should not over-specify internal helper functions beyond what the interface requires.
 
 \subsection{What Would you Do Differently Next Time?}
 
 % TEMPLATE:
 % \plt{What will you do differently for your next project?}
 
-For a similar project, I would create a small architecture note earlier that maps the existing codebase to the SRS/MG/MIS modules. I would also keep a living feedback-response table from the first review onward instead of reconstructing traceability near the end. Finally, I would write the demo SOP earlier, because the external environment and data paths are central to whether another user can reproduce the work.
+For a similar project, I would create a small architecture note earlier that maps the existing codebase to the SRS/MG/MIS modules. I would also keep a living feedback-response table from the first review onward instead of reconstructing traceability near the end. Finally, I would document the demo environment and data-path assumptions earlier, because those details are central to whether another user can reproduce the work.
 
 \section{Ethics and Equity (LO18)}
 
